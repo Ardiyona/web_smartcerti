@@ -3,7 +3,7 @@
     <div id="modal-master" class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Tambah Data pelatihan</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Tambah Data Pelatihan</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -51,17 +51,17 @@
 
                 <!-- No pelatihan -->
                 <div class="form-group">
-                    <label>No pelatihan</label>
-                    <input type="text" name="no_pelatihan" id="no_pelatihan" class="form-control" required>
-                    <small id="error-no_pelatihan" class="error-text form-text text-danger"></small>
+                    <label>Lokasi</label>
+                    <input type="text" name="lokasi" id="lokasi" class="form-control" required>
+                    <small id="error-lokasi" class="error-text form-text text-danger"></small>
                 </div>
 
                 <!-- Jenis -->
                 <div class="form-group">
-                    <label>Jenis</label>
-                    <select name="jenis" id="jenis" class="form-control" required>
-                        <option value="Profesi">Profesi</option>
-                        <option value="Keahlian">Keahlian</option>
+                    <label>Level Pelatihan</label>
+                    <select name="level_pelatihan" id="level_pelatihan" class="form-control" required>
+                        <option value="Nasional">Nasional</option>
+                        <option value="Internasional">Internasional</option>
                     </select>
                     <small id="error-jenis" class="error-text form-text text-danger"></small>
                 </div>
@@ -76,15 +76,8 @@
                 <!-- Bukti pelatihan -->
                 <div class="form-group">
                     <label>Bukti pelatihan</label>
-                    <input type="text" name="bukti_pelatihan" id="bukti_pelatihan" class="form-control" required>
+                    <input type="file" name="bukti_pelatihan" id="bukti_pelatihan" class="form-control" required>
                     <small id="error-bukti_pelatihan" class="error-text form-text text-danger"></small>
-                </div>
-
-                <!-- Masa Berlaku -->
-                <div class="form-group">
-                    <label>Masa Berlaku</label>
-                    <input type="date" name="masa_berlaku" id="masa_berlaku" class="form-control" required>
-                    <small id="error-masa_berlaku" class="error-text form-text text-danger"></small>
                 </div>
 
                 <!-- Kuota Peserta -->
@@ -100,6 +93,19 @@
                     <input type="text" name="biaya" id="biaya" class="form-control" required>
                     <small id="error-biaya" class="error-text form-text text-danger"></small>
                 </div>
+
+                @if (Auth::user()->id_level == 1)
+                    <div class="form-group">
+                        <label>Nama Peserta</label>
+                        <select name="user_id" id="user_id" class="form-control" required>
+                            <option value="">- Pilih Peserta Pelatihan -</option>
+                            @foreach ($user as $l)
+                                <option value="{{ $l->user_id }}">{{ $l->nama_lengkap }}</option>
+                            @endforeach
+                        </select>
+                        <small id="error-user_id" class="error-text form-text text-danger"></small>
+                    </div>
+                @endif
 
                 <div class="form-group">
                     <label for="id_bidang_minat">
@@ -141,6 +147,7 @@
 
 <script>
     $(document).ready(function() {
+        var isAdmin = {{ Auth::user()->id_level == 1 ? 'true' : 'false' }};
         $("#form-tambah").validate({
             rules: {
                 id_vendor_pelatihan: {
@@ -172,9 +179,8 @@
                     required: true,
                 },
                 bukti_pelatihan: {
-                    required: false,
-                    minlength: 3,
-                    maxlength: 255
+                    required: true,
+                    extension: "pdf"
                 },
                 masa_berlaku: {
                     required: true,
@@ -193,6 +199,11 @@
                 id_matakuliah: {
                     required: true,
                 },
+                user_id: {
+                    required: function() {
+                        return isAdmin;
+                    }
+                }
             },
             submitHandler: function(form) {
                 $.ajax({
