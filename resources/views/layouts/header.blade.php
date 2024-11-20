@@ -76,7 +76,7 @@
             <h5 class="mt-1">{{ Auth::user()->username }}</h5> <!-- Adjusted margin-top to mt-1 -->
         </div>
 
-        <a class="dropdown-item text-center btn profile-btn my-2" href="{{ route('profile.index') }}" style="width: 100%;">Profile</a>
+        {{-- <a class="dropdown-item text-center btn profile-btn my-2" href="{{ route('profile.index') }}" style="width: 100%;">Profile</a> --}}
 
         <!-- Tombol Logout -->
         <a class="dropdown-item text-center btn logout-btn my-2" href="{{ url('logout') }}" style="width: 100%;">Logout</a>
