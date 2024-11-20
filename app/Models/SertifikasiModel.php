@@ -60,6 +60,7 @@ class SertifikasiModel extends Model
 
     public function detail_peserta_sertifikasi(): BelongsToMany
     {
-        return $this->belongsToMany(UserModel::class, 'detail_peserta_sertifikasi', 'id_sertifikasi' ,'user_id')->withPivot('user_id');
+        return $this->belongsToMany(UserModel::class, 'detail_peserta_sertifikasi', 'id_sertifikasi', 'user_id')
+            ->withPivot('id_detail_peserta_sertifikasi', 'no_sertifikasi', 'bukti_sertifikasi');
     }
 }

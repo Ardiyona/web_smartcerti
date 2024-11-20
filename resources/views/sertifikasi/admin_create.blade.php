@@ -49,13 +49,6 @@
                     <small id="error-nama_sertifikasi" class="error-text form-text text-danger"></small>
                 </div>
 
-                <!-- No Sertifikasi -->
-                <div class="form-group">
-                    <label>No Sertifikasi</label>
-                    <input type="text" name="no_sertifikasi" id="no_sertifikasi" class="form-control" required>
-                    <small id="error-no_sertifikasi" class="error-text form-text text-danger"></small>
-                </div>
-
                 <!-- Jenis -->
                 <div class="form-group">
                     <label>Jenis</label>
@@ -73,25 +66,11 @@
                     <small id="error-tanggal" class="error-text form-text text-danger"></small>
                 </div>
 
-                <!-- Bukti Sertifikasi -->
-                <div class="form-group">
-                    <label>Bukti Sertifikasi</label>
-                    <input type="file" name="bukti_sertifikasi" id="bukti_sertifikasi" class="form-control" required>
-                    <small id="error-bukti_sertifikasi" class="error-text form-text text-danger"></small>
-                </div>
-
                 <!-- Masa Berlaku -->
                 <div class="form-group">
                     <label>Masa Berlaku</label>
                     <input type="date" name="masa_berlaku" id="masa_berlaku" class="form-control" required>
                     <small id="error-masa_berlaku" class="error-text form-text text-danger"></small>
-                </div>
-
-                <!-- Kuota Peserta -->
-                <div class="form-group">
-                    <label>Kuota Peserta</label>
-                    <input value="1" placeholder="1" type="number" name="kuota_peserta" id="kuota_peserta" class="form-control" readonly>
-                    <small id="error-kuota_peserta" class="error-text form-text text-danger"></small>
                 </div>
 
                 <!-- Biaya -->
@@ -101,18 +80,19 @@
                     <small id="error-biaya" class="error-text form-text text-danger"></small>
                 </div>
 
-                @if (Auth::user()->id_level == 1)
-                    <div class="form-group">
-                        <label>Nama Peserta</label>
-                        <select name="user_id" id="user_id" class="form-control" required>
-                            <option value="">- Pilih Peserta Sertifikasi -</option>
-                            @foreach ($user as $l)
-                                <option value="{{ $l->user_id }}">{{ $l->nama_lengkap }}</option>
-                            @endforeach
-                        </select>
-                        <small id="error-user_id" class="error-text form-text text-danger"></small>
-                    </div>
-                @endif
+                <div class="form-group">
+                    <label for="user_id">
+                        Nama Peserta
+                    </label>
+                    <select multiple="multiple" name="user_id[]" id="user_id"
+                        class="js-example-basic-multiple js-states form-control form-control">
+                        @foreach ($user as $item)
+                            <option value="{{ $item->user_id }}">{{ $item->nama_lengkap }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <small id="error-user_id" class="error-text form-text text-danger"></small>
+                </div>
 
                 <div class="form-group">
                     <label for="id_bidang_minat">
@@ -154,7 +134,6 @@
 
 <script>
     $(document).ready(function() {
-        var isAdmin = {{ Auth::user()->id_level == 1 ? 'true' : 'false' }};
         $("#form-tambah").validate({
             rules: {
                 id_vendor_sertifikasi: {
@@ -174,27 +153,17 @@
                     minlength: 3,
                     maxlength: 100
                 },
-                no_sertifikasi: {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 255
-                },
                 jenis: {
                     required: true,
                 },
                 tanggal: {
                     required: true,
                 },
-                bukti_sertifikasi: {
-                    required: true,
-                    extension: "pdf"
-                },
                 masa_berlaku: {
                     required: true,
                 },
                 kuota_peserta: {
-                    required: true,
-                    number: true
+                    required:true,
                 },
                 biaya: {
                     required: true,
@@ -207,9 +176,7 @@
                     required: true,
                 },
                 user_id: {
-                    required: function() {
-                        return isAdmin;
-                    }
+                    required: true,
                 }
             },
             submitHandler: function(form) {
@@ -256,7 +223,7 @@
                 $(element).removeClass('is-invalid');
             }
         });
-        $("#id_matakuliah, #id_bidang_minat").select2({
+        $("#id_matakuliah, #id_bidang_minat, #user_id").select2({
             dropdownAutoWidth: true,
             theme: "classic"
         });

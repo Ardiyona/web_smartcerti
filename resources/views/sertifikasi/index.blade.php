@@ -37,10 +37,7 @@
                         <th>No Sertifikasi</th>
                         <th>Jenis</th>
                         <th>Tanggal</th>
-                        {{-- <th>Bukti Sertifikasi</th> --}}
                         <th>Masa Berlaku</th>
-                        {{-- <th>Kuota Peserta</th> --}}
-                        {{-- <th>Biaya</th> --}}
                         <th>Tag Bidang Minat</th>
                         <th>Tag Mata Kuliah</th>
                         @if (Auth::user()->id_level == 1)
@@ -111,6 +108,9 @@
                 },
                 {
                     data: "no_sertifikasi",
+                    // render: function(data, type, row) {
+                    //     return row.no_sertifikasi ? row.no_sertifikasi : '-';
+                    // },
                     className: "",
                     width: "6%",
                     orderable: false,
