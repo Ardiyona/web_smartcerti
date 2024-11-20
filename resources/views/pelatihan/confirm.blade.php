@@ -150,6 +150,7 @@
                     $(element).removeClass('is-invalid');
                 }
             });
-        });
-    </script>
+        }); //tes
+    </script> 
 @endempty
+
