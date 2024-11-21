@@ -60,6 +60,8 @@ Route::post('pelatihans', [PelatihanController::class, 'store']);
 Route::get('pelatihans/{pelatihan}', [PelatihanController::class, 'show']);
 Route::put('pelatihans/{pelatihan}', [PelatihanController::class, 'update']);
 Route::delete('pelatihans/{pelatihan}', [PelatihanController::class, 'destroy']);
+Route::get('pelatihans/user/{id}', [PelatihanController::class, 'getPelatihanByUser']);
+
 
 Route::get('sertifikasis', [SertifikasiController::class, 'index']);
 Route::post('sertifikasis', [SertifikasiController::class, 'store']);
