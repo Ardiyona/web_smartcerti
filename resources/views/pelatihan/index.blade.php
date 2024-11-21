@@ -10,6 +10,10 @@
             <h3 class="card-title">{{ $page->title }}</h3>
             <div class="card-tools">
                 <button onclick="modalAction(`{{ url('/pelatihan/create') }}`)" class="btn btn-success" style="background-color: #EF5428; border-color: #EF5428;">Tambah</button>
+                @if (Auth::user()->id_level == 1)
+                <button onclick="modalAction(`{{ url('/pelatihan/create_rekomendasi') }}`)" class="btn btn-success"
+                    style="background-color: #EF5428; border-color: #EF5428;">Tambah Rekomendasi</button>
+            @endif
             </div>
         </div>
         <div class="card-body">
@@ -27,11 +31,10 @@
                         <th>Jenis Pelatihan</th>
                         <th>Periode</th>          
                         <th>Nama Pelatihan</th>
-                        <th>Level Pelatihan</th>
+                        <th>No Pelatihan</th>                       
                         <th>Lokasi</th>
+                        <th>Level Pelatihan</th>
                         <th>Tanggal</th>
-                        {{-- <th>Kuota Peserta</th> --}}
-                        {{-- <th>Biaya</th> --}}
                         <th>Tag Bidang Minat</th>
                         <th>Tag Mata Kuliah</th>
                         @if (Auth::user()->id_level == 1)
@@ -100,14 +103,21 @@
             searchable: true
         },
         {
-            data: "level_pelatihan",
+            data: "no_pelatihan",
+            className: "",
+            width: "9%",
+            orderable: true,
+            searchable: true
+        },
+        {
+            data: "lokasi",
             className: "",
             width: "6%",
             orderable: false,
             searchable: true
         },
         {
-            data: "lokasi",
+            data: "level_pelatihan",
             className: "",
             width: "6%",
             orderable: false,

@@ -16,6 +16,7 @@ use App\Http\Controllers\JenisPelatihanController;
 use App\Http\Controllers\PelatihanController;
 use App\Http\Controllers\PenerimaanPermintaanController;
 use App\Http\Controllers\PeriodeController;
+use App\Http\Controllers\PimpinanpelatihanDosenController;
 use App\Http\Controllers\PimpinanSertifikasiDosenController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SertifikasiController;
@@ -78,6 +79,8 @@ Route::group(['prefix' => 'pelatihan'], function () {
     Route::post('/list', [PelatihanController::class, 'list']);
     Route::get('/create', [PelatihanController::class, 'create']);
     Route::post('/store', [PelatihanController::class, 'store']);
+    Route::get('/create_rekomendasi', [PelatihanController::class, 'create_rekomendasi']);
+    Route::post('/store_rekomendasi', [PelatihanController::class, 'store_rekomendasi']);
     Route::get('/{id}/show', [PelatihanController::class, 'show']);
     Route::get('/{id}/edit', [PelatihanController::class, 'edit']);
     Route::put('/{id}/update', [PelatihanController::class, 'update']);
@@ -187,6 +190,9 @@ Route::prefix('periode')->group(function () {
 
 Route::get('/pimpinansertifikasidosen', [PimpinanSertifikasiDosenController::class, 'index']);
 Route::post('/pimpinansertifikasidosen/list', [PimpinanSertifikasiDosenController::class, 'list']);
+
+Route::get('/pimpinanpelatihandosen', [PimpinanpelatihanDosenController::class, 'index']);
+Route::post('/pimpinanpelatihandosen/list', [PimpinanpelatihanDosenController::class, 'list']);
 
 Route::get('/penerimaanpermintaan', [PenerimaanPermintaanController::class, 'index']);
 Route::post('/penerimaanpermintaan/list', [PenerimaanPermintaanController::class, 'list']);
