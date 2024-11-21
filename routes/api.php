@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\LevelController;
 use App\Http\Controllers\api\MataKuliahController;
 use App\Http\Controllers\Api\PelatihanController;
 use App\Http\Controllers\api\PimpinanPelatihanDosenController;
+use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\SertifikasiController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\PimpinanpelatihanDosenController as ControllersPimpinanpelatihanDosenController;
@@ -72,5 +73,7 @@ Route::post('pimpinanPelatihans', [PimpinanPelatihanDosenController::class, 'sto
 Route::get('pimpinanPelatihans/{pimpinanPelatihan}', [PimpinanPelatihanDosenController::class, 'show']);
 Route::put('pimpinanPelatihans/{pimpinanPelatihan}', [PimpinanPelatihanDosenController::class, 'update']);
 Route::delete('pimpinanPelatihans/{pimpinanPelatihan}', [PimpinanPelatihanDosenController::class, 'destroy']);
+
+Route::get('profiles', [ProfileController::class, 'index']);
 
 });

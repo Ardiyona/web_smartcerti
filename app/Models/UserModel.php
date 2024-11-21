@@ -83,10 +83,4 @@ class UserModel extends Authenticable implements JWTSubject
     {
         return $this->belongsToMany(PelatihanModel::class, 'detail_peserta_pelatihan', 'user_id' ,'id_matakuliah');
     }
-    // public function notifikasi(): HasMany
-    // {
-    //     return $this->hasMany(notifikasi
-    // }
-
-    
 }

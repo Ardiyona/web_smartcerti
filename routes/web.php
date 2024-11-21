@@ -10,7 +10,6 @@ use App\Http\Controllers\LevelController;
 use App\Http\Controllers\MataKuliahController;
 use App\Http\Controllers\VendorPelatihanController;
 use App\Http\Controllers\VendorSertifikasiController;
-use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\JenisPelatihanController;
 use App\Http\Controllers\PelatihanController;
