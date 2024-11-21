@@ -12,7 +12,6 @@ class ProfileController extends Controller
     {
         $user = Auth::guard('api')->user();
 
-
         $userData = [
             'nama_level' => $user->level->nama_level,
             'username' => $user->username,

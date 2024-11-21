@@ -81,6 +81,8 @@ Route::group(['prefix' => 'pelatihan'], function () {
     Route::post('/store', [PelatihanController::class, 'store']);
     Route::get('/create_rekomendasi', [PelatihanController::class, 'create_rekomendasi']);
     Route::post('/store_rekomendasi', [PelatihanController::class, 'store_rekomendasi']);
+    Route::get('/{id}/admin_show_edit', [SertifikasiController::class, 'admin_show_edit']);
+    Route::put('/{id}/admin_show_update', [SertifikasiController::class, 'admin_show_update']);
     Route::get('/{id}/show', [PelatihanController::class, 'show']);
     Route::get('/{id}/edit', [PelatihanController::class, 'edit']);
     Route::put('/{id}/update', [PelatihanController::class, 'update']);

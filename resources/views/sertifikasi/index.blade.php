@@ -49,8 +49,8 @@
             </table>
         </div>
     </div>
-    <div id="myModal" class="modal fade animate shake" tabindex="-1" role="dialog" data-backdrop="static"
-        data-keyboard="false" data-width="75%" aria-hidden="true"></div>
+    <div id="myModal" class="modal fade animate shake modal-dialog modal-xl" tabindex="-1" role="dialog" data-backdrop="static"
+        data-keyboard="false" data-width="75%" style="z-index: 1050; display: none; padding-left: 0px;" aria-modal="true"></div>
 @endsection
 @push('css')
     <style>
@@ -108,9 +108,9 @@
                 },
                 {
                     data: "no_sertifikasi",
-                    // render: function(data, type, row) {
-                    //     return row.no_sertifikasi ? row.no_sertifikasi : '-';
-                    // },
+                    render: function(data, type, row) {
+                        return row.no_sertifikasi ? row.no_sertifikasi : '-';
+                    },
                     className: "",
                     width: "6%",
                     orderable: false,

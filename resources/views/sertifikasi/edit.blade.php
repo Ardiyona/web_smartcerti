@@ -76,8 +76,9 @@
                     <!-- No Sertifikasi -->
                     <div class="form-group">
                         <label>No Sertifikasi</label>
-                        <input value ="{{ $sertifikasi->no_sertifikasi }}" type="text" name="no_sertifikasi"
-                            id="no_sertifikasi" class="form-control" required>
+                        <input
+                            value ="{{ $sertifikasi->detail_peserta_sertifikasi->pluck('pivot.no_sertifikasi')->implode(', ') }}"
+                            type="text" name="no_sertifikasi" id="no_sertifikasi" class="form-control" required>
                         <small id="error-no_sertifikasi" class="error-text form-text text-danger"></small>
                     </div>
 
@@ -103,9 +104,27 @@
                     <!-- Bukti Sertifikasi -->
                     <div class="form-group">
                         <label>Bukti Sertifikasi</label>
-                        <input value ="{{ $sertifikasi->bukti_sertifikasi }}" type="file" name="bukti_sertifikasi"
-                            id="bukti_sertifikasi" class="form-control" required>
-                        <small class="form-text text-muted">Abaikan jika tidak ingin ubah file bukti sertifikasi</small>
+                        @foreach ($sertifikasi->detail_peserta_sertifikasi as $peserta)
+                            @if ($peserta->pivot->bukti_sertifikasi)
+                                <small class="form-text">
+                                    File saat ini:
+                                    @php
+                                        // Ambil nama file tanpa path
+                                        $fullFileName = basename($peserta->pivot->bukti_sertifikasi);
+
+                                        // Hilangkan tanggal di depan
+                                        $cleanFileName = preg_replace('/^\d{10}_/', '', $fullFileName);
+                                    @endphp
+
+                                    <a href="{{ url('storage/bukti_sertifikasi/' . $peserta->pivot->bukti_sertifikasi) }}"
+                                        target="_blank" download>
+                                        {{ $cleanFileName }}
+                                    </a>
+                                </small>
+                            @endif
+                        @endforeach
+                        <input type="file" name="bukti_sertifikasi" id="bukti_sertifikasi" class="form-control">
+                        <small class="form-text text-muted">Abaikan jika tidak ingin mengubah file bukti sertifikasi</small>
                         <small id="error-bukti_sertifikasi" class="error-text form-text text-danger"></small>
                     </div>
 
@@ -121,7 +140,7 @@
                     <div class="form-group">
                         <label>Kuota Peserta</label>
                         <input value ="{{ $sertifikasi->kuota_peserta }}" type="number" name="kuota_peserta"
-                            id="kuota_peserta" class="form-control" required>
+                            id="kuota_peserta" class="form-control" readonly>
                         <small id="error-kuota_peserta" class="error-text form-text text-danger"></small>
                     </div>
 
@@ -137,10 +156,12 @@
                     @if (Auth::user()->id_level == 1)
                         <div class="form-group">
                             <label>Nama Peserta</label>
-                            <select name="user_id" id="user_id" class="form-control" required>
+                            <select name="user_id" id="user_id[]" class="form-control" required>
                                 <option value="">- Pilih Peserta Sertifikasi -</option>
                                 @foreach ($user as $l)
-                                    <option {{ $sertifikasi->detail_peserta_sertifikasi->contains($l->user_id) ? 'selected' : '' }} value="{{ $l->user_id }}">{{ $l->nama_lengkap }}</option>
+                                    <option
+                                        {{ $sertifikasi->detail_peserta_sertifikasi->contains($l->user_id) ? 'selected' : '' }}
+                                        value="{{ $l->user_id }}">{{ $l->nama_lengkap }}</option>
                                 @endforeach
                             </select>
                             <small id="error-user_id" class="error-text form-text text-danger"></small>
