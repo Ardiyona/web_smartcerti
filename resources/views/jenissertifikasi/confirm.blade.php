@@ -12,6 +12,7 @@
                     Data yang anda cari tidak ditemukan
                 </div>
                 <a href="{{ url('/jenissertifikasi') }}" class="btn btn-warning">Kembali</a>
+                
             </div>
         </div>
     </div>
