@@ -175,7 +175,9 @@
                     maxlength: 100
                 },
                 no_sertifikasi: {
-                    required: true,
+                    required: function() {
+                        return isAdmin;
+                    },
                     minlength: 3,
                     maxlength: 255
                 },

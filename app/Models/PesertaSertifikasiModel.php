@@ -11,15 +11,18 @@ class PesertaSertifikasiModel extends Model
 
     protected $table = 'detail_peserta_sertifikasi';
 
-    protected $primary = 'id_sertifikasi';
+    protected $primaryKey = 'id_detail_peserta_sertifikasi';
 
     protected $fillable = [
-        'user_id'
+        'user_id',
+        'id_sertifikasi',
+        'no_sertifikasi',
+        'bukti_sertifikasi'
     ];
 
     public function user()
     {
-        return $this->belongsTo(BidangMinatModel::class, 'user_id', 'user_id');
+        return $this->belongsTo(UserModel::class, 'user_id', 'user_id');
     }
 
     public function sertifikasi()

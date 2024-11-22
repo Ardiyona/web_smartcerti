@@ -15,30 +15,18 @@ class SertifikasiController extends Controller
 {
     public function index()
     {
-        // Mendapatkan data sertifikasi beserta relasi yang diperlukan
-        $sertifikasi = SertifikasiModel::select(
-            'id_sertifikasi',
-            'id_vendor_sertifikasi',
-            'id_jenis_sertifikasi',
-            'id_periode',
-            'nama_sertifikasi',
-            'no_sertifikasi',
-            'jenis',
-            'tanggal',
-            'bukti_sertifikasi',
-            'masa_berlaku',
-            'kuota_peserta',
-            'biaya'
-        )
-            ->with([
-                'vendor_sertifikasi',
-                'jenis_sertifikasi',
-                'periode',
-                'bidang_minat_sertifikasi',
-                'mata_kuliah_sertifikasi',
-                'detail_peserta_sertifikasi'
-            ])
-            ->get(); // Tambahkan get() untuk mengeksekusi query
+        /** @var User */
+        $user = Auth::guard('api')->user();
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized',
+            ], 401);
+        }
+        // Mengambil sertifikasi yang hanya dimiliki oleh user yang sedang login
+        $sertifikasi = $user->detail_peserta_sertifikasi()
+        ->with('vendor_sertifikasi', 'jenis_sertifikasi', 'periode')
+        ->get();
 
         // Mengembalikan response dalam bentuk JSON
         return response()->json([

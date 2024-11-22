@@ -50,7 +50,7 @@
                         </tr>
                         <tr>
                             <th class="text-right col-3">No Sertifikasi</th>
-                            <td class="col-9">{{ $sertifikasi->no_sertifikasi }}</td>
+                            <td class="col-9">{{ $sertifikasi->detail_peserta_sertifikasi->pluck('pivot.no_sertifikasi')->implode(', ') }}</td>
                         </tr>
                         <tr>
                             <th class="text-right col-3">Jenis Sertifikasi</th>
@@ -83,21 +83,24 @@
                         <tr>
                             <th class="text-right col-3">Bukti Sertifikasi</th>
                             <td class="col-9">
-                                @if (!empty($sertifikasi->bukti_sertifikasi))
-                                    @php
-                                        // Ambil nama file tanpa path
-                                        $fullFileName = basename($sertifikasi->bukti_sertifikasi);
-                                        
-                                        // Hilangkan tanggal di depan
-                                        $cleanFileName = preg_replace('/^\d{10}_/', '', $fullFileName);
-                                    @endphp
-                        
-                                    <a href="{{ url('storage/images/' . $sertifikasi->bukti_sertifikasi) }}" target="_blank" download>
-                                        {{ $cleanFileName }}
-                                    </a>
-                                @else
-                                    <span class="text-danger">Tidak ada bukti sertifikasi</span>
-                                @endif
+                                @foreach ($sertifikasi->detail_peserta_sertifikasi as $peserta)
+                                    @if (!empty($peserta->pivot->bukti_sertifikasi))
+                                        @php
+                                            // Ambil nama file tanpa path
+                                            $fullFileName = basename($peserta->pivot->bukti_sertifikasi);
+    
+                                            // Hilangkan tanggal di depan
+                                            $cleanFileName = preg_replace('/^\d{10}_/', '', $fullFileName);
+                                        @endphp
+    
+                                        <a href="{{ url('storage/bukti_sertifikasi/' . $peserta->pivot->bukti_sertifikasi) }}"
+                                            target="_blank" download>
+                                            {{ $cleanFileName }}
+                                        </a>
+                                    @else
+                                        <span class="text-danger">Tidak ada bukti sertifikasi</span>
+                                    @endif
+                                @endforeach
                             </td>
                         </tr>
                         </table>

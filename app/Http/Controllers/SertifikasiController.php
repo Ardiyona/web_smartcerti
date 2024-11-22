@@ -6,9 +6,10 @@ use App\Models\BidangMinatModel;
 use App\Models\JenisSertifikasiModel;
 use App\Models\MataKuliahModel;
 use App\Models\PeriodeModel;
+use App\Models\PesertaSertifikasiModel;
 use App\Models\SertifikasiModel;
 use App\Models\UserModel;
-use App\Models\VendorPelatihanModel;
+use Illuminate\Support\Facades\Log;
 use App\Models\VendorSertifikasiModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -47,10 +48,6 @@ class SertifikasiController extends Controller
         /** @var User */
         $user = Auth::user();
 
-        // $sertifikasis = SertifikasiModel::with('detail_peserta_sertifikasi')->get();
-        // return response()->json($sertifikasis);
-
-        // Jika user bukan admin (id_level ≠ 1), tampilkan hanya sertifikasi miliknya
         if ($user->id_level != 1) {
             // Mengambil sertifikasi yang hanya dimiliki oleh user yang sedang login
             $sertifikasis = $user->detail_peserta_sertifikasi()
@@ -102,9 +99,17 @@ class SertifikasiController extends Controller
                 return $sertifikasi->detail_peserta_sertifikasi->pluck('nama_lengkap')->implode(', ');
             })
             ->addColumn('aksi', function ($sertifikasi) {
-                $btn = '<button onclick="modalAction(\'' . url('/sertifikasi/' . $sertifikasi->id_sertifikasi . '/show') . '\')" class="btn btn-info btn-sm">Detail</button> ';
-                $btn .= '<button onclick="modalAction(\'' . url('/sertifikasi/' . $sertifikasi->id_sertifikasi . '/edit') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
-                $btn .= '<button onclick="modalAction(\'' . url('/sertifikasi/' . $sertifikasi->id_sertifikasi . '/confirm') . '\')" class="btn btn-danger btn-sm">Hapus</button> ';
+                $levelId = Auth::user();
+                if ($levelId->id_level == 1) {
+                    $btn = '<button onclick="modalAction(\'' . url('/sertifikasi/' . $sertifikasi->id_sertifikasi . '/admin_show_edit') . '\')" class="btn btn-info btn-sm">Detail</button> ';
+                    $btn .= '<button onclick="modalAction(\'' . url('/sertifikasi/' . $sertifikasi->id_sertifikasi . '/edit') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
+                    $btn .= '<button onclick="modalAction(\'' . url('/sertifikasi/' . $sertifikasi->id_sertifikasi . '/confirm') . '\')" class="btn btn-danger btn-sm">Hapus</button> ';
+                } else {
+                    $btn = '<button onclick="modalAction(\'' . url('/sertifikasi/' . $sertifikasi->id_sertifikasi . '/show') . '\')" class="btn btn-info btn-sm">Detail</button> ';
+                    $btn .= '<button onclick="modalAction(\'' . url('/sertifikasi/' . $sertifikasi->id_sertifikasi . '/edit') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
+                    $btn .= '<button onclick="modalAction(\'' . url('/sertifikasi/' . $sertifikasi->id_sertifikasi . '/confirm') . '\')" class="btn btn-danger btn-sm">Hapus</button> ';
+                }
+        
                 return $btn;
             })
             ->rawColumns(['aksi'])
@@ -165,7 +170,7 @@ class SertifikasiController extends Controller
                 'kuota_peserta' => 'nullable|integer',
                 'biaya' => 'required|string|max:255',
 
-                'no_sertifikasi' => 'required|string|unique:detail_peserta_sertifikasi,no_sertifikasi',
+                'no_sertifikasi' => 'nullable|string|unique:detail_peserta_sertifikasi,no_sertifikasi',
                 'bukti_sertifikasi' => 'nullable|mimes:pdf|max:5120'
             ];
 
@@ -258,13 +263,12 @@ class SertifikasiController extends Controller
     public function show(String $id)
     {
         $sertifikasi = SertifikasiModel::with('vendor_sertifikasi', 'jenis_sertifikasi', 'periode', 'bidang_minat_sertifikasi', 'mata_kuliah_sertifikasi')->find($id);
-
         return view('sertifikasi.show', ['sertifikasi' => $sertifikasi]);
     }
 
     public function edit(string $id)
     {
-        $sertifikasi = SertifikasiModel::find($id);
+        $sertifikasi = SertifikasiModel::with('detail_peserta_sertifikasi')->find($id);
 
         $vendorSertifikasi = VendorSertifikasiModel::select('id_vendor_sertifikasi', 'nama')->get();
         $jenisSertifikasi = JenisSertifikasiModel::select('id_jenis_sertifikasi', 'nama_jenis_sertifikasi')->get();
@@ -298,13 +302,14 @@ class SertifikasiController extends Controller
                 'user_id' => 'nullable',
 
                 'nama_sertifikasi' => 'required|string|min:5',
-                'no_sertifikasi' => 'required|string|max:255',
                 'jenis' => 'required',
                 'tanggal' => 'required|date',
-                'bukti_sertifikasi' => 'nullable|mimes:pdf|max:5120',
                 'masa_berlaku' => 'required',
                 'kuota_peserta' => 'required|integer',
                 'biaya' => 'required|string|max:255',
+
+                'no_sertifikasi' => 'required|string',
+                'bukti_sertifikasi' => 'nullable|mimes:pdf|max:5120'
             ];
 
             $validator = Validator::make($request->all(), $rules);
@@ -335,10 +340,8 @@ class SertifikasiController extends Controller
                 if ($request->hasFile('bukti_sertifikasi')) {
                     $sertifikasi->update([
                         'nama_sertifikasi'  => $request->nama_sertifikasi,
-                        'no_sertifikasi'      => $request->no_sertifikasi,
                         'jenis'      => $request->jenis,
                         'tanggal'      => $request->tanggal,
-                        'bukti_sertifikasi'      => $bukti_sertifikasi,
                         'masa_berlaku'      => $request->masa_berlaku,
                         'kuota_peserta'      => $request->kuota_peserta,
                         'biaya'      => $request->biaya,
@@ -346,10 +349,16 @@ class SertifikasiController extends Controller
                         'id_jenis_sertifikasi'  => $request->id_jenis_sertifikasi,
                         'id_periode'  => $request->id_periode
                     ]);
+                    $sertifikasi->detail_peserta_sertifikasi()->updateExistingPivot(
+                        Auth::id(),
+                        [
+                            'no_sertifikasi' => $request->no_sertifikasi,
+                            'bukti_sertifikasi' => $bukti_sertifikasi ?? $sertifikasi->detail_peserta_sertifikasi()->first()->pivot->bukti_sertifikasi
+                        ]
+                    );
                 } else {
                     $sertifikasi->update([
                         'nama_sertifikasi'  => $request->nama_sertifikasi,
-                        'no_sertifikasi'      => $request->no_sertifikasi,
                         'jenis'      => $request->jenis,
                         'tanggal'      => $request->tanggal,
                         'masa_berlaku'      => $request->masa_berlaku,
@@ -359,13 +368,27 @@ class SertifikasiController extends Controller
                         'id_jenis_sertifikasi'  => $request->id_jenis_sertifikasi,
                         'id_periode'  => $request->id_periode
                     ]);
+                    $sertifikasi->detail_peserta_sertifikasi()->updateExistingPivot(
+                        Auth::id(),
+                        [
+                            'no_sertifikasi' => $request->no_sertifikasi,
+                        ]
+                    );
                 }
 
                 $sertifikasi->bidang_minat_sertifikasi()->sync($request->id_bidang_minat);
                 $sertifikasi->mata_kuliah_sertifikasi()->sync($request->id_matakuliah);
-
-                if ($user->id_level == 1) {
-                    $sertifikasi->detail_peserta_sertifikasi()->sync($request->user_id);
+                if ($user->id_level == 1 && !empty($request->user_id)) {
+                    // Jika user_id adalah string, ubah menjadi array
+                    $userIds = is_array($request->user_id) ? $request->user_id : [$request->user_id];
+    
+                    $userData = [];
+                    foreach ($userIds as $userId) {
+                        $userData[$userId] = [
+                            'no_sertifikasi' => $request->no_sertifikasi,
+                        ];
+                    }
+                    $sertifikasi->detail_peserta_sertifikasi()->sync($userData);
                 }
                 return response()->json([
                     'status' => true,
@@ -398,6 +421,8 @@ class SertifikasiController extends Controller
                 // Hapus relasi many-to-many dengan MataKuliah dan BidangMinat
                 $sertifikasi->mata_kuliah_sertifikasi()->detach();
                 $sertifikasi->bidang_minat_sertifikasi()->detach();
+                PesertaSertifikasiModel::where('id_sertifikasi', $id)->delete();
+
 
                 // Hapus data sertifikasi
                 $sertifikasi->delete();
@@ -508,5 +533,55 @@ class SertifikasiController extends Controller
             ]);
         }
         return redirect('/');
+    }
+
+    public function admin_show_edit(string $id)
+    {
+        $sertifikasi = SertifikasiModel::with(['detail_peserta_sertifikasi' => function($query) {
+            $query->select('user.user_id as user_id', 'user.nama_lengkap');
+        }])->find($id);
+    
+        return view('sertifikasi.admin_show', [
+            'sertifikasi' => $sertifikasi,
+        ]);
+    }
+
+    public function admin_show_update(Request $request)
+    {
+        Log::info('Request Data:', $request->all()); // Log semua data request
+        if ($request->ajax() || $request->wantsJson()) {
+            $rules = [
+                'bukti_sertifikasi.*' => 'nullable|mimes:pdf|max:5120',
+            ];
+    
+            $validator = Validator::make($request->all(), $rules);
+    
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Validasi gagal.',
+                    'msgField' => $validator->errors()
+                ]);
+            }
+    
+            if ($request->hasFile('bukti_sertifikasi')) {
+                foreach ($request->file('bukti_sertifikasi', []) as $userId => $file) {
+                    if ($file->isValid()) {
+                        $bukti_sertifikasi = $file->storeAs('public/bukti_sertifikasi', time() . '_' . $file->getClientOriginalName());
+                        $userData[$userId] = ['bukti_sertifikasi' => $bukti_sertifikasi];
+                    } else {
+                        return response()->json([
+                            'status' => false,
+                            'message' => 'File tidak valid atau gagal diunggah',
+                        ]);
+                    }
+                }
+            }
+    
+            return response()->json([
+                'status' => false,
+                'message' => 'Data sertifikasi tidak ditemukan',
+            ]);
+        }
     }
 }
