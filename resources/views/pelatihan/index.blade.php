@@ -30,8 +30,7 @@
                         <th>Nama Vendor</th>
                         <th>Jenis Pelatihan</th>
                         <th>Periode</th>          
-                        <th>Nama Pelatihan</th>
-                        <th>No Pelatihan</th>                       
+                        <th>Nama Pelatihan</th>                     
                         <th>Lokasi</th>
                         <th>Level Pelatihan</th>
                         <th>Tanggal</th>
@@ -97,13 +96,6 @@
         },
         {
             data: "nama_pelatihan",
-            className: "",
-            width: "9%",
-            orderable: true,
-            searchable: true
-        },
-        {
-            data: "no_pelatihan",
             className: "",
             width: "9%",
             orderable: true,

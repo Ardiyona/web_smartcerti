@@ -87,11 +87,7 @@ class PelatihanController extends Controller
         // Mengembalikan data dengan DataTables
         return DataTables::of($pelatihans)
             ->addIndexColumn()
-            ->addColumn('no_pelatihan', function ($pelatihan) {
-                return $pelatihan->detail_peserta_pelatihan->map(function ($peserta) {
-                    return $peserta->pivot->no_pelatihan; // Mengakses properti dari pivot
-                })->implode(', ');
-            })
+
             ->addColumn('bidang_minat', function ($pelatihan) {
                 return $pelatihan->bidang_minat_pelatihan->pluck('nama_bidang_minat')->implode(', ');
             })
@@ -165,7 +161,6 @@ class PelatihanController extends Controller
                 'kuota_peserta' => 'nullable|integer',
                 'biaya' => 'required|string|max:255',
 
-                'no_pelatihan' => 'required|string|unique:detail_peserta_pelatihan,no_pelatihan',
                 'bukti_pelatihan' => 'nullable|mimes:pdf|max:5120'
             ];
 
@@ -208,7 +203,6 @@ class PelatihanController extends Controller
                     $userData = [];
                     foreach ($request->user_id as $userId) {
                         $userData[$userId] = [
-                            'no_pelatihan' => null,
                             'bukti_pelatihan' => null
                         ];
                     }
@@ -242,7 +236,6 @@ class PelatihanController extends Controller
 
                 // Attach current user to pelatihan
                 $pelatihan->detail_peserta_pelatihan()->attach(Auth::id(), [
-                    'no_pelatihan' => $request->no_pelatihan,
                     'bukti_pelatihan' => $bukti_pelatihan
                 ]);
 
@@ -298,7 +291,6 @@ class PelatihanController extends Controller
                 'user_id' => 'nullable',
 
                 'nama_pelatihan' => 'required|string|min:5',
-                'no_pelatihan' => 'required|string|max:255',
                 'lokasi' => 'required',
                 'level_pelatihan' => 'required',
                 'tanggal' => 'required|date',
@@ -335,7 +327,6 @@ class PelatihanController extends Controller
                 if ($request->hasFile('bukti_pelatihan')) {
                     $pelatihan->update([
                         'nama_pelatihan'  => $request->nama_pelatihan,
-                        'no_pelatihan'      => $request->no_pelatihan,
                         'lokasi'      => $request->lokasi,
                         'level_pelatihan'      => $request->level_pelatihan,
                         'tanggal'      => $request->tanggal,
@@ -349,7 +340,6 @@ class PelatihanController extends Controller
                 } else {
                     $pelatihan->update([
                         'nama_pelatihan'  => $request->nama_pelatihan,
-                        'no_pelatihan'      => $request->no_pelatihan,
                         'lokasi'      => $request->lokasi,
                         'level_pelatihan'      => $request->level_pelatihan,
                         'tanggal'      => $request->tanggal,

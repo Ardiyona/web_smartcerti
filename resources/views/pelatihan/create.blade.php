@@ -51,13 +51,6 @@
 
                 <!-- No pelatihan -->
                 <div class="form-group">
-                    <label>No Pelatihan</label>
-                    <input type="text" name="no_pelatihan" id="no_pelatihan" class="form-control" required>
-                    <small id="error-no_pelatihan" class="error-text form-text text-danger"></small>
-                </div>
-
-                <!-- No pelatihan -->
-                <div class="form-group">
                     <label>Lokasi</label>
                     <input type="text" name="lokasi" id="lokasi" class="form-control" required>
                     <small id="error-lokasi" class="error-text form-text text-danger"></small>
@@ -173,11 +166,6 @@
                     required: true,
                     minlength: 3,
                     maxlength: 100
-                },
-                no_pelatihan: {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 255
                 },
                 lokasi: {
                     required: true,
