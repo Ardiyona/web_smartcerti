@@ -17,15 +17,9 @@ class SertifikasiController extends Controller
     {
         /** @var User */
         $user = Auth::guard('api')->user();
-        if (!$user) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized',
-            ], 401);
-        }
         // Mengambil sertifikasi yang hanya dimiliki oleh user yang sedang login
         $sertifikasi = $user->detail_peserta_sertifikasi()
-        ->with('vendor_sertifikasi', 'jenis_sertifikasi', 'periode')
+        ->with('vendor_sertifikasi', 'jenis_sertifikasi', 'periode', 'bidang_minat_sertifikasi', 'mata_kuliah_sertifikasi')
         ->get();
 
         // Mengembalikan response dalam bentuk JSON

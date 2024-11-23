@@ -16,7 +16,8 @@
         </div>
     </div>
 @else
-    <form action="{{ url('/sertifikasi/' . $sertifikasi->id_sertifikasi . '/update') }}" method="POST" id="form-edit" enctype="multipart/form-data">
+    <form action="{{ url('/sertifikasi/' . $sertifikasi->id_sertifikasi . '/update') }}" method="POST" id="form-edit"
+        enctype="multipart/form-data">
         @csrf
         @method('PUT')
         <div id="modal-master" class="modal-dialog modal-lg" role="document">
@@ -73,14 +74,28 @@
                         <small id="error-nama_sertifikasi" class="error-text form-text text-danger"></small>
                     </div>
 
-                    <!-- No Sertifikasi -->
-                    <div class="form-group">
-                        <label>No Sertifikasi</label>
-                        <input
-                            value ="{{ $sertifikasi->detail_peserta_sertifikasi->pluck('pivot.no_sertifikasi')->implode(', ') }}"
-                            type="text" name="no_sertifikasi" id="no_sertifikasi" class="form-control" required>
-                        <small id="error-no_sertifikasi" class="error-text form-text text-danger"></small>
-                    </div>
+                    @if (Auth::user()->id_level != 1)
+                        <!-- No Sertifikasi -->
+                        <div class="form-group">
+                            <label>No Sertifikasi</label>
+
+                            @php
+                                $currentUser = Auth::user();
+                                $userNoSertifikasi =
+                                    $sertifikasi->detail_peserta_sertifikasi
+                                        ->filter(function ($peserta) use ($currentUser) {
+                                            return $peserta->user_id == $currentUser->user_id;
+                                        })
+                                        ->pluck('pivot.no_sertifikasi')
+                                        ->implode('- ') ?? ''; // Berikan default kosong
+                            @endphp
+
+                            <input value="{{ $userNoSertifikasi }}" type="text" name="no_sertifikasi"
+                                id="no_sertifikasi" class="form-control" required>
+                            <small id="error-no_sertifikasi" class="error-text form-text text-danger"></small>
+                        </div>
+                    @endif
+
 
                     <!-- Jenis -->
                     <div class="form-group">
@@ -100,33 +115,47 @@
                             class="form-control" required>
                         <small id="error-tanggal" class="error-text form-text text-danger"></small>
                     </div>
+                    @if (Auth::user()->id_level != 1)
+                        <!-- Bukti Sertifikasi -->
+                        <div class="form-group">
+                            <label>Bukti Sertifikasi</label>
 
-                    <!-- Bukti Sertifikasi -->
-                    <div class="form-group">
-                        <label>Bukti Sertifikasi</label>
-                        @foreach ($sertifikasi->detail_peserta_sertifikasi as $peserta)
-                            @if ($peserta->pivot->bukti_sertifikasi)
+                            @php
+                                // Mendapatkan user yang sedang login
+                                $currentUser = Auth::user();
+
+                                // Filter detail_peserta_sertifikasi milik user yang login
+                                $userDetail = $sertifikasi->detail_peserta_sertifikasi
+                                    ->where('user_id', $currentUser->user_id)
+                                    ->first();
+                            @endphp
+
+                            @if ($userDetail && $userDetail->pivot->bukti_sertifikasi)
+                                {{-- Jika user memiliki bukti sertifikasi --}}
                                 <small class="form-text">
                                     File saat ini:
                                     @php
                                         // Ambil nama file tanpa path
-                                        $fullFileName = basename($peserta->pivot->bukti_sertifikasi);
+                                        $fullFileName = basename($userDetail->pivot->bukti_sertifikasi);
 
-                                        // Hilangkan tanggal di depan
+                                        // Hilangkan tanggal di depan nama file
                                         $cleanFileName = preg_replace('/^\d{10}_/', '', $fullFileName);
                                     @endphp
 
-                                    <a href="{{ url('storage/bukti_sertifikasi/' . $peserta->pivot->bukti_sertifikasi) }}"
+                                    <a href="{{ url('storage/bukti_sertifikasi/' . $userDetail->pivot->bukti_sertifikasi) }}"
                                         target="_blank" download>
                                         {{ $cleanFileName }}
                                     </a>
                                 </small>
                             @endif
-                        @endforeach
-                        <input type="file" name="bukti_sertifikasi" id="bukti_sertifikasi" class="form-control">
-                        <small class="form-text text-muted">Abaikan jika tidak ingin mengubah file bukti sertifikasi</small>
-                        <small id="error-bukti_sertifikasi" class="error-text form-text text-danger"></small>
-                    </div>
+
+                            {{-- Input File hanya untuk user yang sedang login --}}
+                            <input type="file" name="bukti_sertifikasi" id="bukti_sertifikasi" class="form-control">
+                            <small class="form-text text-muted">Abaikan jika tidak ingin mengubah file bukti
+                                sertifikasi</small>
+                            <small id="error-bukti_sertifikasi" class="error-text form-text text-danger"></small>
+                        </div>
+                    @endif
 
                     <!-- Masa Berlaku -->
                     <div class="form-group">
@@ -155,9 +184,11 @@
 
                     @if (Auth::user()->id_level == 1)
                         <div class="form-group">
-                            <label>Nama Peserta</label>
-                            <select name="user_id" id="user_id[]" class="form-control" required>
-                                <option value="">- Pilih Peserta Sertifikasi -</option>
+                            <label for="user_id">
+                                Nama Peserta
+                            </label>
+                            <select multiple="multiple" name="user_id[]" id="user_id"
+                                class="js-example-basic-multiple js-states form-control form-control">
                                 @foreach ($user as $l)
                                     <option
                                         {{ $sertifikasi->detail_peserta_sertifikasi->contains($l->user_id) ? 'selected' : '' }}
@@ -208,7 +239,7 @@
     </form>
     <script>
         $(document).ready(function() {
-            var formData = new FormData($('#form-edit')[0])
+            var isAdmin = {{ Auth::user()->id_level == 1 ? 'true' : 'false' }};
             $("#form-edit").validate({
                 rules: {
                     id_vendor_sertifikasi: {
@@ -229,7 +260,9 @@
                         maxlength: 100
                     },
                     no_sertifikasi: {
-                        required: true,
+                        required: function() {
+                        return !isAdmin;
+                    },
                         minlength: 3,
                         maxlength: 255
                     },
@@ -239,7 +272,7 @@
                     tanggal: {
                         required: true,
                     },
-                    bukti_sertifikasi: {
+                    'bukti_sertifikasi[]': {
                         required: false,
                         extension: "pdf"
                     },
@@ -261,11 +294,17 @@
                         required: true,
                     },
                 },
-                submitHandler: function(formData) {
+                submitHandler: function(form) {
+                    var formData = new FormData(document.getElementById('form-edit'));
+                    console.log('Files in FormData:', formData.get(
+                        'bukti_sertifikasi[]')); // Jika menggunakan array
+                    console.log('All FormData:', [...formData.entries()]);
                     $.ajax({
-                        url: formData.action,
-                        type: formData.method,
+                        url: form.action,
+                        type: form.method,
                         data: formData,
+                        processData: false, // Matikan proses data
+                        contentType: false, // Matikan header content-type agar sesuai dengan FormData
                         success: function(response) {
                             if (response.status) {
                                 $('#myModal').modal('hide');
@@ -302,7 +341,7 @@
                     $(element).removeClass('is-invalid');
                 }
             });
-            $("#id_matakuliah, #id_bidang_minat").select2({
+            $("#id_matakuliah, #id_bidang_minat, #user_id").select2({
                 dropdownAutoWidth: true,
                 theme: "classic"
             });

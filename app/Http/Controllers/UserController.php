@@ -131,9 +131,9 @@ class UserController extends Controller
                 'password' => 'nullable|min:5|max:20',
                 'avatar'   => 'image|mimes:jpeg,png,jpg|max:2048'
             ];
-
+    
             $validator = Validator::make($request->all(), $rules);
-
+    
             if ($validator->fails()) {
                 return response()->json([
                     'status' => false,
@@ -141,23 +141,27 @@ class UserController extends Controller
                     'msgField' => $validator->errors()
                 ]);
             }
-
+    
             $user = UserModel::find($id);
-
+    
             if ($user) {
+                // Hapus password dari request jika tidak diisi
                 if (!$request->filled('password')) {
                     $request->request->remove('password');
                 }
-
-                $fileName = time() . $request->file('avatar')->getClientOriginalExtension();
-                $path = $request->file('avatar')->storeAs('images', $fileName);
-                $request['avatar'] = '/storage/' . $path;
-                if (!$request->filled('avatar')) { // jika password tidak diisi, maka hapus dari request 
+    
+                // Proses avatar jika ada file yang diunggah
+                if ($request->hasFile('avatar')) {
+                    $fileName = time() . '.' . $request->file('avatar')->getClientOriginalExtension();
+                    $path = $request->file('avatar')->storeAs('images', $fileName);
+                    $request['avatar'] = '/storage/' . $path;
+                } else {
                     $request->request->remove('avatar');
                 }
-
+    
+                // Update data pengguna
                 $user->update($request->only('username', 'nama_lengkap', 'password', 'avatar', 'id_level'));
-
+    
                 return response()->json([
                     'status' => true,
                     'message' => 'Data berhasil diupdate'
@@ -169,9 +173,10 @@ class UserController extends Controller
                 ]);
             }
         }
-
+    
         return redirect('/');
     }
+    
 
     // Konfirmasi ajax
     public function confirm(string $id)

@@ -108,9 +108,6 @@
                 },
                 {
                     data: "no_sertifikasi",
-                    render: function(data, type, row) {
-                        return row.no_sertifikasi ? row.no_sertifikasi : '-';
-                    },
                     className: "",
                     width: "6%",
                     orderable: false,

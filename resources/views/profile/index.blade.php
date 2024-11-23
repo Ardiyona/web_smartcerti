@@ -45,7 +45,7 @@
                                 <div class="form-group row mb-3">
                                     <label for="nama" class="col-md-4 col-form-label text-md-end">{{ __('Nama') }}</label>
                                     <div class="col-md-7">
-                                        <input id="nama" type="text" class="form-control @error('nama_lengkap') is-invalid @enderror" name="nama" value="{{ old('nama', $user->nama_lengkap) }}" autocomplete="nama">
+                                        <input id="nama" type="text" class="form-control @error('nama_lengkap') is-invalid @enderror" name="nama_lengkap" value="{{ old('nama_lengkap', $user->nama_lengkap) }}" autocomplete="nama">
                                         @error('nama_lengkap')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
