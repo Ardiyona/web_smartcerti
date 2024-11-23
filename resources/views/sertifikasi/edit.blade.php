@@ -16,7 +16,7 @@
         </div>
     </div>
 @else
-    <form action="{{ url('/sertifikasi/' . $sertifikasi->id_sertifikasi . '/update') }}" method="POST" id="form-edit">
+    <form action="{{ url('/sertifikasi/' . $sertifikasi->id_sertifikasi . '/update') }}" method="POST" id="form-edit" enctype="multipart/form-data">
         @csrf
         @method('PUT')
         <div id="modal-master" class="modal-dialog modal-lg" role="document">
@@ -208,6 +208,7 @@
     </form>
     <script>
         $(document).ready(function() {
+            var formData = new FormData($('#form-edit')[0])
             $("#form-edit").validate({
                 rules: {
                     id_vendor_sertifikasi: {
@@ -260,11 +261,11 @@
                         required: true,
                     },
                 },
-                submitHandler: function(form) {
+                submitHandler: function(formData) {
                     $.ajax({
-                        url: form.action,
-                        type: form.method,
-                        data: $(form).serialize(),
+                        url: formData.action,
+                        type: formData.method,
+                        data: formData,
                         success: function(response) {
                             if (response.status) {
                                 $('#myModal').modal('hide');
