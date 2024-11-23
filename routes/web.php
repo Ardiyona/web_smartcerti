@@ -30,8 +30,8 @@ Route::middleware(['auth'])->group(function(){
 
 Route::get('/', [DashboardPimpinanController::class, 'index']);
 
-//Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
-//    Route::patch('/{id}', [ProfileController::class, 'update'])->name('profile.update');
+Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+Route::post('/profile/update/{id}', [ProfileController::class, 'update'])->name('profile.update');
 // user
 Route::group(['prefix' => 'user', 'middleware' => 'authorize:ADM'], function() {
     Route::get('/', [UserController::class, 'index']);        

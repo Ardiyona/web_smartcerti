@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\LevelModel;
 use App\Models\UserModel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -37,7 +38,7 @@ class UserController extends Controller
     public function list(Request $request)
     {
         // Mengambil data user beserta level
-        $users = UserModel::select('user_id', 'username', 'nama_lengkap', 'id_level')
+        $users = UserModel::select('user_id', 'username', 'nama_lengkap', 'avatar', 'id_level')
             ->with('level');
     
         // Filter data user berdasarkan id_level jika ada
@@ -65,42 +66,39 @@ class UserController extends Controller
         return view('user.create')->with('level', $level);
     }
     
-    public function store(Request $request) 
+    public function store(Request $request)
     {
-        if ($request->ajax() || $request->wantsJson()) {
-            $rules = [
-                'id_level' => 'required|integer',
-                'username' => 'required|string|min:5|unique:user,username',
-                'nama_lengkap' => 'required|string|max:255',
-                'password' => 'required|min:5'
-            ];
+        // Validasi input termasuk avatar
+        $this->validate($request, [
+            'id_level' => 'required|numeric',
+            'username' => 'required|string|min:3|max:20|unique:user,username',
+            'nama_lengkap' => 'required|string|min:3|max:100',
+            'password' => 'required|string|min:5|max:20',
+            'avatar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
 
-            $validator = Validator::make($request->all(), $rules);
+        // Simpan data user
+        $user = new UserModel();
+        $user->id_level = $request->id_level;
+        $user->username = $request->username;
+        $user->nama_lengkap = $request->nama_lengkap;
+        $user->password = Hash::make($request->password);
 
-            if ($validator->fails()) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Validasi Gagal',
-                    'msgField' => $validator->errors()
-                ]);
-            }
-
-            // Simpan data user dengan hanya field yang diperlukan
-            UserModel::create([
-                'username'  => $request->username,
-                'nama_lengkap'      => $request->nama_lengkap,
-                'password'  => bcrypt($request->password), // password dienkripsi sebelum disimpan
-                'id_level'  => $request->id_level
-            ]);
-
-            return response()->json([
-                'status' => true,
-                'message' => 'Data user berhasil disimpan'
-            ]);
+        // Simpan file avatar jika ada
+        if ($request->hasFile('avatar')) {
+            $fileName = $request->file('avatar')->hashName();
+            $request->file('avatar')->storeAs('public/photos', $fileName);
+            $user->avatar = $fileName;
         }
 
-        return redirect('/');
+        $user->save();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Data user berhasil ditambahkan'
+        ]);
     }
+
 
     public function show(String $id) {
         $user = UserModel::with('level')->find($id);
@@ -131,6 +129,7 @@ class UserController extends Controller
                 'username' => 'required|max:50|unique:user,username,' . $id . ',user_id',
                 'nama_lengkap' => 'required|max:255',
                 'password' => 'nullable|min:5|max:20',
+                'avatar'   => 'image|mimes:jpeg,png,jpg|max:2048'
             ];
 
             $validator = Validator::make($request->all(), $rules);
@@ -150,7 +149,14 @@ class UserController extends Controller
                     $request->request->remove('password');
                 }
 
-                $user->update($request->only('username', 'nama_lengkap', 'password', 'id_level'));
+                $fileName = time() . $request->file('avatar')->getClientOriginalExtension();
+                $path = $request->file('avatar')->storeAs('images', $fileName);
+                $request['avatar'] = '/storage/' . $path;
+                if (!$request->filled('avatar')) { // jika password tidak diisi, maka hapus dari request 
+                    $request->request->remove('avatar');
+                }
+
+                $user->update($request->only('username', 'nama_lengkap', 'password', 'avatar', 'id_level'));
 
                 return response()->json([
                     'status' => true,

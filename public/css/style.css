@@ -47,6 +47,16 @@
     color: #f8f9fa; /* Warna lebih cerah ketika di-hover */
 }
 
+.rounded-circle {
+    width: 40px;
+    height: 20px;
+    border-radius: 50%; /* Membuat gambar berbentuk lingkaran */
+    object-fit: cover; /* Menjaga proporsi gambar dalam lingkaran */
+    border: 2px solid #ddd; /* Opsional: tambahkan border */
+    background-color: #f8f9fa; /* Opsional: tambahkan warna latar */
+    display: block; /* Pastikan elemen inline seperti img mengikuti aturan ini */
+}
+
 .brand-link {
     background-color: #EF5428;
     color: #ffffff;

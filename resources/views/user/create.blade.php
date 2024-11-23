@@ -1,4 +1,4 @@
-<form action="{{ url('/user/store') }}" method="POST" id="form-tambah">
+<form action="{{ url('/user/store') }}" method="POST" id="form-tambah" enctype="multipart/form-data">
     @csrf
     <div id="modal-master" class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -41,11 +41,18 @@
                     <input type="password" name="password" id="password" class="form-control" required>
                     <small id="error-password" class="error-text form-text text-danger"></small>
                 </div>
+
+                <!-- Foto Profil -->
+                <div class="form-group">
+                    <label>Foto Profil</label>
+                    <input type="file" name="avatar" id="avatar" class="form-control">
+                    <small id="error-avatar" class="error-text form-text text-danger"></small>
+                </div>
             </div>
 
             <div class="modal-footer">
-            <button type="button" data-dismiss="modal" class="btn" style="color: #EF5428; background-color: white; border-color: #EF5428;">Batal</button>
-            <button type="submit" class="btn"style="color: white; background-color: #EF5428; border-color: #EF5428;">Simpan</button>
+                <button type="button" data-dismiss="modal" class="btn" style="color: #EF5428; background-color: white; border-color: #EF5428;">Batal</button>
+                <button type="submit" class="btn" style="color: white; background-color: #EF5428; border-color: #EF5428;">Simpan</button>
             </div>
         </div>
     </div>
@@ -73,13 +80,26 @@
                     required: true,
                     minlength: 5,
                     maxlength: 20
+                },
+                avatar: {
+                    extension: "jpg|jpeg|png",
+                    filesize: 2048000 // Maksimal 2MB
+                }
+            },
+            messages: {
+                avatar: {
+                    extension: "Hanya file gambar dengan format JPG, JPEG, atau PNG yang diperbolehkan.",
+                    filesize: "Ukuran file tidak boleh lebih dari 2 MB."
                 }
             },
             submitHandler: function(form) {
+                let formData = new FormData(form); // Pakai FormData untuk file upload
                 $.ajax({
                     url: form.action,
                     type: form.method,
-                    data: $(form).serialize(),
+                    data: formData,
+                    processData: false,
+                    contentType: false,
                     success: function(response) {
                         if (response.status) {
                             $('#myModal').modal('hide');
@@ -103,19 +123,12 @@
                     }
                 });
                 return false;
-            },
-            errorElement: 'span',
-            errorPlacement: function(error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-group').append(error);
-            },
-            highlight: function(element, errorClass, validClass) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function(element, errorClass, validClass) {
-                $(element).removeClass('is-invalid');
             }
         });
     });
+
+    // Tambahkan custom validator untuk file size
+    $.validator.addMethod("filesize", function(value, element, param) {
+        return this.optional(element) || (element.files[0].size <= param);
+    }, "Ukuran file terlalu besar.");
 </script>
-    
