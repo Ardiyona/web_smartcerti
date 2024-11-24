@@ -70,25 +70,36 @@
                         </tr>
                         <tr>
                             <th class="text-right col-3">Bidang Minat</th>
-                            <td class="col-9">{{ $pelatihan->bidang_minat_pelatihan->pluck('nama_bidang_minat')->implode(', '); }}</td>
+                            <td class="col-9">{{ $pelatihan->bidang_minat_pelatihan->pluck('nama_bidang_minat')->implode(', ') }}</td>
                         </tr>
                         <tr>
                             <th class="text-right col-3">Mata Kuliah</th>
-                            <td class="col-9">{{ $pelatihan->mata_kuliah_pelatihan->pluck('nama_matakuliah')->implode(', '); }}</td>
+                            <td class="col-9">{{ $pelatihan->mata_kuliah_pelatihan->pluck('nama_matakuliah')->implode(', ') }}</td>
                         </tr>
                         <tr>
                             <th class="text-right col-3">Bukti Pelatihan</th>
                             <td class="col-9">
-                                @if (!empty($pelatihan->bukti_pelatihan))
+                                @php
+                                    // Mendapatkan user yang sedang login
+                                    $currentUser = Auth::user();
+
+                                    // Filter detail_peserta_pelatihan milik user yang login
+                                    $userDetail = $pelatihan->detail_peserta_pelatihan
+                                        ->where('user_id', $currentUser->user_id)
+                                        ->first();
+                                @endphp
+                                @if ($userDetail && $userDetail->pivot->bukti_pelatihan)
+                                    {{-- Jika user memiliki bukti pelatihan --}}
                                     @php
                                         // Ambil nama file tanpa path
-                                        $fullFileName = basename($pelatihan->bukti_pelatihan);
-                                        
-                                        // Hilangkan tanggal di depan
+                                        $fullFileName = basename($userDetail->pivot->bukti_pelatihan);
+
+                                        // Hilangkan tanggal di depan nama file
                                         $cleanFileName = preg_replace('/^\d{10}_/', '', $fullFileName);
                                     @endphp
-                        
-                                    <a href="{{ url('storage/images/' . $pelatihan->bukti_pelatihan) }}" target="_blank" download>
+
+                                    <a href="{{ url('storage/bukti_pelatihan/' . $userDetail->pivot->bukti_pelatihan) }}"
+                                        target="_blank" download>
                                         {{ $cleanFileName }}
                                     </a>
                                 @else

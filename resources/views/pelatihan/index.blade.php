@@ -174,6 +174,7 @@
         },
         columns: columns
     });
+    
         });
     </script>
 @endpush
