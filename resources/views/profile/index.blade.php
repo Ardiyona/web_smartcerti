@@ -20,7 +20,7 @@
                             @if($user->avatar)
                                 <img src="{{ asset('storage/photos/'.$user->avatar) }}" class="img-thumbnail rounded-circle shadow-sm" style="width: 150px; height: 150px; object-fit: cover;">
                             @else
-                                <img src="{{ asset('img/profile.') }}" class="img-thumbnail rounded-circle shadow-sm" style="width: 150px; height: 150px; object-fit: cover;">
+                                <img src="{{ asset('img/profile.png') }}" class="img-thumbnail rounded-circle shadow-sm" style="width: 150px; height: 150px; object-fit: cover;">
                             @endif
                             <div class="mt-2">
                                 <h5>{{ $user->nama }}</h5>

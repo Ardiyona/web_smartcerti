@@ -461,13 +461,13 @@ class SertifikasiController extends Controller
                         ->where('id_sertifikasi', $id)
                         ->where('user_id', $currentUser->user_id)
                         ->first(); // Ambil data pivot spesifik
-    
+
                     if ($detailPeserta) {
                         // Hapus data berdasarkan primary key tabel pivot
                         DB::table('detail_peserta_sertifikasi')
                             ->where('id_detail_peserta_sertifikasi', $detailPeserta->id_detail_peserta_sertifikasi)
                             ->delete();
-    
+
                         return response()->json([
                             'status' => true,
                             'message' => 'Data relasi pada detail_peserta_sertifikasi berhasil dihapus.'
@@ -537,7 +537,7 @@ class SertifikasiController extends Controller
                 'jenis' => 'required',
                 'tanggal' => 'required|date',
                 'masa_berlaku' => 'required',
-                'kuota_peserta' => 'required|integer',
+                'kuota_peserta' => 'nullable|integer',
                 'biaya' => 'required|string|max:255',
             ];
 
@@ -551,17 +551,20 @@ class SertifikasiController extends Controller
                 ]);
             }
 
+            $kuotaPeserta = count($request->user_id);
+
             // Simpan data user dengan hanya field yang diperlukan
             $sertifikasi = SertifikasiModel::create([
                 'nama_sertifikasi'  => $request->nama_sertifikasi,
                 'jenis'      => $request->jenis,
                 'tanggal'      => $request->tanggal,
                 'masa_berlaku'      => $request->masa_berlaku,
-                'kuota_peserta'      => $request->kuota_peserta,
+                'kuota_peserta'      => $kuotaPeserta,
                 'biaya'      => $request->biaya,
                 'id_vendor_sertifikasi'  => $request->id_vendor_sertifikasi,
                 'id_jenis_sertifikasi'  => $request->id_jenis_sertifikasi,
-                'id_periode'  => $request->id_periode
+                'id_periode'  => $request->id_periode,
+                'status_sertifikasi' => 'menunggu' // Pastikan status diatur di sini
             ]);
 
             $sertifikasi->bidang_minat_sertifikasi()->sync($request->id_bidang_minat);
@@ -569,11 +572,7 @@ class SertifikasiController extends Controller
 
             // Menyimpan user_id ke dalam pivot tabel dengan status 'menunggu'
             if (!empty($request->user_id)) {
-                $userData = [];
-                foreach ($request->user_id as $userId) {
-                    $userData[$userId] = ['status_sertifikasi' => 'menunggu'];
-                }
-                $sertifikasi->detail_peserta_sertifikasi()->attach($userData);
+                $sertifikasi->detail_peserta_sertifikasi()->sync($request->user_id);
             }
 
             return response()->json([

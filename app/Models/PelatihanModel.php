@@ -25,9 +25,9 @@ class PelatihanModel extends Model
         'lokasi',
         'level_pelatihan',
         'tanggal',
-        'bukti_pelatihan',
         'kuota_peserta',
         'biaya',
+        'status_pelatihan',
         'created_at',
         'updated_at'
     ];

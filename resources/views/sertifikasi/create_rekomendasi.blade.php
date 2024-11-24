@@ -25,7 +25,7 @@
                     <select name="id_jenis_sertifikasi" id="id_jenis_sertifikasi" class="form-control" required>
                         <option value="">- Pilih Jenis Bidang -</option>
                         @foreach ($jenisSertifikasi as $l)
-                            <option value="{{ $l->id_jenis_sertifikasi }}">{{ $l->nama_jenis }}</option>
+                            <option value="{{ $l->id_jenis_sertifikasi }}">{{ $l->nama_jenis_sertifikasi }}</option>
                         @endforeach
                     </select>
                     <small id="error-id_jenis_sertifikasi" class="error-text form-text text-danger"></small>
@@ -73,13 +73,6 @@
                     <small id="error-masa_berlaku" class="error-text form-text text-danger"></small>
                 </div>
 
-                <!-- Kuota Peserta -->
-                <div class="form-group">
-                    <label>Kuota Peserta</label>
-                    <input type="number" name="kuota_peserta" id="kuota_peserta" class="form-control" required>
-                    <small id="error-kuota_peserta" class="error-text form-text text-danger"></small>
-                </div>
-
                 <!-- Biaya -->
                 <div class="form-group">
                     <label>Biaya</label>
@@ -87,17 +80,17 @@
                     <small id="error-biaya" class="error-text form-text text-danger"></small>
                 </div>
 
-                    <div class="form-group">
-                        <label>Nama Peserta</label>
-                        <select multiple="multiple" name="user_id[]" id="user_id"
-                            class="js-example-basic-multiple js-states form-control form-control">
-                            <option value="">- Pilih Peserta Sertifikasi -</option>
-                            @foreach ($user as $l)
-                                <option value="{{ $l->user_id }}">{{ $l->nama_lengkap }}</option>
-                            @endforeach
-                        </select>
-                        <small id="error-user_id" class="error-text form-text text-danger"></small>
-                    </div>
+                <div class="form-group">
+                    <label>Nama Peserta</label>
+                    <select multiple="multiple" name="user_id[]" id="user_id"
+                        class="js-example-basic-multiple js-states form-control form-control">
+                        <option value="">- Pilih Peserta Sertifikasi -</option>
+                        @foreach ($user as $l)
+                            <option value="{{ $l->user_id }}">{{ $l->nama_lengkap }}</option>
+                        @endforeach
+                    </select>
+                    <small id="error-user_id" class="error-text form-text text-danger"></small>
+                </div>
 
                 <div class="form-group">
                     <label for="id_bidang_minat">
@@ -166,10 +159,6 @@
                 },
                 masa_berlaku: {
                     required: true,
-                },
-                kuota_peserta: {
-                    required: true,
-                    number: true
                 },
                 biaya: {
                     required: true,

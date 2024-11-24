@@ -14,7 +14,7 @@
                     <label>Level Pengguna</label>
                     <select name="id_level" id="id_level" class="form-control" required>
                         <option value="">- Pilih Level -</option>
-                        @foreach($level as $l)
+                        @foreach ($level as $l)
                             <option value="{{ $l->id_level }}">{{ $l->nama_level }}</option>
                         @endforeach
                     </select>
@@ -35,6 +35,26 @@
                     <small id="error-nama_lengkap" class="error-text form-text text-danger"></small>
                 </div>
 
+                <div class="form-group">
+                    <label>No Telepon</label>
+                    <input type="text" name="no_telp" id="no_telp" class="form-control" required>
+                    <small id="error-no_telp" class="error-text form-text text-danger"></small>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="text" name="email" id="email" class="form-control" required>
+                    <small id="error-email" class="error-text form-text text-danger"></small>
+                </div>
+                <div class="form-group">
+                    <label>Jenis Kelamin</label>
+                    <select name="jenis_kelamin" id="jenis_kelamin" class="form-control" required>
+                        <option value="">- Pilih Jenis Kelamin -</option>
+                        <option value="Laki-Laki">Laki-Laki</option>
+                        <option value="Perempuan">Perempuan</option>
+                    </select>
+                    <small id="error-jenis_kelamin" class="error-text form-text text-danger"></small>
+                </div>
+
                 <!-- Password -->
                 <div class="form-group">
                     <label>Password</label>
@@ -48,11 +68,40 @@
                     <input type="file" name="avatar" id="avatar" class="form-control">
                     <small id="error-avatar" class="error-text form-text text-danger"></small>
                 </div>
+
+                <div class="form-group">
+                    <label for="id_bidang_minat">
+                        Tag Bidang Minat
+                    </label>
+                    <select multiple="multiple" name="id_bidang_minat[]" id="id_bidang_minat"
+                        class="js-example-basic-multiple js-states form-control form-control">
+                        @foreach ($bidangMinat as $item)
+                            <option value="{{ $item->id_bidang_minat }}">{{ $item->nama_bidang_minat }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <small id="error-id_bidang_minat" class="error-text form-text text-danger"></small>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_matakuliah">
+                        Tag Mata Kuliah
+                    </label>
+                    <select multiple="multiple" name="id_matakuliah[]" id="id_matakuliah"
+                        class="js-example-basic-multiple js-states form-control">
+                        @foreach ($mataKuliah as $item)
+                            <option value="{{ $item->id_matakuliah }}">{{ $item->nama_matakuliah }}</option>
+                        @endforeach
+                    </select>
+                    <small id="error-id_matakuliah" class="error-text form-text text-danger"></small>
+                </div>
             </div>
 
             <div class="modal-footer">
-                <button type="button" data-dismiss="modal" class="btn" style="color: #EF5428; background-color: white; border-color: #EF5428;">Batal</button>
-                <button type="submit" class="btn" style="color: white; background-color: #EF5428; border-color: #EF5428;">Simpan</button>
+                <button type="button" data-dismiss="modal" class="btn"
+                    style="color: #EF5428; background-color: white; border-color: #EF5428;">Batal</button>
+                <button type="submit" class="btn"
+                    style="color: white; background-color: #EF5428; border-color: #EF5428;">Simpan</button>
             </div>
         </div>
     </div>
@@ -76,10 +125,28 @@
                     minlength: 3,
                     maxlength: 100
                 },
-                password: {
+                no_telp: {
                     required: true,
-                    minlength: 5,
+                    minlength: 11,
+                    maxlength: 15
+                },
+                email: {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 100
+                },
+                jenis_kelamin: {
+                    required: true,
+                },
+                password: {
+                    minlength: 6,
                     maxlength: 20
+                },
+                id_bidang_minat: {
+                    required: true,
+                },
+                id_matakuliah: {
+                    required: true,
                 },
                 avatar: {
                     extension: "jpg|jpeg|png",
@@ -124,6 +191,10 @@
                 });
                 return false;
             }
+        });
+        $("#id_matakuliah, #id_bidang_minat").select2({
+            dropdownAutoWidth: true,
+            theme: "classic"
         });
     });
 

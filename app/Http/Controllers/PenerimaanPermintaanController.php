@@ -32,7 +32,7 @@ class PenerimaanPermintaanController extends Controller
 
     public function list()
     {
-        // Ambil data dari tabel sertifikasi
+        // Ambil data dari tabel sertifikasi dengan status_sertifikasi = 'menunggu'
         $sertifikasi = SertifikasiModel::select(
             'id_sertifikasi as id',
             'id_vendor_sertifikasi',
@@ -45,11 +45,16 @@ class PenerimaanPermintaanController extends Controller
             'biaya',
             DB::raw("'sertifikasi' as kategori")
         )
-        ->whereHas('detail_peserta_sertifikasi', function($query) {
-            $query->where('status_sertifikasi', 'menunggu');
-        })
-        ->with('vendor_sertifikasi', 'jenis_sertifikasi', 'periode');
-        
+        ->where('status_sertifikasi', 'menunggu')
+        ->with(['vendor_sertifikasi', 'jenis_sertifikasi', 'periode', 
+            'detail_peserta_sertifikasi' => function($query) {
+                $query->select('id_detail_peserta_sertifikasi', 'id_sertifikasi', 'nama_lengkap');
+            }
+        ]);
+
+        // $sertifikasis = SertifikasiModel::with('detail_peserta_sertifikasi')->first();
+        // dd($sertifikasis->detail_peserta_sertifikasi);
+
         // Ambil data dari tabel pelatihan
         $pelatihan = PelatihanModel::select(
             'id_pelatihan as id',
@@ -63,17 +68,29 @@ class PenerimaanPermintaanController extends Controller
             'biaya',
             DB::raw("'pelatihan' as kategori")
         )
-        ->whereHas('detail_peserta_pelatihan', function($query) {
-            $query->where('status_pelatihan', 'menunggu');
-        })
-        ->with('vendor_pelatihan', 'jenis_pelatihan', 'periode');
-    
+        ->where('status_pelatihan', 'menunggu')
+        ->with(['vendor_pelatihan', 'jenis_pelatihan', 'periode',
+            'detail_peserta_pelatihan' => function($query) {
+                $query->select('id_detail_peserta_pelatihan', 'id_pelatihan', 'nama_lengkap');
+            }
+        ]);
+
         // Gabungkan data sertifikasi dan pelatihan
         $data = $sertifikasi->union($pelatihan)->get();
-    
         // Mengembalikan data dengan DataTables
         return DataTables::of($data)
             ->addIndexColumn()
+            ->addColumn('peserta', function ($row) {
+                
+                if ($row->kategori === 'sertifikasi') {
+                    $peserta = $row->detail_peserta_sertifikasi;
+                    return $peserta ? $peserta->pluck('nama_lengkap')->implode(', ') : '-';
+                } elseif ($row->kategori === 'pelatihan') {
+                    $peserta = $row->detail_peserta_pelatihan;
+                    return $peserta ? $peserta->pluck('nama_lengkap')->implode(', ') : '-';
+                }
+                return '-';
+            })
             ->addColumn('aksi', function ($row) {
                 $btn = '<button onclick="modalAction(\'' . url('/detail/' . $row->id . '/show') . '\')" class="btn btn-info btn-sm">Detail</button> ';
                 return $btn;
