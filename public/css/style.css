@@ -99,10 +99,6 @@
     color: #ffffff;
 }
 
-/* Latar belakang logo menjadi lebih gelap saat di-hover */
-.brand-link:hover {
-    background-color: white;
-}
 
 /* Gaya untuk gambar logo agar berbentuk lingkaran */
 .brand-link .brand-image {
@@ -173,4 +169,16 @@ h5 {
 .search-bar-container {
     margin-left: 15px; /* Jarak kiri */
     margin-right: 15px; /* Jarak kanan */
+}
+
+/* Gaya untuk header card profile */
+.bg-profile {
+    background-color: #007bff; /* Warna biru (primary) */
+    color: #ffffff; /* Warna teks putih */
+    text-align: center; /* Teks rata tengah */
+    padding: 1rem; /* Spasi di dalam header */
+    font-size: 1.25rem; /* Ukuran font */
+    font-weight: bold; /* Teks tebal */
+    border-radius: 0.5rem 0.5rem 0 0; /* Membuat sudut atas melengkung */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Bayangan lembut */
 }
