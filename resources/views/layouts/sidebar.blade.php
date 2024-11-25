@@ -119,7 +119,7 @@
             @endif
 
             <!-- Untuk Pimpinan -->
-            @if(Auth::user()->id_level == 2)
+            @if(Auth::user()->id_level == 3)
                 <li class="nav-header">Management Permintaan</li>
                 <li class="nav-item">
                     <a href="{{ url('/penerimaanpermintaan') }}" class="nav-link {{ $activeMenu == 'penerimaanpermintaan' ? 'active' : '' }}">
