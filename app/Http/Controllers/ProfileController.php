@@ -12,6 +12,9 @@ class ProfileController extends Controller
     // Method untuk menampilkan halaman profile
     public function index()
     {
+        // Ambil data user beserta relasi bidang minat dan mata kuliah
+        //$user = UserModel::with(['detail_daftar_user_bidang_minat', 'detail_daftar_user_matakuliah'])->findOrFail(Auth::id());
+
         // Ambil data user berdasarkan ID yang sedang login
         $user = UserModel::findOrFail(Auth::id());
 

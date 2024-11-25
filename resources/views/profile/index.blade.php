@@ -53,6 +53,46 @@
                                         @enderror
                                     </div>
                                 </div>
+
+                                <div class="row mt-4">
+                                    <div class="col-md-6">
+                                        <div class="card shadow-sm border-0 rounded-lg">
+                                            <div class="card-header bg-secondary text-white">
+                                                <h5>{{ __('Bidang Minat') }}</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                @if($user->bidang_minat->isEmpty())
+                                                    <p class="text-muted">{{ __('Tidak ada bidang minat yang terdaftar.') }}</p>
+                                                @else
+                                                    <ul class="list-group list-group-flush">
+                                                        @foreach ($user->bidang_minat as $minat)
+                                                            <li class="list-group-item">{{ $minat->nama_bidang_minat }}</li>
+                                                        @endforeach
+                                                    </ul>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card shadow-sm border-0 rounded-lg">
+                                            <div class="card-header bg-secondary text-white">
+                                                <h5>{{ __('Mata Kuliah') }}</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                @if($user->mataKuliah->isEmpty())
+                                                    <p class="text-muted">{{ __('Tidak ada mata kuliah yang terdaftar.') }}</p>
+                                                @else
+                                                    <ul class="list-group list-group-flush">
+                                                        @foreach ($user->mataKuliah as $kuliah)
+                                                            <li class="list-group-item">{{ $kuliah->nama_matakuliah }}</li>
+                                                        @endforeach
+                                                    </ul>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div class="form-group row mb-3">
                                     <label for="old_password" class="col-md-4 col-form-label text-md-end">{{ __('Password Lama') }}</label>
                                     <div class="col-md-7">

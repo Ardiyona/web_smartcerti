@@ -1,15 +1,18 @@
-/*header*/
+/* ----- MODAL ----- */
+/* Mengatur modal agar berada di tengah secara horizontal dan vertikal */
 .modal-dialog {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
+/* Mengatur ukuran konten modal dan memusatkannya */
 .modal-content {
-    width: 80%;
+    width: 80%; /* Lebar modal */
     justify-content: center;
 }
 
+/* Header modal dipusatkan teks dan kontennya */
 .modal-header {
     text-align: center;
     display: flex;
@@ -17,128 +20,157 @@
     align-items: center;
 }
 
+/* Menambahkan jarak antara ikon profil dengan teks di modal header */
 .modal-header .profile-icon {
-    margin-right: 10px;
+    margin-right: 20px;
 }
 
+/* Memusatkan teks dalam footer modal */
 .modal-footer {
     text-align: center;
 }
 
+/* Memberikan margin bawah untuk informasi profil */
 .profile-info {
     margin-bottom: 20px;
 }
 
+/* Menentukan ukuran ikon besar, misalnya untuk avatar */
 .large-icon {
     font-size: 5em;
 }
 
-/* Mengubah warna navbar menjadi warna #EF5428 */
+/* ----- NAVBAR ----- */
+/* Mengatur warna latar belakang navbar menjadi oranye-kemerahan dan teks putih */
 .main-header.navbar {
     background-color: #EF5428; /* Warna orange-red */
     color: #ffffff; /* Teks putih untuk kontras */
 }
 
-.navbar-light .navbar-nav .nav-link {
-    color: #ffffff; /* Teks pada link navbar berwarna putih */
+/* Pastikan link navigasi memiliki teks putih */
+.nav-link {
+    color: #ffffff !important; /* Teks putih */
+    text-decoration: none; /* Menghapus garis bawah jika ada */
 }
 
-.navbar-light .navbar-nav .nav-link:hover {
-    color: #f8f9fa; /* Warna lebih cerah ketika di-hover */
+/* Warna teks tetap putih saat di-hover atau aktif */
+.nav-link:hover,
+.nav-link:active {
+    color: #ffffff !important;
 }
 
-.rounded-circle {
-    width: 40px;
-    height: 20px;
+
+/* ----- FOTO PROFIL BULAT ----- */
+/* Mengatur gambar agar berbentuk lingkaran dengan ukuran tertentu */
+/* Membuat foto profil berbentuk lingkaran sempurna */
+.profile-img {
+    width: 40px; /* Ukuran lingkaran (sesuaikan dengan kebutuhan) */
+    height: 40px; /* Ukuran lingkaran (sesuaikan dengan kebutuhan) */
+    object-fit: cover; /* Menjaga proporsi gambar */
     border-radius: 50%; /* Membuat gambar berbentuk lingkaran */
-    object-fit: cover; /* Menjaga proporsi gambar dalam lingkaran */
-    border: 2px solid #ddd; /* Opsional: tambahkan border */
-    background-color: #f8f9fa; /* Opsional: tambahkan warna latar */
-    display: block; /* Pastikan elemen inline seperti img mengikuti aturan ini */
+    border: 2px solid #ddd; /* Opsional: memberi border */
 }
 
+/* Atur tampilan username di samping foto */
+.nav-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none; /* Menghapus garis bawah pada teks */
+    color: #ffffff; /* Warna teks */
+    font-weight: bold;
+}
+
+.nav-link:hover {
+    color: #f8f9fa; /* Warna lebih cerah saat hover */
+}
+
+
+/* ----- BRAND LOGO ----- */
+/* Mengatur gaya latar belakang dan teks pada bagian logo */
 .brand-link {
     background-color: #EF5428;
     color: #ffffff;
-    margin-left: -5px; /* Geser ke kiri */
-    padding-left: 10px; 
+    margin-left: -5px; /* Geser logo sedikit ke kiri */
+    padding-left: 10px; /* Tambahkan jarak kiri untuk teks */
 }
 
-.dropdown-item.text-center {
-    display: flex;
-    align-items: center;
-    justify-content: center; 
-    flex-direction: column; 
-}
-
-.dropdown-item.text-center img {
-    margin-bottom: 3px; /* Menambahkan jarak di bawah gambar */
-    margin-top: -5px; /* Memindahkan gambar sedikit ke atas */
-}
-
-p.text-muted {
-    margin-bottom: 5px; /* Reduced margin-bottom */
-}
-
-h5 {
-    margin-top: 2px; /* Reduced top margin to bring username closer to the role */
-    margin-bottom: 0;
-}
-
-.profile-btn {
-    background-color: #205989; 
-    border: none;
-    color: white;
-    font-weight: bold;
-    transition: background 0.3s ease;
-}
-
-.profile-btn:hover {
-    background-color: #003366; /* Warna biru gelap saat hover */
-    color: white;
-}
-
-/* Tombol Logout dengan warna solid oranye */
-.logout-btn {
-    background-color: #FF9800; /* Oranye penuh */
-    border: none;
-    color: white;
-    font-weight: bold;
-    transition: background 0.3s ease;
-}
-
-.logout-btn:hover {
-    background-color: #e68900; /* Oranye lebih gelap saat hover */
-    color: white;
-}
-
-
-/* Mengatur teks dan ikon di dalam Brand Logo */
+/* Teks dalam logo tetap putih */
 .brand-link .brand-text {
-    color: #ffffff; /* Teks tetap putih */
+    color: #ffffff;
 }
 
+/* Latar belakang logo menjadi lebih gelap saat di-hover */
 .brand-link:hover {
-    background-color: #d9431e; /* Warna lebih gelap saat di-hover */
+    background-color: white;
 }
 
-/* Gambar logo di dalam Brand Logo */
+/* Gaya untuk gambar logo agar berbentuk lingkaran */
 .brand-link .brand-image {
     background-color: white; /* Background putih di belakang logo */
     padding: 3px; /* Memberikan jarak di sekitar logo */
     border-radius: 50%; /* Membuatnya berbentuk lingkaran */
 }
 
+/* ----- DROPDOWN PROFIL ----- */
+/* Menata item di dalam dropdown agar berada di tengah */
+.dropdown-item.text-center {
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+    flex-direction: column; /* Elemen ditumpuk vertikal */
+}
 
-  .search-bar-container {
+/* Menambahkan jarak vertikal pada gambar dalam dropdown */
+.dropdown-item.text-center img {
+    margin-bottom: 3px; /* Jarak bawah */
+    margin-top: -5px; /* Memindahkan gambar sedikit ke atas */
+}
+
+/* Mengatur jarak margin teks dalam dropdown */
+p.text-muted {
+    margin-bottom: 5px; /* Margin bawah lebih kecil */
+}
+
+/* Mengatur margin pada heading di dropdown agar lebih dekat ke teks lainnya */
+h5 {
+    margin-top: 2px;
+    margin-bottom: 0;
+}
+
+/* ----- TOMBOL PROFILE DAN LOGOUT ----- */
+/* Tombol untuk membuka halaman profil */
+.profile-btn {
+    background-color: #205989; /* Warna biru */
+    border: none;
+    color: white;
+    font-weight: bold;
+    transition: background 0.3s ease; /* Animasi saat hover */
+}
+
+/* Warna tombol profil saat di-hover */
+.profile-btn:hover {
+    background-color: #003366; /* Biru gelap */
+    color: white;
+}
+
+/* Tombol logout dengan warna oranye */
+.logout-btn {
+    background-color: #EF5428; /* Warna oranye */
+    border: none;
+    color: white;
+    font-weight: bold;
+    transition: background 0.3s ease; /* Animasi saat hover */
+}
+
+/* Warna tombol logout saat di-hover */
+.logout-btn:hover {
+    background-color: #F73700; /* Oranye lebih gelap */
+    color: white;
+}
+
+/* ----- PENCARIAN ----- */
+/* Mengatur jarak di sekitar bilah pencarian */
+.search-bar-container {
     margin-left: 15px; /* Jarak kiri */
     margin-right: 15px; /* Jarak kanan */
-}  
-
-
-
-  
-  
-        
-
-        
+}
