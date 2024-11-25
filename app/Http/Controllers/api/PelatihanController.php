@@ -221,7 +221,7 @@ class PelatihanController extends Controller
     $pelatihans = PelatihanModel::where('user_id', $id)->get();
     if ($pelatihans->isEmpty()) {
         return response()->json([
-            'message' => 'Tidak ada pelatihan ditemukan untuk user ini adalah.',
+            'message' => 'Tidak ada pelatihan ditemukan untuk user ini.',
         ], 404);
     }
     return response()->json($pelatihans);
