@@ -478,7 +478,6 @@ class PelatihanController extends Controller
             $query->select(
                 'detail_peserta_pelatihan.user_id',
                 'detail_peserta_pelatihan.id_pelatihan',
-                'detail_peserta_pelatihan.status_pelatihan'
             );
         }])->get();
 

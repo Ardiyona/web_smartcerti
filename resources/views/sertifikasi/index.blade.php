@@ -36,12 +36,15 @@
                         <th>Nama Sertifikasi</th>
                         <th>No Sertifikasi</th>
                         <th>Jenis</th>
-                        <th>Tanggal</th>
+                        @if (Auth::user()->id_level != 1)
+                            <th>Tanggal</th>
+                        @endif
                         <th>Masa Berlaku</th>
                         <th>Tag Bidang Minat</th>
                         <th>Tag Mata Kuliah</th>
                         @if (Auth::user()->id_level == 1)
                             <th>Nama Peserta</th>
+                            <th>Status</th>
                         @endif
                         <th>Aksi</th>
                     </tr>
@@ -49,8 +52,9 @@
             </table>
         </div>
     </div>
-    <div id="myModal" class="modal fade animate shake modal-dialog modal-xl" tabindex="-1" role="dialog" data-backdrop="static"
-        data-keyboard="false" data-width="75%" style="z-index: 1050; display: none; padding-left: 0px;" aria-modal="true"></div>
+    <div id="myModal" class="modal fade animate shake modal-dialog modal-xl" tabindex="-1" role="dialog"
+        data-backdrop="static" data-keyboard="false" data-width="75%"
+        style="z-index: 1050; display: none; padding-left: 0px;" aria-modal="true"></div>
 @endsection
 @push('css')
     <style>
@@ -120,13 +124,13 @@
                     orderable: false,
                     searchable: true
                 },
-                {
-                    data: "tanggal",
-                    className: "",
-                    width: "8%",
-                    orderable: false,
-                    searchable: false
-                },
+                // {
+                //     data: "tanggal",
+                //     className: "",
+                //     width: "8%",
+                //     orderable: false,
+                //     searchable: false
+                // },
                 {
                     data: "masa_berlaku",
                     className: "",
@@ -163,15 +167,35 @@
                 }
             ];
 
+            if (!isAdmin) {
+                columns.splice(7, 0, {
+                    data: "tanggal",
+                    className: "",
+                    width: "8%",
+                    orderable: true, // Set true jika ingin sorting berdasarkan tanggal
+                    searchable: false
+                });
+            }
             // Tambahkan kolom "Nama Peserta" jika user adalah admin
             if (isAdmin) {
-                columns.splice(11, 0, {
+                columns.splice(10, 0, {
                     data: "peserta_sertifikasi",
                     render: function(data, type, row) {
                         return row.peserta_sertifikasi ? row.peserta_sertifikasi : '-';
                     },
                     className: "",
                     width: "10%",
+                    orderable: false,
+                    searchable: false
+                });
+                columns.splice(11, 0, {
+                    data: "status_sertifikasi",
+                    render: function(data, type, row) {
+                        // Jika data tersedia, tampilkan, jika tidak, tampilkan '-'
+                        return data ? data : '-';
+                    },
+                    className: "",
+                    width: "8%",
                     orderable: false,
                     searchable: false
                 });

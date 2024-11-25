@@ -87,7 +87,8 @@ class SertifikasiController extends Controller
                 'tanggal',
                 'masa_berlaku',
                 'kuota_peserta',
-                'biaya'
+                'biaya',
+                'status_sertifikasi'
             )
                 ->with('vendor_sertifikasi', 'jenis_sertifikasi', 'periode', 'bidang_minat_sertifikasi', 'mata_kuliah_sertifikasi', 'detail_peserta_sertifikasi');
         }
