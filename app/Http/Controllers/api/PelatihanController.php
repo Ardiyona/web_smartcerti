@@ -225,6 +225,7 @@ class PelatihanController extends Controller
         ], 404);
     }
     return response()->json($pelatihans);
+    
 }
 
 }
