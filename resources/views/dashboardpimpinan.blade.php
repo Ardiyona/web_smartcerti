@@ -136,7 +136,7 @@
           <!-- ./col -->
 
           <!-- Pelatihan User (Untuk User) -->
-          @if(Auth::user()->id_level == 2) <!-- Level 2 untuk User -->
+          @if(in_array(Auth::user()->id_level, [2, 3])) <!-- Level 2 untuk User -->
           <div class="col-lg-3 col-6">
             <div class="small-box bg-warning">
               <div class="inner">
@@ -156,7 +156,7 @@
           <!-- ./col -->
 
           <!-- Sertifikasi User (Untuk User) -->
-          @if(Auth::user()->id_level == 2)
+          @if(in_array(Auth::user()->id_level, [2, 3]))
           <div class="col-lg-3 col-6">
             <div class="small-box bg-danger">
               <div class="inner">
