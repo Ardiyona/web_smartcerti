@@ -26,6 +26,10 @@ class AuthController extends Controller
 
             // Autentikasi pengguna
             if (Auth::attempt($credentials)) {
+                session([
+                    'profile_img_path' => Auth::user()->avatar,
+                    'user_id' => Auth::user()->user_id
+                ]);
                 // Jika login berhasil, kirim respons JSON untuk permintaan AJAX
                 return response()->json([
                     'status' => true,

@@ -68,7 +68,8 @@ class UserModel extends Authenticable implements JWTSubject
 
     public function detail_peserta_pelatihan(): BelongsToMany
     {
-        return $this->belongsToMany(PelatihanModel::class, 'detail_peserta_pelatihan', 'user_id' ,'id_pelatihan');
+        return $this->belongsToMany(PelatihanModel::class, 'detail_peserta_pelatihan', 'user_id' ,'id_pelatihan')
+        ->withPivot('id_detail_peserta_pelatihan', 'bukti_pelatihan');
     }
     public function detail_peserta_sertifikasi(): BelongsToMany
     {
@@ -81,6 +82,6 @@ class UserModel extends Authenticable implements JWTSubject
     }
     public function detail_daftar_user_matakuliah(): BelongsToMany
     {
-        return $this->belongsToMany(PelatihanModel::class, 'detail_peserta_pelatihan', 'user_id' ,'id_matakuliah');
+        return $this->belongsToMany(MataKuliahModel::class, 'detail_daftar_user_matakuliah', 'user_id' ,'id_matakuliah');
     }
 }

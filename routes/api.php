@@ -3,6 +3,7 @@
 use App\Http\Controllers\api\BidangMinatController;
 use App\Http\Controllers\Api\LevelController;
 use App\Http\Controllers\api\MataKuliahController;
+use App\Http\Controllers\api\MyAccountController;
 use App\Http\Controllers\Api\PelatihanController;
 use App\Http\Controllers\api\PimpinanPelatihanDosenController;
 use App\Http\Controllers\Api\ProfileController;
@@ -77,5 +78,7 @@ Route::put('pimpinanPelatihans/{pimpinanPelatihan}', [PimpinanPelatihanDosenCont
 Route::delete('pimpinanPelatihans/{pimpinanPelatihan}', [PimpinanPelatihanDosenController::class, 'destroy']);
 
 Route::get('profiles', [ProfileController::class, 'index']);
+
+Route::get('my_accounts', [MyAccountController::class, 'index']);
 
 });

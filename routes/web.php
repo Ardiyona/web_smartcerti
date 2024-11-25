@@ -30,8 +30,8 @@ Route::middleware(['auth'])->group(function(){
 
 Route::get('/', [DashboardPimpinanController::class, 'index']);
 
-//Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
-//    Route::patch('/{id}', [ProfileController::class, 'update'])->name('profile.update');
+Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+Route::post('/profile/update/{id}', [ProfileController::class, 'update'])->name('profile.update');
 // user
 Route::group(['prefix' => 'user', 'middleware' => 'authorize:ADM'], function() {
     Route::get('/', [UserController::class, 'index']);        
@@ -67,6 +67,8 @@ Route::group(['prefix' => 'sertifikasi'], function () {
     Route::post('/store', [SertifikasiController::class, 'store']);
     Route::get('/create_rekomendasi', [SertifikasiController::class, 'create_rekomendasi']);
     Route::post('/store_rekomendasi', [SertifikasiController::class, 'store_rekomendasi']);
+    Route::get('/{id}/admin_show_edit', [SertifikasiController::class, 'admin_show_edit']);
+    Route::put('/{id}/admin_show_update', [SertifikasiController::class, 'admin_show_update']);
     Route::get('/{id}/show', [SertifikasiController::class, 'show']);
     Route::get('/{id}/edit', [SertifikasiController::class, 'edit']);
     Route::put('/{id}/update', [SertifikasiController::class, 'update']);
@@ -80,8 +82,8 @@ Route::group(['prefix' => 'pelatihan'], function () {
     Route::post('/store', [PelatihanController::class, 'store']);
     Route::get('/create_rekomendasi', [PelatihanController::class, 'create_rekomendasi']);
     Route::post('/store_rekomendasi', [PelatihanController::class, 'store_rekomendasi']);
-    Route::get('/{id}/admin_show_edit', [SertifikasiController::class, 'admin_show_edit']);
-    Route::put('/{id}/admin_show_update', [SertifikasiController::class, 'admin_show_update']);
+    Route::get('/{id}/admin_show_edit', [PelatihanController::class, 'admin_show_edit']);
+    Route::put('/{id}/admin_show_update', [PelatihanController::class, 'admin_show_update']);
     Route::get('/{id}/show', [PelatihanController::class, 'show']);
     Route::get('/{id}/edit', [PelatihanController::class, 'edit']);
     Route::put('/{id}/update', [PelatihanController::class, 'update']);

@@ -1,6 +1,8 @@
 @extends('layouts.template')
 
-@section('title')| User @endsection
+@section('title')
+    | User
+@endsection
 
 @section('content')
     <div id="myModal" class="modal fade animate shake" tabindex="-1" role="dialog" data-backdrop="static"
@@ -9,7 +11,8 @@
         <div class="card-header">
             <h3 class="card-title">{{ $page->title }}</h3>
             <div class="card-tools">
-                <button onclick="modalAction(`{{ url('/user/create') }}`)" class="btn btn-success" style="background-color: #EF5428; border-color: #EF5428;">Tambah</button>
+                <button onclick="modalAction(`{{ url('/user/create') }}`)" class="btn btn-success"
+                    style="background-color: #EF5428; border-color: #EF5428;">Tambah</button>
             </div>
         </div>
         <div class="card-body">
@@ -36,12 +39,22 @@
                 </div>
             </div>
             <table class="table table-bordered table-striped table-hover table-sm" id="table_user">
+                <style>
+                    table.dataTable td.text-center {
+                        vertical-align: middle; /* Memastikan elemen di dalam sel sejajar vertikal */
+                        text-align: center;    /* Memastikan elemen sejajar horizontal */
+                    }
+                    table.dataTable img {
+                        display: inline-block; /* Pastikan gambar dianggap elemen blok sejajar */
+                    }
+                </style>
                 <thead>
                     <tr>
                         <th>ID</th>
                         <th>Username</th>
                         <th>Nama Lengkap</th>
                         <th>Level Pengguna</th>
+                        <th>Avatar</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -50,7 +63,7 @@
     </div>
 @endsection
 @push('css')
-<style>
+    <style>
         .card.card-outline.card-primary {
             border-color: #375E97 !important;
         }
@@ -77,40 +90,55 @@
                     }
                 },
                 columns: [{
-                    data: "DT_RowIndex",
-                    className: "text-center",
-                    width: "5%",
-                    orderable: false,
-                    searchable: false
-                }, {
-                    data: "username",
-                    className: "",
-                    width: "10%",
-                    orderable: true,
-                    searchable: true
-                }, 
-                {
-                    data: "nama_lengkap",
-                    className: "",
-                    width: "30%",
-                    orderable: true,
-                    searchable: true,
-                },
-                {
-                    data: "level.nama_level",
-                    className: "",
-                    width: "15%",
-                    orderable: true,
-                    searchable: false
-                },
-                
-                {
-                    data: "aksi",
-                    className: "",
-                    width: "14%",
-                    orderable: false,
-                    searchable: false
-                }]
+                        data: "DT_RowIndex",
+                        className: "text-center",
+                        width: "4%",
+                        orderable: false,
+                        searchable: false
+                    }, {
+                        data: "username",
+                        className: "",
+                        width: "10%",
+                        orderable: true,
+                        searchable: true
+                    },
+                    {
+                        data: "nama_lengkap",
+                        className: "",
+                        width: "30%",
+                        orderable: true,
+                        searchable: true,
+                    },
+                    {
+                        data: "level.nama_level",
+                        className: "",
+                        width: "15%",
+                        orderable: true,
+                        searchable: false
+                    },
+                    {
+                        data: "avatar", // Kolom avatar dengan render gambar
+                        className: "text-center",
+                        width: "15%",
+                        orderable: false,
+                        searchable: false,
+                        render: function(data, type, row) {
+                            // Tampilkan avatar jika ada, atau gambar default jika tidak ada
+                            if (data) {
+                                return `<img src="${data}" class=" rounded-circle shadow-sm" style="width: 50px; height: 50px; object-fit: cover;">`;
+                            } else {
+                                return `<img src="/img/profile.png" class=" rounded-circle shadow-sm" style="width: 50px; height: 50px; object-fit: cover;">`;
+                            }
+                        }
+                    },
+                    {
+                        data: "aksi",
+                        className: "",
+                        width: "14%",
+                        orderable: false,
+                        searchable: false
+                    }
+                ]
             });
             $('#table-user_filter input').unbind().bind().on('keyup', function(e) {
                 if (e.keyCode == 13) { // enter key

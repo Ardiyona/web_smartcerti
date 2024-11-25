@@ -50,7 +50,19 @@
                         </tr>
                         <tr>
                             <th class="text-right col-3">No Sertifikasi</th>
-                            <td class="col-9">{{ $sertifikasi->detail_peserta_sertifikasi->pluck('pivot.no_sertifikasi')->implode(', ') }}</td>
+                            <td class="col-9">
+                                @php
+                                    $currentUser = Auth::user();
+                                    $userNoSertifikasi =
+                                        $sertifikasi->detail_peserta_sertifikasi
+                                            ->filter(function ($peserta) use ($currentUser) {
+                                                return $peserta->user_id == $currentUser->user_id;
+                                            })
+                                            ->pluck('pivot.no_sertifikasi')
+                                            ->implode('- ') ?? ''; // Berikan default kosong
+                                @endphp
+                                {{ $userNoSertifikasi }}
+                            </td>
                         </tr>
                         <tr>
                             <th class="text-right col-3">Jenis Sertifikasi</th>
@@ -74,36 +86,47 @@
                         </tr>
                         <tr>
                             <th class="text-right col-3">Bidang Minat</th>
-                            <td class="col-9">{{ $sertifikasi->bidang_minat_sertifikasi->pluck('nama_bidang_minat')->implode(', '); }}</td>
+                            <td class="col-9">
+                                {{ $sertifikasi->bidang_minat_sertifikasi->pluck('nama_bidang_minat')->implode(', ') }}
+                            </td>
                         </tr>
                         <tr>
                             <th class="text-right col-3">Mata Kuliah</th>
-                            <td class="col-9">{{ $sertifikasi->mata_kuliah_sertifikasi->pluck('nama_matakuliah')->implode(', '); }}</td>
+                            <td class="col-9">
+                                {{ $sertifikasi->mata_kuliah_sertifikasi->pluck('nama_matakuliah')->implode(', ') }}</td>
                         </tr>
                         <tr>
                             <th class="text-right col-3">Bukti Sertifikasi</th>
                             <td class="col-9">
-                                @foreach ($sertifikasi->detail_peserta_sertifikasi as $peserta)
-                                    @if (!empty($peserta->pivot->bukti_sertifikasi))
-                                        @php
-                                            // Ambil nama file tanpa path
-                                            $fullFileName = basename($peserta->pivot->bukti_sertifikasi);
-    
-                                            // Hilangkan tanggal di depan
-                                            $cleanFileName = preg_replace('/^\d{10}_/', '', $fullFileName);
-                                        @endphp
-    
-                                        <a href="{{ url('storage/bukti_sertifikasi/' . $peserta->pivot->bukti_sertifikasi) }}"
-                                            target="_blank" download>
-                                            {{ $cleanFileName }}
-                                        </a>
-                                    @else
-                                        <span class="text-danger">Tidak ada bukti sertifikasi</span>
-                                    @endif
-                                @endforeach
+                                @php
+                                    // Mendapatkan user yang sedang login
+                                    $currentUser = Auth::user();
+
+                                    // Filter detail_peserta_sertifikasi milik user yang login
+                                    $userDetail = $sertifikasi->detail_peserta_sertifikasi
+                                        ->where('user_id', $currentUser->user_id)
+                                        ->first();
+                                @endphp
+                                @if ($userDetail && $userDetail->pivot->bukti_sertifikasi)
+                                    {{-- Jika user memiliki bukti sertifikasi --}}
+                                    @php
+                                        // Ambil nama file tanpa path
+                                        $fullFileName = basename($userDetail->pivot->bukti_sertifikasi);
+
+                                        // Hilangkan tanggal di depan nama file
+                                        $cleanFileName = preg_replace('/^\d{10}_/', '', $fullFileName);
+                                    @endphp
+
+                                    <a href="{{ url('storage/bukti_sertifikasi/' . $userDetail->pivot->bukti_sertifikasi) }}"
+                                        target="_blank" download>
+                                        {{ $cleanFileName }}
+                                    </a>
+                                @else
+                                    <span class="text-danger">Tidak ada bukti sertifikasi</span>
+                                @endif
                             </td>
                         </tr>
-                        </table>
+                    </table>
                 </div>
                 <div class="modal-footer">
                     <button type="button" data-dismiss="modal" class="btn btn-warning">Batal</button>

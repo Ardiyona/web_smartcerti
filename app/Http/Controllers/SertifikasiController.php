@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\VendorSertifikasiModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -63,7 +64,17 @@ class SertifikasiController extends Controller
                     'sertifikasi.kuota_peserta',
                     'sertifikasi.biaya'
                 )
-                ->with('vendor_sertifikasi', 'jenis_sertifikasi', 'periode', 'bidang_minat_sertifikasi', 'mata_kuliah_sertifikasi', 'detail_peserta_sertifikasi');
+                ->with([
+                    'vendor_sertifikasi',
+                    'jenis_sertifikasi',
+                    'periode',
+                    'bidang_minat_sertifikasi',
+                    'mata_kuliah_sertifikasi',
+                    // Mengambil detail hanya untuk user login
+                    'detail_peserta_sertifikasi' => function ($query) use ($user) {
+                        $query->where('detail_peserta_sertifikasi.user_id', $user->user_id);
+                    }
+                ]);
         } else {
             // Jika admin (id_level = 1), tampilkan semua sertifikasi
             $sertifikasis = SertifikasiModel::select(
@@ -84,7 +95,17 @@ class SertifikasiController extends Controller
         // Mengembalikan data dengan DataTables
         return DataTables::of($sertifikasis)
             ->addIndexColumn()
-            ->addColumn('no_sertifikasi', function ($sertifikasi) {
+            ->addColumn('no_sertifikasi', function ($sertifikasi) use ($user) {
+                // Jika user bukan admin, hanya tampilkan nomor sertifikasi milik user tersebut
+                if ($user->id_level != 1) {
+                    return $sertifikasi->detail_peserta_sertifikasi
+                        ->where('user_id', $user->user_id) // Filter nomor sertifikasi milik user
+                        ->map(function ($peserta) {
+                            return $peserta->pivot->no_sertifikasi; // Mengakses properti dari pivot
+                        })->implode('- ');
+                }
+
+                // Jika admin, tampilkan semua nomor sertifikasi
                 return $sertifikasi->detail_peserta_sertifikasi->map(function ($peserta) {
                     return $peserta->pivot->no_sertifikasi; // Mengakses properti dari pivot
                 })->implode(', ');
@@ -109,7 +130,7 @@ class SertifikasiController extends Controller
                     $btn .= '<button onclick="modalAction(\'' . url('/sertifikasi/' . $sertifikasi->id_sertifikasi . '/edit') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
                     $btn .= '<button onclick="modalAction(\'' . url('/sertifikasi/' . $sertifikasi->id_sertifikasi . '/confirm') . '\')" class="btn btn-danger btn-sm">Hapus</button> ';
                 }
-        
+
                 return $btn;
             })
             ->rawColumns(['aksi'])
@@ -308,8 +329,8 @@ class SertifikasiController extends Controller
                 'kuota_peserta' => 'required|integer',
                 'biaya' => 'required|string|max:255',
 
-                'no_sertifikasi' => 'required|string',
-                'bukti_sertifikasi' => 'nullable|mimes:pdf|max:5120'
+                'no_sertifikasi' => 'nullable|string',
+                'bukti_sertifikasi.*' => 'nullable|mimes:pdf|max:5120'
             ];
 
             $validator = Validator::make($request->all(), $rules);
@@ -333,7 +354,7 @@ class SertifikasiController extends Controller
             // Cek apakah file bukti sertifikasi diunggah
             if ($request->hasFile('bukti_sertifikasi')) {
                 $bukti_sertifikasi = time() . '_' . $request->file('bukti_sertifikasi')->getClientOriginalName();
-                $request->file('bukti_sertifikasi')->storeAs('public/images/', $bukti_sertifikasi);
+                $request->file('bukti_sertifikasi')->storeAs('public/bukti_sertifikasi/', $bukti_sertifikasi);
             }
 
             if ($sertifikasi) {
@@ -381,7 +402,7 @@ class SertifikasiController extends Controller
                 if ($user->id_level == 1 && !empty($request->user_id)) {
                     // Jika user_id adalah string, ubah menjadi array
                     $userIds = is_array($request->user_id) ? $request->user_id : [$request->user_id];
-    
+
                     $userData = [];
                     foreach ($userIds as $userId) {
                         $userData[$userId] = [
@@ -414,27 +435,54 @@ class SertifikasiController extends Controller
     public function delete(Request $request, $id)
     {
         if ($request->ajax() || $request->wantsJson()) {
+            /** @var User $currentUser */
+            $currentUser = Auth::user(); // Mendapatkan user login
+
             // Temukan data sertifikasi berdasarkan ID
             $sertifikasi = SertifikasiModel::find($id);
 
             if ($sertifikasi) {
-                // Hapus relasi many-to-many dengan MataKuliah dan BidangMinat
-                $sertifikasi->mata_kuliah_sertifikasi()->detach();
-                $sertifikasi->bidang_minat_sertifikasi()->detach();
-                PesertaSertifikasiModel::where('id_sertifikasi', $id)->delete();
+                if ($currentUser->id_level == 1) {
+                    // Jika user adalah admin, hapus data sertifikasi sepenuhnya
+                    $sertifikasi->mata_kuliah_sertifikasi()->detach();
+                    $sertifikasi->bidang_minat_sertifikasi()->detach();
+                    PesertaSertifikasiModel::where('id_sertifikasi', $id)->delete();
 
+                    // Hapus data sertifikasi
+                    $sertifikasi->delete();
 
-                // Hapus data sertifikasi
-                $sertifikasi->delete();
+                    return response()->json([
+                        'status' => true,
+                        'message' => 'Data sertifikasi berhasil dihapus.'
+                    ]);
+                } else {
+                    // Jika user bukan admin, hapus hanya relasi pada tabel pivot berdasarkan user login
+                    $detailPeserta = DB::table('detail_peserta_sertifikasi')
+                        ->where('id_sertifikasi', $id)
+                        ->where('user_id', $currentUser->user_id)
+                        ->first(); // Ambil data pivot spesifik
 
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Data berhasil dihapus'
-                ]);
+                    if ($detailPeserta) {
+                        // Hapus data berdasarkan primary key tabel pivot
+                        DB::table('detail_peserta_sertifikasi')
+                            ->where('id_detail_peserta_sertifikasi', $detailPeserta->id_detail_peserta_sertifikasi)
+                            ->delete();
+
+                        return response()->json([
+                            'status' => true,
+                            'message' => 'Data relasi pada detail_peserta_sertifikasi berhasil dihapus.'
+                        ]);
+                    } else {
+                        return response()->json([
+                            'status' => false,
+                            'message' => 'Data relasi tidak ditemukan untuk user ini.'
+                        ]);
+                    }
+                }
             } else {
                 return response()->json([
                     'status' => false,
-                    'message' => 'Data tidak ditemukan'
+                    'message' => 'Data tidak ditemukan.'
                 ]);
             }
         }
@@ -442,6 +490,7 @@ class SertifikasiController extends Controller
         // Jika bukan request AJAX atau JSON, redirect ke halaman utama
         return redirect('/');
     }
+
 
     public function create_rekomendasi()
     {
@@ -488,7 +537,7 @@ class SertifikasiController extends Controller
                 'jenis' => 'required',
                 'tanggal' => 'required|date',
                 'masa_berlaku' => 'required',
-                'kuota_peserta' => 'required|integer',
+                'kuota_peserta' => 'nullable|integer',
                 'biaya' => 'required|string|max:255',
             ];
 
@@ -502,17 +551,20 @@ class SertifikasiController extends Controller
                 ]);
             }
 
+            $kuotaPeserta = count($request->user_id);
+
             // Simpan data user dengan hanya field yang diperlukan
             $sertifikasi = SertifikasiModel::create([
                 'nama_sertifikasi'  => $request->nama_sertifikasi,
                 'jenis'      => $request->jenis,
                 'tanggal'      => $request->tanggal,
                 'masa_berlaku'      => $request->masa_berlaku,
-                'kuota_peserta'      => $request->kuota_peserta,
+                'kuota_peserta'      => $kuotaPeserta,
                 'biaya'      => $request->biaya,
                 'id_vendor_sertifikasi'  => $request->id_vendor_sertifikasi,
                 'id_jenis_sertifikasi'  => $request->id_jenis_sertifikasi,
-                'id_periode'  => $request->id_periode
+                'id_periode'  => $request->id_periode,
+                'status_sertifikasi' => 'menunggu' // Pastikan status diatur di sini
             ]);
 
             $sertifikasi->bidang_minat_sertifikasi()->sync($request->id_bidang_minat);
@@ -520,11 +572,7 @@ class SertifikasiController extends Controller
 
             // Menyimpan user_id ke dalam pivot tabel dengan status 'menunggu'
             if (!empty($request->user_id)) {
-                $userData = [];
-                foreach ($request->user_id as $userId) {
-                    $userData[$userId] = ['status_sertifikasi' => 'menunggu'];
-                }
-                $sertifikasi->detail_peserta_sertifikasi()->attach($userData);
+                $sertifikasi->detail_peserta_sertifikasi()->sync($request->user_id);
             }
 
             return response()->json([
@@ -537,10 +585,10 @@ class SertifikasiController extends Controller
 
     public function admin_show_edit(string $id)
     {
-        $sertifikasi = SertifikasiModel::with(['detail_peserta_sertifikasi' => function($query) {
+        $sertifikasi = SertifikasiModel::with(['detail_peserta_sertifikasi' => function ($query) {
             $query->select('user.user_id as user_id', 'user.nama_lengkap');
         }])->find($id);
-    
+
         return view('sertifikasi.admin_show', [
             'sertifikasi' => $sertifikasi,
         ]);
@@ -553,9 +601,9 @@ class SertifikasiController extends Controller
             $rules = [
                 'bukti_sertifikasi.*' => 'nullable|mimes:pdf|max:5120',
             ];
-    
+
             $validator = Validator::make($request->all(), $rules);
-    
+
             if ($validator->fails()) {
                 return response()->json([
                     'status' => false,
@@ -563,21 +611,51 @@ class SertifikasiController extends Controller
                     'msgField' => $validator->errors()
                 ]);
             }
-    
+
+            $userData = []; // Simpan data hasil upload
             if ($request->hasFile('bukti_sertifikasi')) {
                 foreach ($request->file('bukti_sertifikasi', []) as $userId => $file) {
                     if ($file->isValid()) {
-                        $bukti_sertifikasi = $file->storeAs('public/bukti_sertifikasi', time() . '_' . $file->getClientOriginalName());
-                        $userData[$userId] = ['bukti_sertifikasi' => $bukti_sertifikasi];
+                        $bukti_sertifikasi = $file->storeAs(
+                            'public/bukti_sertifikasi',
+                            time() . '_' . $file->getClientOriginalName()
+                        );
+
+                        // Simpan ke database
+                        $data = [
+                            'user_id' => $userId,
+                            'bukti_sertifikasi' => $bukti_sertifikasi,
+                            'updated_at' => now(),
+                        ];
+
+                        $result = DB::table('detail_peserta_sertifikasi')
+                            ->where('user_id', $userId)
+                            ->update($data);
+
+                        if (!$result) {
+                            return response()->json([
+                                'status' => false,
+                                'message' => "Gagal menyimpan data untuk User ID: $userId"
+                            ]);
+                        }
+
+                        $userData[$userId] = $data;
                     } else {
                         return response()->json([
                             'status' => false,
-                            'message' => 'File tidak valid atau gagal diunggah',
+                            'message' => 'File tidak valid atau gagal diunggah.',
                         ]);
                     }
                 }
+
+                // Jika ada data yang berhasil diunggah, kembalikan respons berhasil
+                return response()->json([
+                    'status' => true,
+                    'message' => 'File berhasil diunggah dan disimpan ke database.',
+                    'data' => $userData
+                ]);
             }
-    
+
             return response()->json([
                 'status' => false,
                 'message' => 'Data sertifikasi tidak ditemukan',

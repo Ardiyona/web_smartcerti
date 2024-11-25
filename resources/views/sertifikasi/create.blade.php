@@ -104,7 +104,7 @@
                 @if (Auth::user()->id_level == 1)
                     <div class="form-group">
                         <label>Nama Peserta</label>
-                        <select name="user_id" id="user_id" class="form-control" required>
+                        <select name="user_id[]" id="user_id" class="form-control">
                             <option value="">- Pilih Peserta Sertifikasi -</option>
                             @foreach ($user as $l)
                                 <option value="{{ $l->user_id }}">{{ $l->nama_lengkap }}</option>

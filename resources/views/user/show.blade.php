@@ -34,16 +34,38 @@
                         <td class="col-9">{{ $user->level->nama_level }}</td>
                     </tr>
                     <tr>
-                        <th class="text-right col-3">Username </th>
+                        <th class="text-right col-3">Username</th>
                         <td class="col-9">{{ $user->username }}</td>
                     </tr>
                     <tr>
-                        <th class="text-right col-3">Nama Lengkap </th>
+                        <th class="text-right col-3">Nama Lengkap</th>
                         <td class="col-9">{{ $user->nama_lengkap }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right col-3">No Telepon</th>
+                        <td class="col-9">{{ $user->no_telp }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right col-3">Email</th>
+                        <td class="col-9">{{ $user->email }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right col-3">Jenis Kelamin</th>
+                        <td class="col-9">{{ $user->jenis_kelamin }}</td>
                     </tr>
                     <tr>
                         <th class="text-right col-3">Password </th>
                         <td class="col-9">********</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right col-3">Bidang Minat</th>
+                        <td class="col-9">
+                            {{ $user->detail_daftar_user_bidang_minat->pluck('nama_bidang_minat')->implode(', ') }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right col-3">Mata Kuliah</th>
+                        <td class="col-9">
+                            {{ $user->detail_daftar_user_matakuliah->pluck('nama_matakuliah')->implode(', ') }}</td>
                     </tr>
                     </table>
             </div>

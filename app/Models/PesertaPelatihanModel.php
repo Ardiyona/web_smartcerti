@@ -14,7 +14,9 @@ class PesertaPelatihanModel extends Model
     protected $primary = 'id_pelatihan';
 
     protected $fillable = [
-        'user_id'
+        'user_id',
+        'id_pelatihan',
+        'bukti_pelatihan',
     ];
 
     public function user()

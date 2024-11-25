@@ -22,13 +22,12 @@ class SertifikasiModel extends Model
         'id_bidang_minat',
         'id_matakuliah',
         'nama_sertifikasi',
-        'no_sertifikasi',
         'jenis',
         'tanggal',
-        'bukti_sertifikasi',
         'masa_berlaku',
         'kuota_peserta',
         'biaya',
+        'status_sertifikasi',
         'created_at',
         'updated_at'
     ];

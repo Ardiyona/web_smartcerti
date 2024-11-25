@@ -27,9 +27,9 @@
                         <th>Periode</th>
                         <th>Nama Program</th>
                         <th>Kategori</th>
-                        <th>Jenis</th>
+                        <th>Jenis/Level</th>
                         <th>Tanggal</th>
-                        <th>Kuota</th>
+                        <th>Peserta</th>
                         <th>Biaya</th>
                         <th>Aksi</th>
                     </tr>
@@ -56,106 +56,107 @@
         }
         var dataSertifikasi;
         $(document).ready(function() {
-            var columns = [{
-                    data: "DT_RowIndex",
-                    className: "text-center",
-                    width: "4%",
-                    orderable: false,
-                    searchable: false
-                },
-                {
-                    data: "vendor_sertifikasi.nama",
-                    className: "",
-                    width: "9%",
-                    orderable: false,
-                    searchable: true
-                },
-                {
-                    data: null,
-                    className: "",
-                    width: "6%",
-                    orderable: false,
-                    searchable: true,
-                    render: function(data, type, row) {
-                        if (row.kategori === 'sertifikasi') {
-                            return row.jenis_sertifikasi.nama_jenis_sertifikasi;
-                        } else if (row.kategori === 'pelatihan') {
-                            return row.jenis_sertifikasi.nama_jenis_pelatihan;
-                        } else {
-                            return '-';
-                        }
-                    }
-                },
-                {
-                    data: "periode.tahun_periode",
-                    className: "",
-                    width: "6%",
-                    orderable: false,
-                    searchable: false
-                },
-                {
-                    data: "nama_program",
-                    className: "",
-                    width: "9%",
-                    orderable: true,
-                    searchable: true
-                },
-                {
-                    data: "kategori", // Sertifikasi atau Pelatihan
-                    render: function(data) {
-                        return data ? data : '-';
-                    },
-                    className: "",
-                    width: "8%",
-                    orderable: false,
-                    searchable: false
-                },
-                {
-                    data: "jenis_level",
-                    className: "",
-                    width: "6%",
-                    orderable: false,
-                    searchable: true
-                },
-                {
-                    data: "tanggal",
-                    className: "",
-                    width: "8%",
-                    orderable: false,
-                    searchable: false
-                },
-                {
-                    data: "kuota_peserta",
-                    className: "",
-                    width: "8%",
-                    orderable: false,
-                    searchable: false
-                },
-                {
-                    data: "biaya",
-                    className: "",
-                    width: "8%",
-                    orderable: false,
-                    searchable: false
-                },
-                {
-                    data: "aksi",
-                    className: "",
-                    width: "9%",
-                    orderable: false,
-                    searchable: false
-                }
-            ];
-
             dataSertifikasi = $('#table_penerimaan_permintaan').DataTable({
-                serverSide: true,
                 processing: true,
+                serverSide: true,
                 ajax: {
                     url: "{{ url('penerimaanpermintaan/list') }}",
-                    dataType: "json",
                     type: "POST",
                 },
-                columns: columns
+                columns: [
+                    {
+                        data: "DT_RowIndex",
+                        className: "text-center",
+                        width: "4%",
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: "vendor_sertifikasi.nama",
+                        className: "",
+                        width: "9%",
+                        orderable: false,
+                        searchable: true
+                    },
+                    {
+                        data: null,
+                        className: "",
+                        width: "6%",
+                        orderable: false,
+                        searchable: true,
+                        render: function(data, type, row) {
+                            if (row.kategori === 'sertifikasi') {
+                                return row.jenis_sertifikasi.nama_jenis_sertifikasi;
+                            } else if (row.kategori === 'pelatihan') {
+                                return row.jenis_sertifikasi.nama_jenis_pelatihan;
+                            } else {
+                                return '-';
+                            }
+                        }
+                    },
+                    {
+                        data: "periode.tahun_periode",
+                        className: "",
+                        width: "6%",
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: "nama_program",
+                        className: "",
+                        width: "9%",
+                        orderable: true,
+                        searchable: true
+                    },
+                    {
+                        data: "kategori", // Sertifikasi atau Pelatihan
+                        render: function(data) {
+                            return data ? data : '-';
+                        },
+                        className: "",
+                        width: "8%",
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: "jenis_level",
+                        className: "",
+                        width: "6%",
+                        orderable: false,
+                        searchable: true
+                    },
+                    {
+                        data: "tanggal",
+                        className: "",
+                        width: "8%",
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: "peserta",
+                        render: function(data, type, row) {
+                            return row.peserta ? row.peserta : '-';
+                        },
+                        className: "",
+                        width: "10%",
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: "biaya",
+                        className: "",
+                        width: "8%",
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: "aksi",
+                        className: "",
+                        width: "9%",
+                        orderable: false,
+                        searchable: false
+                    }
+                ]
             });
         });
     </script>

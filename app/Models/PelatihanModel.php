@@ -22,13 +22,12 @@ class PelatihanModel extends Model
         'id_bidang_minat',
         'id_matakuliah',
         'nama_pelatihan',
-        'no_pelatihan',
         'lokasi',
         'level_pelatihan',
         'tanggal',
-        'bukti_pelatihan',
         'kuota_peserta',
         'biaya',
+        'status_pelatihan',
         'created_at',
         'updated_at'
     ];
@@ -61,6 +60,6 @@ class PelatihanModel extends Model
     public function detail_peserta_pelatihan(): BelongsToMany
     {
         return $this->belongsToMany(UserModel::class, 'detail_peserta_pelatihan', 'id_pelatihan', 'user_id')
-            ->withPivot('id_detail_peserta_pelatihan', 'no_pelatihan', 'bukti_pelatihan');
+            ->withPivot('id_detail_peserta_pelatihan', 'bukti_pelatihan');
     }
 }

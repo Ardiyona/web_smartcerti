@@ -100,14 +100,47 @@
                         <small id="error-tanggal" class="error-text form-text text-danger"></small>
                     </div>
 
-                    <!-- Bukti pelatihan -->
-                    <div class="form-group">
-                        <label>Bukti pelatihan</label>
-                        <input value ="{{ $pelatihan->bukti_pelatihan }}" type="file" name="bukti_pelatihan"
-                            id="bukti_pelatihan" class="form-control" required>
-                        <small class="form-text text-muted">Abaikan jika tidak ingin ubah file bukti pelatihan</small>
-                        <small id="error-bukti_pelatihan" class="error-text form-text text-danger"></small>
-                    </div>
+                    @if (Auth::user()->id_level != 1)
+                        <!-- Bukti Pelatihan -->
+                        <div class="form-group">
+                            <label>Bukti Pelatihan</label>
+
+                            @php
+                                // Mendapatkan user yang sedang login
+                                $currentUser = Auth::user();
+
+                                // Filter detail_peserta_pelatihan milik user yang login
+                                $userDetail = $pelatihan->detail_peserta_pelatihan
+                                    ->where('user_id', $currentUser->user_id)
+                                    ->first();
+                            @endphp
+
+                            @if ($userDetail && $userDetail->pivot->bukti_pelatihan)
+                                {{-- Jika user memiliki bukti pelatihan --}}
+                                <small class="form-text">
+                                    File saat ini:
+                                    @php
+                                        // Ambil nama file tanpa path
+                                        $fullFileName = basename($userDetail->pivot->bukti_pelatihan);
+
+                                        // Hilangkan tanggal di depan nama file
+                                        $cleanFileName = preg_replace('/^\d{10}_/', '', $fullFileName);
+                                    @endphp
+
+                                    <a href="{{ url('storage/bukti_pelatihan/' . $userDetail->pivot->bukti_pelatihan) }}"
+                                        target="_blank" download>
+                                        {{ $cleanFileName }}
+                                    </a>
+                                </small>
+                            @endif
+
+                            {{-- Input File hanya untuk user yang sedang login --}}
+                            <input type="file" name="bukti_pelatihan" id="bukti_pelatihan" class="form-control">
+                            <small class="form-text text-muted">Abaikan jika tidak ingin mengubah file bukti
+                                pelatihan</small>
+                            <small id="error-bukti_pelatihan" class="error-text form-text text-danger"></small>
+                        </div>
+                    @endif
 
                     <!-- Kuota Peserta -->
                     <div class="form-group">
@@ -128,11 +161,15 @@
 
                     @if (Auth::user()->id_level == 1)
                         <div class="form-group">
-                            <label>Nama Peserta</label>
-                            <select name="user_id" id="user_id" class="form-control" required>
-                                <option value="">- Pilih Peserta pelatihan -</option>
+                            <label for="user_id">
+                                Nama Peserta
+                            </label>
+                            <select multiple="multiple" name="user_id[]" id="user_id"
+                                class="js-example-basic-multiple js-states form-control form-control">
                                 @foreach ($user as $l)
-                                    <option {{ $pelatihan->detail_peserta_pelatihan->contains($l->user_id) ? 'selected' : '' }} value="{{ $l->user_id }}">{{ $l->nama_lengkap }}</option>
+                                    <option
+                                        {{ $pelatihan->detail_peserta_pelatihan->contains($l->user_id) ? 'selected' : '' }}
+                                        value="{{ $l->user_id }}">{{ $l->nama_lengkap }}</option>
                                 @endforeach
                             </select>
                             <small id="error-user_id" class="error-text form-text text-danger"></small>
@@ -179,6 +216,7 @@
     </form>
     <script>
         $(document).ready(function() {
+            var isAdmin = {{ Auth::user()->id_level == 1 ? 'true' : 'false' }};
             $("#form-edit").validate({
                 rules: {
                     id_vendor_pelatihan: {
@@ -207,7 +245,7 @@
                     tanggal: {
                         required: true,
                     },
-                    bukti_pelatihan: {
+                    'bukti_pelatihan[]': {
                         required: false,
                         extension: "pdf"
                     },
@@ -227,10 +265,16 @@
                     },
                 },
                 submitHandler: function(form) {
+                    var formData = new FormData(document.getElementById('form-edit'));
+                    console.log('Files in FormData:', formData.get(
+                        'bukti_pelatihan[]')); // Jika menggunakan array
+                    console.log('All FormData:', [...formData.entries()]);
                     $.ajax({
                         url: form.action,
                         type: form.method,
-                        data: $(form).serialize(),
+                        data: formData,
+                        processData: false, // Matikan proses data
+                        contentType: false, // Matikan header content-type agar sesuai dengan FormData
                         success: function(response) {
                             if (response.status) {
                                 $('#myModal').modal('hide');
@@ -267,7 +311,7 @@
                     $(element).removeClass('is-invalid');
                 }
             });
-            $("#id_matakuliah, #id_bidang_minat").select2({
+            $("#id_matakuliah, #id_bidang_minat, #user_id").select2({
                 dropdownAutoWidth: true,
                 theme: "classic"
             });

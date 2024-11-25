@@ -45,7 +45,8 @@
                                     <td>
                                         <input type="file" id="bukti_sertifikasi"
                                             name="bukti_sertifikasi[{{ $peserta->user_id }}]" class="form-control">
-                                        <small id="error-id_bukti_sertifikasi" class="error-text form-text text-danger"></small>
+                                        <small id="error-id_bukti_sertifikasi"
+                                            class="error-text form-text text-danger"></small>
                                     </td>
                                 </tr>
                             @endforeach
@@ -67,16 +68,21 @@
         $(document).ready(function() {
             $("#form-edit").validate({
                 rules: {
-                    bukti_sertifikasi: {
+                    'bukti_sertifikasi[]': {
                         required: true,
                         extension: "pdf"
                     },
                 },
                 submitHandler: function(form) {
+                    var formData = new FormData(document.getElementById('form-edit'));
+                    console.log('Files in FormData:', formData.get('bukti_sertifikasi[]')); // Jika menggunakan array
+                    console.log('All FormData:', [...formData.entries()]);
                     $.ajax({
                         url: form.action,
                         type: form.method,
-                        data: $(form).serialize(),
+                        data: formData,
+                        processData: false, // Matikan proses data
+                        contentType: false, // Matikan header content-type agar sesuai dengan FormData
                         success: function(response) {
                             if (response.status) {
                                 $('#myModal').modal('hide');
