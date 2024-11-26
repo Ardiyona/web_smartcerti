@@ -6,6 +6,7 @@ use App\Http\Controllers\api\MataKuliahController;
 use App\Http\Controllers\api\MyAccountController;
 use App\Http\Controllers\Api\PelatihanController;
 use App\Http\Controllers\api\PimpinanPelatihanDosenController;
+use App\Http\Controllers\api\PimpinanSertifikasiDosenController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\SertifikasiController;
 use App\Http\Controllers\Api\UserController;
@@ -75,10 +76,7 @@ Route::put('sertifikasis/{sertifikasi}', [SertifikasiController::class, 'update'
 Route::delete('sertifikasis/{sertifikasi}', [SertifikasiController::class, 'destroy']);
 
 Route::get('pimpinanPelatihans', [PimpinanPelatihanDosenController::class, 'index']);
-Route::post('pimpinanPelatihans', [PimpinanPelatihanDosenController::class, 'store']);
-Route::get('pimpinanPelatihans/{pimpinanPelatihan}', [PimpinanPelatihanDosenController::class, 'show']);
-Route::put('pimpinanPelatihans/{pimpinanPelatihan}', [PimpinanPelatihanDosenController::class, 'update']);
-Route::delete('pimpinanPelatihans/{pimpinanPelatihan}', [PimpinanPelatihanDosenController::class, 'destroy']);
+Route::get('pimpinanSertifikasis', [PimpinanSertifikasiDosenController::class, 'index']);
 
 Route::get('profiles', [ProfileController::class, 'index']);
 
