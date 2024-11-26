@@ -32,6 +32,7 @@ Route::post('/logout', App\Http\Controllers\Api\LogoutController::class)->name('
 Route::middleware('auth:api')->get('/user', function(Request $request){
     return $request->user();
 });
+
 Route::middleware(['auth:api'])->group(function () {
 Route::get('levels', [LevelController::class, 'index']);
 Route::post('levels', [LevelController::class, 'store']);
@@ -62,7 +63,9 @@ Route::post('pelatihans', [PelatihanController::class, 'store']);
 Route::get('pelatihans/{pelatihan}', [PelatihanController::class, 'show']);
 Route::put('pelatihans/{pelatihan}', [PelatihanController::class, 'update']);
 Route::delete('pelatihans/{pelatihan}', [PelatihanController::class, 'destroy']);
-Route::get('pelatihans/user/{id}', [PelatihanController::class, 'getPelatihanByUser']);
+Route::get('pelatihans/{user_id}', [PelatihanController::class, 'getPelatihanByUser']);
+
+
 
 
 Route::get('sertifikasis', [SertifikasiController::class, 'index']);

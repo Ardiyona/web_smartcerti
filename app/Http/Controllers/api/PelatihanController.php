@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\PelatihanModel;
+use App\Models\PesertaPelatihanModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -11,39 +12,60 @@ use Illuminate\Support\Facades\Storage;
 
 class PelatihanController extends Controller
 {
-    public function index()
-    {
-        // Mendapatkan data pelatihan beserta relasi yang diperlukan
-        $pelatihan = PelatihanModel::select(
-            'id_pelatihan',
-            'id_vendor_pelatihan',
-            'id_jenis_pelatihan',
-            'id_periode',
-            'nama_pelatihan',
-            'lokasi',
-            'level_pelatihan',
-            'tanggal',
-            'bukti_pelatihan',
-            'kuota_peserta',
-            'biaya'
-        )
-            ->with([
-                'vendor_pelatihan',
-                'jenis_pelatihan',
-                'periode',
-                'bidang_minat_pelatihan',
-                'mata_kuliah_pelatihan',
-                'detail_peserta_pelatihan'
-            ])
-            ->get();
+    // public function index()
+    // {
+    //     // Mendapatkan data pelatihan beserta relasi yang diperlukan
+    //     $pelatihan = PelatihanModel::select(
+    //         'id_pelatihan',
+    //         'id_vendor_pelatihan',
+    //         'id_jenis_pelatihan',
+    //         'id_periode',
+    //         'nama_pelatihan',
+    //         'lokasi',
+    //         'level_pelatihan',
+    //         'tanggal',
+    //         'bukti_pelatihan',
+    //         'kuota_peserta',
+    //         'biaya'
+    //     )
+    //         ->with([
+    //             'vendor_pelatihan',
+    //             'jenis_pelatihan',
+    //             'periode',
+    //             'bidang_minat_pelatihan',
+    //             'mata_kuliah_pelatihan',
+    //             'detail_peserta_pelatihan'
+    //         ])
+    //         ->get();
 
-        // Mengembalikan response dalam bentuk JSON
-        return response()->json([
-            'success' => true,
-            'message' => 'Data pelatihan retrieved successfully',
-            'data' => $pelatihan
-        ], 200);
-    }
+    //     // Mengembalikan response dalam bentuk JSON
+    //     return response()->json([
+    //         'success' => true,
+    //         'message' => 'Data pelatihan retrieved successfully',
+    //         'data' => $pelatihan
+    //     ], 200);
+    // }
+
+
+
+    public function index()
+{
+    /** @var User */
+    $user = Auth::guard('api')->user();
+    // Mengambil pelatihan yang hanya dimiliki oleh user yang sedang login
+    $pelatihan = $user->detail_peserta_pelatihan()
+        ->with('vendor_pelatihan', 'jenis_pelatihan', 'periode', 'bidang_minat_pelatihan', 'mata_kuliah_pelatihan')
+        ->get();
+
+    // Mengembalikan response dalam bentuk JSON
+    return response()->json([
+        'success' => true,
+        'message' => 'Data pelatihan retrieved successfully',
+        'data' => $pelatihan
+    ], 200);
+}
+
+
 
     public function store(Request $request)
     {
@@ -216,16 +238,36 @@ class PelatihanController extends Controller
         }
     }
 
-    public function getPelatihanByUser($id)
+//     public function getPelatihanByUser($id)
+// {
+//     $pelatihans = PelatihanModel::where('user_id', $id)->get();
+//     if ($pelatihans->isEmpty()) {
+//         return response()->json([
+//             'message' => 'Tidak ada pelatihan ditemukan untuk user ini.',
+//         ], 404);
+//     }
+//     return response()->json($pelatihans);
+
+// }
+
+
+public function getPelatihanByUser($id)
 {
-    $pelatihans = PelatihanModel::where('user_id', $id)->get();
-    if ($pelatihans->isEmpty()) {
+    // Ambil data peserta pelatihan berdasarkan user_id
+    $pesertaPelatihan = PesertaPelatihanModel::with('pelatihan')
+        ->where('user_id', $id)
+        ->get();
+
+    // Periksa apakah data kosong
+    if ($pesertaPelatihan->isEmpty()) {
         return response()->json([
             'message' => 'Tidak ada pelatihan ditemukan untuk user ini.',
         ], 404);
     }
-    return response()->json($pelatihans);
 
+    // Jika data ditemukan, kembalikan dalam bentuk JSON
+    return response()->json($pesertaPelatihan);
 }
+
 
 }

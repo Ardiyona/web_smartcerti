@@ -630,4 +630,6 @@ class PelatihanController extends Controller
             ]);
         }
     }
+
+    
 }
