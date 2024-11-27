@@ -508,7 +508,6 @@ class SertifikasiController extends Controller
             $query->select(
                 'detail_peserta_sertifikasi.user_id',
                 'detail_peserta_sertifikasi.id_sertifikasi',
-                'detail_peserta_sertifikasi.status_sertifikasi'
             );
         }])->get();
 

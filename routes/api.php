@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\api\BidangMinatController;
+use App\Http\Controllers\Api\JenisSertifikasiController;
 use App\Http\Controllers\Api\LevelController;
 use App\Http\Controllers\api\MataKuliahController;
 use App\Http\Controllers\api\MyAccountController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\api\PimpinanSertifikasiDosenController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\SertifikasiController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\VendorSertifikasiController;
 use App\Http\Controllers\PimpinanpelatihanDosenController as ControllersPimpinanpelatihanDosenController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -81,5 +83,9 @@ Route::get('pimpinanSertifikasis', [PimpinanSertifikasiDosenController::class, '
 Route::get('profiles', [ProfileController::class, 'index']);
 
 Route::get('my_accounts', [MyAccountController::class, 'index']);
+
+Route::get('vendorsertifikasi', [VendorSertifikasiController::class, 'index']);
+Route::get('jenissertifikasi', [JenisSertifikasiController::class, 'index']);
+
 
 });

@@ -1,6 +1,7 @@
 @extends('layouts.template')
-@section('content')
+@section('title')| Jenis Pelatihan @endsection
 
+@section('content')
     <div class="card card-outline card-primary">
         <div class="card-header">
             <h3 class="card-title">{{ $page->title }}</h3>
@@ -9,7 +10,8 @@
                 <a href="{{ url('/jenispelatihan/export_excel') }}" class="btn btn-primary"><i class="fa fa-file-excel"></i> Export Excel</a>
                 <button onclick="modalAction('{{ url('/jenispelatihan/import') }}')" class="btn btn-primary"><i class="fa fa-file-excel"></i> Import
                 </button>
-                <button onclick="modalAction(`{{ url('/jenispelatihan/create') }}`)" class="btn btn-success">Tambah</button>
+                <button onclick="modalAction(`{{ url('/jenispelatihan/create') }}`)" class="btn btn-success"  
+                style="background-color: #EF5428; border-color: #EF5428;"> <i class="fas fa-plus"></i> Tambah</button>
             </div>
         </div>
         <div class="card-body">
@@ -58,8 +60,14 @@
     </div>
     <div id="myModal" class="modal fade animate shake" tabindex="-1" role="dialog" data-backdrop="static"
     data-keyboard="false" data-width="75%" aria-hidden="true"></div>
-@endsection
+    @endsection
+
 @push('css')
+<style>
+    .card.card-outline.card-primary {
+        border-color: #375E97 !important;
+    }
+</style>
 @endpush
 @push('js')
     <script>

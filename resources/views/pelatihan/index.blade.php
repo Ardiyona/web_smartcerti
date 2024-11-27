@@ -9,11 +9,13 @@
         <div class="card-header">
             <h3 class="card-title">{{ $page->title }}</h3>
             <div class="card-tools">
-                <button onclick="modalAction(`{{ url('/pelatihan/create') }}`)" class="btn btn-success" style="background-color: #EF5428; border-color: #EF5428;">Tambah</button>
-                @if (Auth::user()->id_level == 1)
+            @if (Auth::user()->id_level == 1)
                 <button onclick="modalAction(`{{ url('/pelatihan/create_rekomendasi') }}`)" class="btn btn-success"
                     style="background-color: #EF5428; border-color: #EF5428;">Tambah Rekomendasi</button>
             @endif
+                <button onclick="modalAction(`{{ url('/pelatihan/create') }}`)" class="btn btn-success" 
+                style="background-color: #EF5428; border-color: #EF5428;"> <i class="fas fa-plus"></i> Tambah</button>
+                
             </div>
         </div>
         <div class="card-body">

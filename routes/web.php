@@ -43,6 +43,8 @@ Route::group(['prefix' => 'user', 'middleware' => 'authorize:ADM'], function() {
     Route::put('/{id}/update', [UserController::class, 'update']); // Perbaikan URL
     Route::get('/{id}/confirm', [UserController::class, 'confirm']); 
     Route::delete('/{id}/delete', [UserController::class, 'delete']); 
+    Route::get('/import', [UserController::class, 'import']);
+    Route::post('/import_ajax', [UserController::class, 'import_ajax']);
 });
 
 
@@ -140,6 +142,8 @@ Route::group(['prefix' => 'jenissertifikasi'], function () {
     Route::put('/{id}/update', [JenisSertifikasiController::class, 'update']);
     Route::get('/{id}/confirm', [JenisSertifikasiController::class, 'confirm']);
     Route::delete('/{id}/delete', [JenisSertifikasiController::class, 'delete']);
+    Route::get('/import', [JenisSertifikasiController::class, 'import']);
+    Route::post('/import_ajax', [JenisSertifikasiController::class, 'import_ajax']);
 });
 
 

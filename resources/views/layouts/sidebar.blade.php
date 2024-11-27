@@ -38,17 +38,17 @@
                 <li class="nav-item">
                     <a href="{{ url('/level') }}" class="nav-link {{ $activeMenu == 'level' ? 'active' : '' }}">
                         <i class="nav-icon fas fa-layer-group"></i>
-                        <p>Level User</p>
+                        <p>Level Pengguna</p>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="{{ url('/user') }}" class="nav-link {{ $activeMenu == 'user' ? 'active' : '' }}">
                         <i class="nav-icon far fa-user"></i>
-                        <p>Data User</p>
+                        <p>Data Pengguna</p>
                     </a>
                 </li>
 
-                <li class="nav-header">Manage Vendor</li>
+                <li class="nav-header">Mengelola Vendor</li>
                 <li class="nav-item">
                     <a href="{{ url('/vendorpelatihan') }}" class="nav-link {{ $activeMenu == 'vendorpelatihan' ? 'active' : '' }}">
                         <i class="nav-icon fas fa-building"></i>
@@ -62,7 +62,7 @@
                     </a>
                 </li>
 
-                <li class="nav-header">Manage Jenis</li>
+                <li class="nav-header">Mengelola Jenis</li>
                 <li class="nav-item">
                     <a href="{{ url('/jenispelatihan') }}" class="nav-link {{ $activeMenu == 'jenispelatihan' ? 'active' : '' }}">
                         <i class="nav-icon fas fa-list-alt"></i>
@@ -76,7 +76,7 @@
                     </a>
                 </li>
 
-                <li class="nav-header">Manage Mata Kuliah</li>
+                <li class="nav-header">Mengelola Mata Kuliah</li>
                 <li class="nav-item">
                     <a href="{{ url('/matakuliah') }}" class="nav-link {{ $activeMenu == 'matakuliah' ? 'active' : '' }}">
                         <i class="nav-icon fas fa-book"></i>
@@ -84,7 +84,7 @@
                     </a>
                 </li>
 
-                <li class="nav-header">Manage Bidang Minat</li>
+                <li class="nav-header">Mengelola Bidang Minat</li>
                 <li class="nav-item">
                     <a href="{{ url('/bidangminat') }}" class="nav-link {{ $activeMenu == 'bidangminat' ? 'active' : '' }}">
                         <i class="nav-icon fas fa-atom"></i>
@@ -92,7 +92,7 @@
                     </a>
                 </li>
 
-                <li class="nav-header">Manage Periode</li>
+                <li class="nav-header">Mengelola Periode</li>
                 <li class="nav-item">
                     <a href="{{ url('/periode') }}" class="nav-link {{ $activeMenu == 'periode' ? 'active' : '' }}">
                         <i class="nav-icon fas fa-calendar-alt"></i>
@@ -103,7 +103,7 @@
 
             <!-- Menu Umum untuk Level 1, 2, dan 3 -->
             @if(in_array(Auth::user()->id_level, [1, 2, 3]))
-                <li class="nav-header">Manage Pelatihan dan Sertifikasi</li>
+                <li class="nav-header">Mengelola Pelatihan dan Sertifikasi</li>
                 <li class="nav-item">
                     <a href="{{ url('/pelatihan') }}" class="nav-link {{ $activeMenu == 'pelatihan' ? 'active' : '' }}">
                         <i class="nav-icon far fa-bookmark"></i>
@@ -119,7 +119,7 @@
             @endif
 
             <!-- Untuk Pimpinan -->
-            @if(Auth::user()->id_level == 3)
+            @if(Auth::user()->id_level == 2)
                 <li class="nav-header">Management Permintaan</li>
                 <li class="nav-item">
                     <a href="{{ url('/penerimaanpermintaan') }}" class="nav-link {{ $activeMenu == 'penerimaanpermintaan' ? 'active' : '' }}">

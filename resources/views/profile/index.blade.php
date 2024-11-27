@@ -17,7 +17,7 @@
                         <div class="form-group row mb-3">
                             <label for="username" class="col-md-4 col-form-label text-md-end">{{ __('Username') }}</label>
                             <div class="col-md-8">
-                                <input id="username" type="text" class="form-control @error('username') is-invalid @enderror" name="username" value="{{ $user->username }}" required autocomplete="username">
+                                <input id="username" type="text" class="form-control @error('username') is-invalid @enderror" name="username" value="{{ $user->username }}" autocomplete="username">
                                 @error('username')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -112,7 +112,7 @@
                     @else
                         <img src="{{ asset('img/profile.png') }}" class="img-thumbnail rounded-circle shadow-sm mb-3" style="width: 150px; height: 150px; object-fit: cover;">
                     @endif
-                    <form method="POST" action="{{ url('profile/update/avatar', $user->user_id) }}" enctype="multipart/form-data">
+                    <form method="POST" action="{{ url('profile/update', $user->user_id) }}" enctype="multipart/form-data">
                         @csrf
                         <div class="form-group mb-3">
                             <input id="avatar" type="file" class="form-control" name="avatar">

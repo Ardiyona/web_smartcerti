@@ -9,6 +9,7 @@ use App\Models\UserModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use Yajra\DataTables\Facades\DataTables;
 
 class UserController extends Controller
@@ -250,4 +251,109 @@ class UserController extends Controller
 
         return redirect('/');
     }
+
+    public function import()
+    {
+    return view('user.import');
+    }
+
+    public function import_ajax(Request $request)
+    {
+    // Memastikan request adalah AJAX atau JSON
+    if ($request->ajax() || $request->wantsJson()) {
+        // Validasi file yang diupload
+        $rules = [
+            'file_user' => ['required', 'mimes:xlsx', 'max:1024'] // Validasi file .xlsx
+        ];
+
+        // Melakukan validasi terhadap request
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validasi Gagal',
+                'msgField' => $validator->errors()
+            ]);
+        }
+
+        // Mengambil file dari request
+        $file = $request->file('file_user');
+        
+        // Membaca file excel dengan PHPSpreadsheet
+        $reader = IOFactory::createReader('Xlsx');
+        $reader->setReadDataOnly(true);
+        $spreadsheet = $reader->load($file->getRealPath());
+        $sheet = $spreadsheet->getActiveSheet();
+        $data = $sheet->toArray(null, false, true, true);
+
+        // Menyiapkan data untuk disimpan
+        $insert = [];
+
+        // Memeriksa apakah ada data dalam file selain header
+        if (count($data) > 1) {
+            foreach ($data as $baris => $value) {
+                if ($baris > 1) {
+                    // Menyiapkan data untuk dimasukkan
+                    $avatarPath = null;
+                    if (isset($value['I'])) {
+                        // Jika ada avatar, proses upload
+                        $avatarPath = $this->uploadAvatar($value['I']); // Panggil method uploadAvatar
+                    }
+
+                    $insert[] = [
+                        'user_id' => $value['A'], // Misalnya kolom A untuk user_id
+                        'id_level' => $value['B'], // Kolom B untuk id_level
+                        'password' => bcrypt($value['C']), // Kolom C untuk password, di-hash
+                        'username' => $value['D'], // Kolom D untuk username
+                        'nama_lengkap' => $value['E'], // Kolom E untuk nama_lengkap
+                        'no_telp' => $value['F'], // Kolom F untuk no_telp
+                        'email' => $value['G'], // Kolom G untuk email
+                        'jenis_kelamin' => $value['H'], // Kolom H untuk jenis_kelamin
+                        'avatar' => $avatarPath, // Path avatar yang sudah diproses
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
+            }
+
+            // Menyimpan data ke database, jika ada data yang diinsert
+            if (count($insert) > 0) {
+                UserModel::insertOrIgnore($insert); // Insert data ke tabel User
+            }
+
+            // Response jika berhasil
+            return response()->json([
+                'status' => true,
+                'message' => 'Data berhasil diimport'
+            ]);
+        } else {
+            // Jika tidak ada data yang diimport
+            return response()->json([
+                'status' => false,
+                'message' => 'Tidak ada data yang diimport'
+            ]);
+        }
+    }
+
+    // Jika bukan request AJAX atau JSON
+    return redirect('/');
+}
+
+// Method untuk menangani upload avatar
+private function uploadAvatar($avatar)
+{
+    // Periksa apakah avatar tidak kosong
+    if ($avatar) {
+        // Tentukan nama file dan path untuk menyimpan
+        $avatarPath = 'photos/' . time() . '-' . $avatar->getClientOriginalName();
+
+        // Pindahkan file avatar ke folder public/storage/photos
+        $avatar->move(public_path('storage'), $avatarPath);
+
+        return $avatarPath; // Mengembalikan path file avatar
+    }
+
+    return null; // Jika tidak ada avatar, kembalikan null
+}
+
 }

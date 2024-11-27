@@ -8,7 +8,8 @@
                 <a href="{{ url('/bidangminat/export_pdf') }}" class="btn btn-warning"><i class="fa fa-file-pdf"></i> Export PDF</a>
                 <a href="{{ url('/bidangminat/export_excel') }}" class="btn btn-primary"><i class="fa fa-file-excel"></i> Export Excel</a>
                 <a href="{{ url('/bidangminat/import_ajax') }}" class="btn btn-primary"><i class="fa fa-file-excel"></i> Import</a>
-                <button onclick="modalAction(`{{ url('/bidangminat/create') }}`)" class="btn btn-success">Tambah</button>
+                <button onclick="modalAction(`{{ url('/bidangminat/create') }}`)" class="btn btn-success" 
+                style="background-color: #EF5428; border-color: #EF5428;">  <i class="fas fa-plus"></i> Tambah</button>
             </div>
         </div>
         <div class="card-body">

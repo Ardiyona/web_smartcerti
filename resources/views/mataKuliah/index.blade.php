@@ -7,7 +7,8 @@
         <div class="card-header">
             <h3 class="card-title">{{ $page->title }}</h3>
             <div class="card-tools">
-            <button onclick="modalAction(`{{ url('/matakuliah/create') }}`)" class="btn btn-success" style="background-color: #EF5428; border-color: #EF5428;">Tambah</button>
+            <button onclick="modalAction(`{{ url('/matakuliah/create') }}`)" class="btn btn-success" 
+            style="background-color: #EF5428; border-color: #EF5428;">  <i class="fas fa-plus"></i> Tambah</button>
             </div>
         </div>
         <div class="card-body">

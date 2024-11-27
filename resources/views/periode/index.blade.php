@@ -7,7 +7,8 @@
         <div class="card-tools">
             <a href="{{ url('/periode/export_pdf') }}" class="btn btn-warning"><i class="fa fa-file-pdf"></i> Export PDF</a>
             <a href="{{ url('/periode/export_excel') }}" class="btn btn-primary"><i class="fa fa-file-excel"></i> Export Excel</a>
-            <button onclick="modalAction(`{{ url('/periode/create') }}`)" class="btn btn-success">Tambah</button>
+            <button onclick="modalAction(`{{ url('/periode/create') }}`)" class="btn btn-success"
+            style="background-color: #EF5428; border-color: #EF5428;"> <i class="fas fa-plus"></i> Tambah</button>
         </div>
     </div>
     <div class="card-body">
