@@ -16,6 +16,6 @@ class VendorPelatihanModel extends Model
     protected $fillable = ['nama', 'alamat', 'kota', 'no_telp', 'alamat_web'];
 
     public function pelatihan(): HasMany {
-        return $this->hasMany(SertifikasiModel::class, 'id_vendor_sertifikasi', 'id_vendor_sertifikasi');
+        return $this->hasMany(PelatihanModel::class, 'id_vendor_pelatihan', 'id_vendor_pelatihan');
     }
 }

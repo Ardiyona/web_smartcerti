@@ -198,7 +198,8 @@ Route::get('/pimpinanpelatihandosen', [PimpinanpelatihanDosenController::class, 
 Route::post('/pimpinanpelatihandosen/list', [PimpinanpelatihanDosenController::class, 'list']);
 
 Route::get('/penerimaanpermintaan', [PenerimaanPermintaanController::class, 'index']);
-Route::post('/penerimaanpermintaan/list', [PenerimaanPermintaanController::class, 'list']);
+Route::post('/penerimaanpermintaan/listSertifikasi', [PenerimaanPermintaanController::class, 'listSertifikasi']);
+Route::post('/penerimaanpermintaan/listPelatihan', [PenerimaanPermintaanController::class, 'listPelatihan']);
 
 
 });
