@@ -16,7 +16,6 @@ class DetailPesertaSertifikasiModel extends Model
     protected $fillable = [
         'id_sertifikasi',
         'user_id',
-        'status_sertifikasi',
         'no_sertifikasi',
         'bukti_sertifikasi',
     ];

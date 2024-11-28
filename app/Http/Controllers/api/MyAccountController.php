@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Models\UserModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class MyAccountController extends Controller
 {
@@ -22,6 +25,64 @@ class MyAccountController extends Controller
         return response()->json([
             'success' => true,
             'data' => $userData,
+        ], 200);
+    }
+
+    public function update(Request $request)
+    {
+        /** @var User */
+        $user = Auth::guard('api')->user();
+    
+        // Proses avatar jika ada file yang diunggah
+        if ($request->hasFile('avatar')) {
+            $fileName = time() . '.' . $request->file('avatar')->getClientOriginalExtension();
+            $path = $request->file('avatar')->storeAs('images', $fileName);
+            $request['avatar'] = '/storage/' . $path;
+        } else {
+            $request->request->remove('avatar');
+        }
+    
+        // Perbarui data utama pengguna
+        $user->update($request->only('username', 'nama_lengkap', 'no_telp', 'email', 'jenis_kelamin', 'avatar', 'id_level'));
+
+        Log::info('Query setelah update:', $user->toArray());
+    
+        // Sinkronisasi relasi hanya jika data dikirim
+        if ($request->has('id_bidang_minat')) {
+            $user->detail_daftar_user_bidang_minat()->sync($request->id_bidang_minat);
+        }
+    
+        if ($request->has('id_matakuliah')) {
+            $user->detail_daftar_user_matakuliah()->sync($request->id_matakuliah);
+        }
+    
+        return response()->json([
+            'success' => true,
+            'message' => 'Profil berhasil diperbarui',
+            'data' => $user->refresh()->load(['detail_daftar_user_matakuliah', 'detail_daftar_user_bidang_minat']),
+        ], 200);
+    }
+
+    public function updatePassword(Request $request)
+    {
+        /** @var User */
+        $user = Auth::guard('api')->user();
+
+        // Verifikasi password lama
+        if (!Hash::check($request->current_password, $user->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Password lama tidak sesuai.',
+            ], 400);
+        }
+
+        // Update password baru
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Password berhasil diperbarui',
         ], 200);
     }
 }

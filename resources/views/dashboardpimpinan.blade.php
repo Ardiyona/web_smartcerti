@@ -96,7 +96,7 @@
         <div class="row">
           
           <!-- Total Pelatihan (Untuk Admin atau Pimpinan) -->
-          @if(in_array(Auth::user()->id_level, [1, 3])) <!-- Level 1 untuk Admin -->
+          @if(in_array(Auth::user()->id_level, [1, 2])) <!-- Level 1 untuk Admin -->
           <div class="col-lg-3 col-6">
             <div class="small-box bg-info">
               <div class="inner">
@@ -116,7 +116,7 @@
           <!-- ./col -->
 
           <!-- Total Sertifikasi (Untuk Admin atau Pimpinan) -->
-          @if(in_array(Auth::user()->id_level, [1, 3]))
+          @if(in_array(Auth::user()->id_level, [1, 2]))
           <div class="col-lg-3 col-6">
             <div class="small-box bg-success">
               <div class="inner">

@@ -87,6 +87,7 @@ Route::get('/penerimaanSertifikasis', [PenerimaanPermintaanController::class, 'l
 Route::get('profiles', [ProfileController::class, 'index']);
 
 Route::get('my_accounts', [MyAccountController::class, 'index']);
+Route::put('my_accounts/update', [MyAccountController::class, 'update']);
 
 // Route::get('vendorsertifikasi', [VendorSertifikasiController::class, 'index']);
 // Route::get('jenissertifikasi', [JenisSertifikasiController::class, 'index']);
