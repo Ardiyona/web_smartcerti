@@ -12,34 +12,36 @@
     </div>
 
     <!-- Tabel Sertifikasi -->
-    <div class="card card-outline card-primary" id="sertifikasi_card" style="display: none;">
-        <div class="card-header">
-            <h3 class="card-title">{{ $page->title }} - Sertifikasi</h3>
-        </div>
-        <div class="card-body">
-            @if (session('success'))
-                <div class="alert alert-success">{{ session('success') }}</div>
-            @endif
-            @if (session('error'))
-                <div class="alert alert-danger">{{ session('error') }}</div>
-            @endif
-            <table class="table table-bordered table-striped table-hover table-sm" id="table_sertifikasi">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Kategori</th>
-                        <th>Nama Vendor</th>
-                        <th>Jenis Bidang</th>
-                        <th>Periode</th>
-                        <th>Nama Program</th>
-                        <th>Jenis/Level</th>
-                        <th>Tanggal</th>
-                        <th>Peserta</th>
-                        <th>Status</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-            </table>
+    <div class="container-fluid">
+        <div class="card card-outline card-primary" id="sertifikasi_card" style="display: none;">
+            <div class="card-header">
+                <h3 class="card-title">{{ $page->title }} - Sertifikasi</h3>
+            </div>
+            <div class="card-body">
+                @if (session('success'))
+                    <div class="alert alert-success">{{ session('success') }}</div>
+                @endif
+                @if (session('error'))
+                    <div class="alert alert-danger">{{ session('error') }}</div>
+                @endif
+                <table class="table table-bordered table-striped table-hover table-sm" id="table_sertifikasi">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Kategori</th>
+                            <th>Nama Vendor</th>
+                            <th>Jenis Bidang</th>
+                            <th>Periode</th>
+                            <th>Nama Program</th>
+                            <th>Jenis/Level</th>
+                            <th>Tanggal</th>
+                            <th>Peserta</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -75,11 +77,12 @@
         .card.card-outline.card-primary {
             border-color: #375E97 !important;
         }
-
         .table {
-            width: 100%;
-            /* Pastikan tabel menggunakan lebar penuh */
-        }
+    width: 100% !important;
+}
+
+    </style>
+
     </style>
 @endpush
 

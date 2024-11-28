@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\LevelController;
 use App\Http\Controllers\api\MataKuliahController;
 use App\Http\Controllers\api\MyAccountController;
 use App\Http\Controllers\Api\PelatihanController;
+use App\Http\Controllers\api\PenerimaanPermintaanController;
 use App\Http\Controllers\api\PimpinanPelatihanDosenController;
 use App\Http\Controllers\api\PimpinanSertifikasiDosenController;
 use App\Http\Controllers\Api\ProfileController;
@@ -80,12 +81,15 @@ Route::delete('sertifikasis/{sertifikasi}', [SertifikasiController::class, 'dest
 Route::get('pimpinanPelatihans', [PimpinanPelatihanDosenController::class, 'index']);
 Route::get('pimpinanSertifikasis', [PimpinanSertifikasiDosenController::class, 'index']);
 
+Route::get('/penerimaanPelatihans', [PenerimaanPermintaanController::class, 'listPelatihan']);
+Route::get('/penerimaanSertifikasis', [PenerimaanPermintaanController::class, 'listSertifikasi']);
+
 Route::get('profiles', [ProfileController::class, 'index']);
 
 Route::get('my_accounts', [MyAccountController::class, 'index']);
 
-Route::get('vendorsertifikasi', [VendorSertifikasiController::class, 'index']);
-Route::get('jenissertifikasi', [JenisSertifikasiController::class, 'index']);
+// Route::get('vendorsertifikasi', [VendorSertifikasiController::class, 'index']);
+// Route::get('jenissertifikasi', [JenisSertifikasiController::class, 'index']);
 
 
 });
