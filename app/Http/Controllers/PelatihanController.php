@@ -52,9 +52,24 @@ class PelatihanController extends Controller
         // $pelatihans = pelatihanModel::with('detail_peserta_pelatihan')->get();
         // return response()->json($pelatihans);
 
-        // Jika user bukan admin (id_level ≠ 1), tampilkan hanya pelatihan miliknya
-        if ($user->id_level != 1) {
-            // Mengambil pelatihan yang hanya dimiliki oleh user yang sedang login
+        // Jika user adalah admin (id_level = 1) atau pimpinan (id_level = 2), tampilkan semua pelatihan
+        if ($user->id_level == 1 || $user->id_level == 2) {
+            // Mengambil semua pelatihan yang ada di database
+            $pelatihans = PelatihanModel::select(
+                'id_pelatihan',
+                'id_vendor_pelatihan',
+                'id_jenis_pelatihan',
+                'id_periode',
+                'nama_pelatihan',
+                'lokasi',
+                'level_pelatihan',
+                'tanggal',
+                'kuota_peserta',
+                'biaya'
+            )
+            ->with('vendor_pelatihan', 'jenis_pelatihan', 'periode', 'bidang_minat_pelatihan', 'mata_kuliah_pelatihan', 'detail_peserta_pelatihan');
+        } else {
+            // Jika user bukan admin atau pimpinan, hanya tampilkan pelatihan yang dimiliki oleh user tersebut
             $pelatihans = $user->detail_peserta_pelatihan()
                 ->select(
                     'pelatihan.id_pelatihan',
@@ -79,21 +94,6 @@ class PelatihanController extends Controller
                         $query->where('detail_peserta_pelatihan.user_id', $user->user_id);
                     }
                 ]);
-        } else {
-            // Jika admin (id_level = 1), tampilkan semua pelatihan
-            $pelatihans = PelatihanModel::select(
-                'id_pelatihan',
-                'id_vendor_pelatihan',
-                'id_jenis_pelatihan',
-                'id_periode',
-                'nama_pelatihan',
-                'lokasi',
-                'level_pelatihan',
-                'tanggal',
-                'kuota_peserta',
-                'biaya'
-            )
-                ->with('vendor_pelatihan', 'jenis_pelatihan', 'periode', 'bidang_minat_pelatihan', 'mata_kuliah_pelatihan', 'detail_peserta_pelatihan');
         }
 
         // Mengembalikan data dengan DataTables
@@ -109,6 +109,7 @@ class PelatihanController extends Controller
             ->addColumn('peserta_pelatihan', function ($pelatihan) {
                 return $pelatihan->detail_peserta_pelatihan->pluck('nama_lengkap')->implode(', ');
             })
+
             ->addColumn('aksi', function ($pelatihan) {
                 $levelId = Auth::user();
                 if ($levelId->id_level == 1) {

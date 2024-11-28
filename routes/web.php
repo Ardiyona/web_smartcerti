@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BidangMinatController;
-use App\Http\Controllers\DashboardPimpinanController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DosenSertifikasiController;
 use App\Http\Controllers\JenisSertifikasiController;
 use App\Http\Controllers\UserController;
@@ -12,15 +12,22 @@ use App\Http\Controllers\VendorPelatihanController;
 use App\Http\Controllers\VendorSertifikasiController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\JenisPelatihanController;
+use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\PelatihanController;
+use App\Http\Controllers\PelatihanUserController;
 use App\Http\Controllers\PenerimaanPermintaanController;
 use App\Http\Controllers\PeriodeController;
-use App\Http\Controllers\PimpinanpelatihanDosenController;
-use App\Http\Controllers\PimpinanSertifikasiDosenController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SemuaDosenController;
+use App\Http\Controllers\SemuaPelatihanDosenController;
+use App\Http\Controllers\SemuaSertifikasiController as ControllersSemuaSertifikasiController;
+use App\Http\Controllers\SemuaSertifikasiDosenController;
 use App\Http\Controllers\SertifikasiController;
+use App\Http\Controllers\SertifikasiUserController;
 
 Route::pattern('id', '[0-9]+'); // artinya ketika ada parameter {id}, maka harus berupa angka
+
+Route::get('/', [LandingPageController::class, 'index'])->name('landingpage'); // Mengarahkan ke tampilan utama
 
 Route::get('login', [AuthController::class, 'login'])->name('login');
 Route::post('login', [AuthController::class, 'postlogin']);
@@ -28,7 +35,21 @@ Route::get('logout', [AuthController::class, 'logout'])->middleware('auth');
 
 Route::middleware(['auth'])->group(function(){
 
-Route::get('/', [DashboardPimpinanController::class, 'index']);
+Route::get('/dashboard', [DashboardController::class, 'index']);
+Route::get('/semuasertifikasidosen', [SemuaSertifikasiDosenController::class, 'index']);
+Route::post('/semuasertifikasidosen/list', [SemuaSertifikasiDosenController::class, 'list']);
+
+Route::get('/semuadosen', [SemuaDosenController::class, 'index']);
+Route::post('/semuadosen/list', [SemuaDosenController::class, 'list']);
+
+Route::get('/semuapelatihandosen', [SemuaPelatihanDosenController::class, 'index']);
+Route::post('/semuapelatihandosen/list', [SemuaPelatihanDosenController::class, 'list']);
+
+Route::get('/pelatihanuser', [PelatihanUserController::class, 'index']);
+Route::post('/pelatihanuser/list', [PelatihanUserController::class, 'list']);
+
+Route::get('/sertifikasiuser', [SertifikasiUserController::class, 'index']);
+Route::post('/sertifikasiuser/list', [SertifikasiUserController::class, 'list']);
 
 Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
 Route::post('/profile/update/{id}', [ProfileController::class, 'update'])->name('profile.update');
@@ -195,11 +216,7 @@ Route::prefix('periode')->group(function () {
 });
 
 
-Route::get('/pimpinansertifikasidosen', [PimpinanSertifikasiDosenController::class, 'index']);
-Route::post('/pimpinansertifikasidosen/list', [PimpinanSertifikasiDosenController::class, 'list']);
 
-Route::get('/pimpinanpelatihandosen', [PimpinanpelatihanDosenController::class, 'index']);
-Route::post('/pimpinanpelatihandosen/list', [PimpinanpelatihanDosenController::class, 'list']);
 
 Route::get('/penerimaanpermintaan', [PenerimaanPermintaanController::class, 'index']);
 Route::post('/penerimaanpermintaan/listSertifikasi', [PenerimaanPermintaanController::class, 'listSertifikasi']);
@@ -207,6 +224,4 @@ Route::post('/penerimaanpermintaan/listPelatihan', [PenerimaanPermintaanControll
 
 
 });
-
-//tes clone
 

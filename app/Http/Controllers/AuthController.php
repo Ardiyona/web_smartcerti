@@ -12,7 +12,8 @@ class AuthController extends Controller
     {
         // Jika pengguna sudah login, arahkan ke halaman dashboard
         if (Auth::check()) {
-            return redirect('/');
+            return redirect()->intended('/dashboard');
+
         }
         return view('auth.login'); // Menampilkan form login
     }
@@ -34,7 +35,7 @@ class AuthController extends Controller
                 return response()->json([
                     'status' => true,
                     'message' => 'Login Berhasil',
-                    'redirect' => url('/') // Arahkan ke dashboard setelah login
+                    'redirect' => url('/dashboard') // Arahkan ke dashboard setelah login
                 ]);
             }
 
@@ -49,7 +50,7 @@ class AuthController extends Controller
         $credentials = $request->only('username', 'password');
         if (Auth::attempt($credentials)) {
             // Jika login berhasil, arahkan ke dashboard
-            return redirect()->intended('/');
+            return redirect()->intended('/dashboard');
         }
 
         // Jika login gagal, kembalikan ke halaman login dengan pesan error
@@ -67,6 +68,6 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         // Arahkan kembali ke halaman login setelah logout
-        return redirect('login');
+        return redirect('/');
     }
 }
