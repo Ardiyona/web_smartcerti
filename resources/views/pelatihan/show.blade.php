@@ -118,6 +118,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" data-dismiss="modal" class="btn btn-default">Kembali</button>
+                
             </div>
         </div>
     </div>

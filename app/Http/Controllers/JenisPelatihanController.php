@@ -211,8 +211,9 @@ public function import_ajax(Request $request)
             foreach ($data as $baris => $value) {
                 if ($baris > 1) { // baris ke 1 adalah header, maka lewati
                     $insert[] = [
-                        'kode_pelatihan' => $value['A'],
+                        'id_jenis_pelatihan' => $value['A'],
                         'nama_jenis_pelatihan' => $value['B'],
+                        'kode_pelatihan' => $value['C'],
                         'created_at' => now(),
                         'updated_at' => now()
                     ];
@@ -237,6 +238,8 @@ public function import_ajax(Request $request)
     }
     return redirect('/');
 }
+
+
 
 
 }

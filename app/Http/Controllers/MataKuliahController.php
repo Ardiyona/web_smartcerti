@@ -164,4 +164,68 @@ class MataKuliahController extends Controller
         }
         return redirect('/');
     }
+
+    public function import()
+{
+    return view('matakuliah.import');
+}
+
+public function import_ajax(Request $request)
+{
+    if ($request->ajax() || $request->wantsJson()) {
+        $rules = [
+            // Validasi file harus xls atau xlsx, max 1MB
+            'file_mata_kuliah' => ['required', 'mimes:xlsx', 'max:1024']
+        ];
+        
+        $validator = Validator::make($request->all(), $rules);
+        
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validasi Gagal',
+                'msgField' => $validator->errors()
+            ]);
+        }
+        
+        $file = $request->file('file_mata_kuliah'); // Ambil file dari request
+        $reader = IOFactory::createReader('Xlsx'); // Load reader file Excel
+        $reader->setReadDataOnly(true); // Hanya membaca data
+        $spreadsheet = $reader->load($file->getRealPath()); // Load file Excel
+        $sheet = $spreadsheet->getActiveSheet(); // Ambil sheet yang aktif
+        $data = $sheet->toArray(null, false, true, true); // Ambil data Excel
+        $insert = [];
+        
+        if (count($data) > 1) { // Jika data lebih dari 1 baris
+            foreach ($data as $baris => $value) {
+                if ($baris > 1) { // Baris ke-1 adalah header, maka lewati
+                    $insert[] = [
+                        'id_matakuliah' => $value['A'], 
+                        'nama_matakuliah' => $value['B'], 
+                        'kode_matakuliah' => $value['C'], 
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ];
+                }
+            }
+            
+            if (count($insert) > 0) {
+                // Insert data ke database, jika data sudah ada, maka diabaikan
+                MataKuliahModel::insertOrIgnore($insert);
+            }
+            
+            return response()->json([
+                'status' => true,
+                'message' => 'Data mata kuliah berhasil diimport'
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'message' => 'Tidak ada data mata kuliah yang diimport'
+            ]);
+        }
+    }
+    return redirect('/');
+}
+
 }

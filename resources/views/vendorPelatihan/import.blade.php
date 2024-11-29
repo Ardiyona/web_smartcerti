@@ -1,23 +1,23 @@
-<form action="{{ url('/jenispelatihan/import_ajax') }}" method="POST" id="form-import-pelatihan" enctype="multipart/form-data">
+<form action="{{ url('/vendorpelatihan/import_ajax') }}" method="POST" id="form-import-vendorpelatihan" enctype="multipart/form-data">
     @csrf
     <div id="modal-master" class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Import Data Jenis Pelatihan</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Import Data Vendor Pelatihan</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                         aria-hidden="true">&times;</span></button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
                     <label>Download Template</label>
-                    <a href="{{ asset('template_jenis_pelatihan.xlsx') }}" class="btn" style="color: white; background-color: #375E97; border-color: #375E97;"> <i
+                    <a href="{{ asset('template_vendor_pelatihan.xlsx') }}" class="btn" style="color: white; background-color: #375E97; border-color: #375E97;"> <i
                             class="fa fa-file-excel"></i> Download</a>
                     <small id="error-kategori_id" class="error-text form-text text-danger"></small>
                 </div>
                 <div class="form-group">
                     <label>Pilih File</label>
-                    <input type="file" name="file_jenis_pelatihan" id="file_jenis_pelatihan" class="form-control" required>
-                    <small id="error-file_jenis_pelatihan" class="error-text form-text text-danger"></small>
+                    <input type="file" name="file_vendor_pelatihan" id="file_vendor_pelatihan" class="form-control" required>
+                    <small id="error-file_vendor_pelatihan" class="error-text form-text text-danger"></small>
                 </div>
             </div>
             <div class="modal-footer">
@@ -29,9 +29,9 @@
 </form>
 <script>
     $(document).ready(function() {
-        $("#form-import-pelatihan").validate({
+        $("#form-import-vendorpelatihan").validate({
             rules: {
-                file_jenis_pelatihan: {
+                file_vendor_pelatihan: {
                     required: true,
                     extension: "xlsx"
                 },
@@ -52,7 +52,7 @@
                                 title: 'Berhasil',
                                 text: response.message
                             });
-                            tableJenispelatihan.ajax.reload(); // reload datatable jenis pelatihan
+                            tableVendorpelatihan.ajax.reload(); // reload datatable vendor pelatihan
                         } else { // jika error
                             $('.error-text').text('');
                             $.each(response.msgField, function(prefix, val) {

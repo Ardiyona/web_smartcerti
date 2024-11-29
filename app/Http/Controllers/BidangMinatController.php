@@ -172,58 +172,67 @@ class BidangMinatController extends Controller
         return $pdf->stream('Data_Bidang_Minat_' . date('Y-m-d_H-i-s') . '.pdf');
     }
 
-    public function import_ajax(Request $request)
-    {
-        if ($request->ajax() || $request->wantsJson()) {
-            $rules = [
-                'file_bidang_minat' => ['required', 'mimes:xlsx', 'max:1024']
-            ];
-            
-            $validator = Validator::make($request->all(), $rules);
-            
-            if ($validator->fails()) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Validasi Gagal',
-                    'msgField' => $validator->errors()
-                ]);
-            }
-            
-            $file = $request->file('file_bidang_minat');
-            $reader = IOFactory::createReader('Xlsx');
-            $reader->setReadDataOnly(true);
-            $spreadsheet = $reader->load($file->getRealPath());
-            $sheet = $spreadsheet->getActiveSheet();
-            $data = $sheet->toArray(null, false, true, true);
-            $insert = [];
-            
-            if (count($data) > 1) {
-                foreach ($data as $baris => $value) {
-                    if ($baris > 1) {
-                        $insert[] = [
-                            'kode_bidang_minat' => $value['A'],
-                            'nama_bidang_minat' => $value['B'],
-                            'created_at' => now(),
-                            'updated_at' => now()
-                        ];
-                    }
-                }
-                
-                if (count($insert) > 0) {
-                    BidangMinatModel::insertOrIgnore($insert);
-                }
-                
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Data berhasil diimport'
-                ]);
-            } else {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Tidak ada data yang diimport'
-                ]);
-            }
+    public function import()
+{
+    return view('bidangminat.import');
+}
+
+public function import_ajax(Request $request)
+{
+    if ($request->ajax() || $request->wantsJson()) {
+        $rules = [
+            // Validasi file harus xls atau xlsx, max 1MB
+            'file_bidang_minat' => ['required', 'mimes:xlsx', 'max:1024']
+        ];
+        
+        $validator = Validator::make($request->all(), $rules);
+        
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validasi Gagal',
+                'msgField' => $validator->errors()
+            ]);
         }
-        return redirect('/');
+        
+        $file = $request->file('file_bidang_minat'); // Ambil file dari request
+        $reader = IOFactory::createReader('Xlsx'); // Load reader file Excel
+        $reader->setReadDataOnly(true); // Hanya membaca data
+        $spreadsheet = $reader->load($file->getRealPath()); // Load file Excel
+        $sheet = $spreadsheet->getActiveSheet(); // Ambil sheet yang aktif
+        $data = $sheet->toArray(null, false, true, true); // Ambil data Excel
+        $insert = [];
+        
+        if (count($data) > 1) { // Jika data lebih dari 1 baris
+            foreach ($data as $baris => $value) {
+                if ($baris > 1) { // Baris ke-1 adalah header, maka lewati
+                    $insert[] = [
+                        'id_bidang_minat' => $value['A'], 
+                        'nama_bidang_minat' => $value['B'], 
+                        'kode_bidang_minat' => $value['C'], 
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ];
+                }
+            }
+            
+            if (count($insert) > 0) {
+                // Insert data ke database, jika data sudah ada, maka diabaikan
+                BidangMinatModel::insertOrIgnore($insert);
+            }
+            
+            return response()->json([
+                'status' => true,
+                'message' => 'Data bidang minat berhasil diimport'
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'message' => 'Tidak ada data bidang minat yang diimport'
+            ]);
+        }
     }
+    return redirect('/');
+}
+
 }

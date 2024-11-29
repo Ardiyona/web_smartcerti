@@ -125,6 +125,8 @@ Route::group(['prefix' => 'matakuliah'], function () {
     Route::put('/{id}/update', [MataKuliahController::class, 'update']);
     Route::get('/{id}/confirm', [MataKuliahController::class, 'confirm']);
     Route::delete('/{id}/delete', [MataKuliahController::class, 'delete']);
+    Route::get('/import', [MataKuliahController::class, 'import']);
+    Route::post('/import_ajax', [MataKuliahController::class, 'import_ajax']);
 });
 
 //Route Vendor Pelatihan
@@ -138,6 +140,8 @@ Route::group(['prefix' => 'vendorpelatihan'], function () {
     Route::put('/{id}/update', [VendorPelatihanController::class, 'update']);
     Route::get('/{id}/confirm', [VendorPelatihanController::class, 'confirm']);
     Route::delete('/{id}/delete', [VendorPelatihanController::class, 'delete']);
+    Route::get('/import', [VendorPelatihanController::class, 'import']);
+    Route::post('/import_ajax', [VendorPelatihanController::class, 'import_ajax']);
 });
 //Route Vendor Sertifikasi
 Route::group(['prefix' => 'vendorsertifikasi'], function () {
@@ -150,6 +154,8 @@ Route::group(['prefix' => 'vendorsertifikasi'], function () {
     Route::put('/{id}/update', [VendorSertifikasiController::class, 'update']);
     Route::get('/{id}/confirm', [VendorSertifikasiController::class, 'confirm']);
     Route::delete('/{id}/delete', [VendorSertifikasiController::class, 'delete']);
+    Route::get('/import', [VendorSertifikasiController::class, 'import']);
+    Route::post('/import_ajax', [VendorSertifikasiController::class, 'import_ajax']);
 });
 
 //Route Jenis Sertifikasi
@@ -197,6 +203,8 @@ Route::prefix('bidangminat')->group(function () {
     Route::get('/export_pdf', [BidangMinatController::class, 'export_pdf']);
     Route::post('/import_ajax', [BidangMinatController::class, 'import_ajax']);
     Route::get('/{id}/confirm', [BidangMinatController::class, 'confirm']);
+    Route::get('/import', [BidangMinatController::class, 'import']);
+    Route::post('/import_ajax', [BidangMinatController::class, 'import_ajax']);
 });
 
 

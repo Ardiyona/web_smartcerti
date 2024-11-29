@@ -7,6 +7,8 @@
         <div class="card-header">
             <h3 class="card-title">{{ $page->title }}</h3>
             <div class="card-tools">
+            <button onclick="modalAction(`{{ url('/vendorsertifikasi/import') }}`)" class="btn btn-success" 
+            style="background-color: #EF5428; border-color: #EF5428;"><i class="fas fa-file-import"></i> Import</button>
             <button onclick="modalAction(`{{ url('/vendorsertifikasi/create') }}`)" class="btn btn-success" 
             style="background-color: #EF5428; border-color: #EF5428;"><i class="fas fa-plus"></i> Tambah</button>
             </div>

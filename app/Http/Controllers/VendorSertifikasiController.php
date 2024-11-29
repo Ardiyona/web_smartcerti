@@ -170,4 +170,82 @@ class VendorSertifikasiController extends Controller
         }
         return redirect('/');
     }
+
+    public function import()
+    {
+        return view('vendorsertifikasi.import');
+    }
+
+    public function import_ajax(Request $request)
+{
+    // Memastikan request adalah AJAX atau JSON
+    if ($request->ajax() || $request->wantsJson()) {
+        // Validasi file yang diupload
+        $rules = [
+            'file_vendor_sertifikasi' => ['required', 'mimes:xlsx', 'max:1024'] // Validasi file .xlsx
+        ];
+
+        // Melakukan validasi terhadap request
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validasi Gagal',
+                'msgField' => $validator->errors()
+            ]);
+        }
+
+        // Mengambil file dari request
+        $file = $request->file('file_vendor_sertifikasi');
+        
+        // Membaca file excel dengan PHPSpreadsheet
+        $reader = IOFactory::createReader('Xlsx');
+        $reader->setReadDataOnly(true);
+        $spreadsheet = $reader->load($file->getRealPath());
+        $sheet = $spreadsheet->getActiveSheet();
+        $data = $sheet->toArray(null, false, true, true);
+
+        // Menyiapkan data untuk disimpan
+        $insert = [];
+
+        // Memeriksa apakah ada data dalam file selain header
+        if (count($data) > 1) {
+            foreach ($data as $baris => $value) {
+                if ($baris > 1) {
+                    // Menyiapkan data untuk dimasukkan
+                    $insert[] = [
+                        'id_vendor_sertifikasi' => $value['A'], 
+                        'nama' => $value['B'], 
+                        'alamat' => $value['C'], 
+                        'kota' => $value['D'], 
+                        'no_telp' => $value['E'], 
+                        'alamat_web' => $value['F'], 
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
+            }
+
+            // Menyimpan data ke database, jika ada data yang diinsert
+            if (count($insert) > 0) {
+                VendorSertifikasiModel::insertOrIgnore($insert); 
+            }
+
+            // Response jika berhasil
+            return response()->json([
+                'status' => true,
+                'message' => 'Data vendor sertifikasi berhasil diimport'
+            ]);
+        } else {
+            // Jika tidak ada data yang diimport
+            return response()->json([
+                'status' => false,
+                'message' => 'Tidak ada data vendor sertifikasi yang diimport'
+            ]);
+        }
+    }
+
+    // Jika bukan request AJAX atau JSON
+    return redirect('/');
+}
 }
