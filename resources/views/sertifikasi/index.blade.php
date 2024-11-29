@@ -30,7 +30,9 @@
                 <thead>
                     <tr>
                         <th>ID</th>
+                        @if (Auth::user()->id_level != 1)
                         <th>Nama Vendor</th>
+                        @endif
                         <th>Jenis Bidang</th>
                         <th>Periode</th>
                         <th>Nama Sertifikasi</th>
@@ -81,13 +83,6 @@
                     width: "4%",
                     orderable: false,
                     searchable: false
-                },
-                {
-                    data: "vendor_sertifikasi.nama",
-                    className: "",
-                    width: "9%",
-                    orderable: false,
-                    searchable: true
                 },
                 {
                     data: "jenis_sertifikasi.nama_jenis_sertifikasi",
@@ -175,10 +170,17 @@
                     orderable: true, // Set true jika ingin sorting berdasarkan tanggal
                     searchable: false
                 });
+                columns.splice(1, 0, {
+                    data: "vendor_sertifikasi.nama",
+                    className: "",
+                    width: "9%",
+                    orderable: false,
+                    searchable: true
+                });
             }
             // Tambahkan kolom "Nama Peserta" jika user adalah admin
             if (isAdmin) {
-                columns.splice(10, 0, {
+                columns.splice(9, 0, {
                     data: "peserta_sertifikasi",
                     render: function(data, type, row) {
                         return row.peserta_sertifikasi ? row.peserta_sertifikasi : '-';
@@ -188,7 +190,7 @@
                     orderable: false,
                     searchable: false
                 });
-                columns.splice(11, 0, {
+                columns.splice(10, 0, {
                     data: "status_sertifikasi",
                     render: function(data, type, row) {
                         // Jika data tersedia, tampilkan, jika tidak, tampilkan '-'

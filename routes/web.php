@@ -97,6 +97,7 @@ Route::group(['prefix' => 'sertifikasi'], function () {
     Route::put('/{id}/update', [SertifikasiController::class, 'update']);
     Route::get('/{id}/confirm', [SertifikasiController::class, 'confirm']);
     Route::delete('/{id}/delete', [SertifikasiController::class, 'delete']); 
+    Route::get('/{id}/generate', [SertifikasiController::class, 'generate']); 
 });
 Route::group(['prefix' => 'pelatihan'], function () {
     Route::get('/', [PelatihanController::class, 'index']);
@@ -229,7 +230,7 @@ Route::prefix('periode')->group(function () {
 Route::get('/penerimaanpermintaan', [PenerimaanPermintaanController::class, 'index']);
 Route::post('/penerimaanpermintaan/listSertifikasi', [PenerimaanPermintaanController::class, 'listSertifikasi']);
 Route::post('/penerimaanpermintaan/listPelatihan', [PenerimaanPermintaanController::class, 'listPelatihan']);
-
+Route::put('/penerimaanpermintaan/{id}/status/{status}', [PenerimaanPermintaanController::class, 'updateStatus'])->name('penerimaanpermintaan.updateStatus');
 
 });
 

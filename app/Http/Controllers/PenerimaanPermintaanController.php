@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\PelatihanModel;
 use App\Models\SertifikasiModel;
-use Illuminate\Http\Request;
-
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
@@ -49,7 +47,7 @@ class PenerimaanPermintaanController extends Controller
                 'biaya',
                 DB::raw("'sertifikasi' as kategori")
             )
-                ->where('status_sertifikasi', 'menunggu')
+                ->whereIn('status_sertifikasi', ['tolak', 'terima', 'menunggu'])
                 ->with([
                     'vendor_sertifikasi',
                     'jenis_sertifikasi',
@@ -59,18 +57,17 @@ class PenerimaanPermintaanController extends Controller
                     }
                 ]);
 
-
             // Gabungkan data sertifikasi dan pelatihan
             $sertifikasi->get();
 
             return DataTables::of($sertifikasi)
                 ->addIndexColumn()
                 ->addColumn('peserta', function ($row) {
-                        $peserta = $row->detail_peserta_sertifikasi;
-                        return $peserta ? $peserta->pluck('nama_lengkap')->implode(', ') : '-';
+                    $peserta = $row->detail_peserta_sertifikasi;
+                    return $peserta ? $peserta->pluck('nama_lengkap')->implode(', ') : '-';
                 })
                 ->addColumn('aksi', function ($row) {
-                    $btn = '<button onclick="modalAction(\'' . url('/detail/' . $row->id . '/show') . '\')" class="btn btn-info btn-sm">Detail</button> ';
+                    $btn = '<button onclick="modalAction(\'' . url('/penerimaanpermintaan/' . $row->id . '/show_sertifikasi') . '\')" class="btn btn-info btn-sm">Detail</button> ';
                     return $btn;
                 })
                 ->rawColumns(['aksi'])
@@ -118,7 +115,7 @@ class PenerimaanPermintaanController extends Controller
                     return $pelatihan->detail_peserta_pelatihan->pluck('nama_lengkap')->implode(', ');
                 })
                 ->addColumn('aksi', function ($row) {
-                    $btn = '<button onclick="modalAction(\'' . url('/detail/' . $row->id . '/show') . '\')" class="btn btn-info btn-sm">Detail</button> ';
+                    $btn = '<button onclick="modalAction(\'' . url('/penerimaanpermintaan/' . $row->id . '/show_pelatihan') . '\')" class="btn btn-info btn-sm">Detail</button> ';
                     return $btn;
                 })
                 ->rawColumns(['aksi'])
@@ -129,6 +126,35 @@ class PenerimaanPermintaanController extends Controller
                 'error' => 'Internal Server Error',
                 'message' => $e->getMessage()
             ], 500);
+        }
+    }
+
+    public function show(String $id)
+    {
+        $sertifikasi = SertifikasiModel::with('vendor_sertifikasi', 'jenis_sertifikasi', 'periode', 'bidang_minat_sertifikasi', 'mata_kuliah_sertifikasi')->find($id);
+        $pelatihan = PelatihanModel::with('vendor_pelatihan', 'jenis_pelatihan', 'periode', 'bidang_minat_pelatihan', 'mata_kuliah_pelatihan')->find($id);
+        if ($sertifikasi) {
+            return view('penerimaanpermintaan.show_sertifikasi', ['sertifikasi' => $sertifikasi]);
+        } else {
+            return view('penerimaanpermintaan.show_pelatihan', ['pelatihan' => $pelatihan]);
+        }
+    }
+
+    public function updateStatus($id, $status)
+    {
+        $sertifikasi = SertifikasiModel::find($id);
+    
+        if ($sertifikasi) {
+            // Validasi status yang diterima
+            if (in_array($status, ['terima', 'tolak'])) {
+                $sertifikasi->status_sertifikasi = $status;
+                $sertifikasi->save();
+                return redirect()->back()->with('success', 'Status sertifikasi berhasil diperbarui.');
+            } else {
+                return redirect()->back()->with('error', 'Status tidak valid.');
+            }
+        } else {
+            return redirect()->back()->with('error', 'Sertifikasi tidak ditemukan.');
         }
     }
 }

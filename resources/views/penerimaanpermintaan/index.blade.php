@@ -70,6 +70,7 @@
             </table>
         </div>
     </div>
+    <div id="myModal" class="modal fade animate shake" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" data-width="75%" aria-hidden="true"></div>
 @endsection
 
 @push('css')
@@ -77,10 +78,10 @@
         .card.card-outline.card-primary {
             border-color: #375E97 !important;
         }
-        .table {
-    width: 100% !important;
-}
 
+        .table {
+            width: 100% !important;
+        }
     </style>
 
     </style>
@@ -88,6 +89,12 @@
 
 @push('js')
     <script>
+        function modalAction(url = '') {
+            $('#myModal').load(url, function() {
+                $('#myModal').modal('show');
+            });
+        }
+
         function tampilkanTabel(kategori) {
             // Sembunyikan kedua tabel terlebih dahulu
             $('#sertifikasi_card').hide();

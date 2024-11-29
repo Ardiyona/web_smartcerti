@@ -15,6 +15,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use PhpOffice\PhpWord\IOFactory;
+use PhpOffice\PhpWord\PhpWord;
 use Yajra\DataTables\Facades\DataTables;
 
 class SertifikasiController extends Controller
@@ -49,7 +51,7 @@ class SertifikasiController extends Controller
         /** @var User */
         $user = Auth::user();
 
-        if ($user->id_level == 1 || $user->id_level == 2) {
+        if ($user->id_level == 1) {
             // Jika user adalah admin (id_level = 1) atau pimpinan (id_level = 2), tampilkan semua sertifikasi
             $sertifikasis = SertifikasiModel::select(
                 'id_sertifikasi',
@@ -661,5 +663,101 @@ class SertifikasiController extends Controller
                 'message' => 'Data sertifikasi tidak ditemukan',
             ]);
         }
+    }
+
+    public function generate($id)
+    {
+        $sertifikasi = SertifikasiModel::with('vendor_sertifikasi', 'detail_peserta_sertifikasi')->find($id);
+        $user = Auth::user(); // Ambil data user yang login
+
+        if (!$sertifikasi) {
+            return redirect()->back()->with('error', 'Sertifikasi tidak ditemukan.');
+        }
+
+        // Buat instance PhpWord
+        $phpWord = new PhpWord();
+        $section = $phpWord->addSection();
+
+        // Tambahkan tabel untuk header dengan logo
+        $headerTable = $section->addTable();
+        $headerTable->addRow();
+
+        // Tambahkan logo
+        $logoPath = storage_path('Logo/logo.png'); // Ganti sesuai path logo Anda
+        $headerTable->addCell(2000)->addImage(
+            $logoPath,
+            [
+                'width' => 100,
+                'height' => 100,
+                'alignment' => 'left'
+            ]
+        );
+
+        // Tambahkan teks header
+        $cell = $headerTable->addCell(6000);
+        $cell->addText(
+            'KEMENTERIAN PENDIDIKAN, KEBUDAYAAN, RISET DAN TEKNOLOGI',
+            ['bold' => true, 'size' => 14, 'alignment' => 'center']
+        );
+        $cell->addText(
+            'POLITEKNIK NEGERI MALANG',
+            ['bold' => true, 'size' => 14, 'alignment' => 'center']
+        );
+        $cell->addText('Jl. Soekarno Hatta No.9 Malang 65141', ['size' => 10]);
+        $cell->addText('Telp (0341) 404424 – 404425 Fax (0341) 404420', ['size' => 10]);
+
+        $section->addTextBreak(1);
+
+        // Tambahkan informasi surat
+        $section->addText("Nomor: -", ['size' => 12]);
+        $section->addText("Lampiran: -", ['size' => 12]);
+        $section->addText("Perihal: Surat Tugas", ['size' => 12]);
+        $section->addTextBreak(1);
+
+        // Tambahkan keterangan kegiatan
+        $section->addText(
+            "Sehubungan dengan Kegiatan Peningkatan Kompetensi Sumber Daya Manusia diselenggarakan sertifikasi tentang "
+                . $sertifikasi->nama_sertifikasi
+                . " yang diselenggarakan oleh "
+                . $sertifikasi->vendor_sertifikasi->nama
+                . " pada tanggal "
+                . $sertifikasi->tanggal
+                . ", maka kami mohon diterbitkan Surat Tugas kepada peserta berikut:",
+            ['size' => 12]
+        );
+        $section->addTextBreak(1);
+
+        // Tambahkan tabel peserta
+        $table = $section->addTable(['borderSize' => 6, 'borderColor' => '999999', 'cellMargin' => 80]);
+        $table->addRow();
+        $table->addCell(1000)->addText("NO", ['bold' => true]);
+        $table->addCell(4000)->addText("USERNAME", ['bold' => true]);
+        $table->addCell(4000)->addText("NAMA LENGKAP", ['bold' => true]);
+        $table->addCell(4000)->addText("JABATAN", ['bold' => true]);
+
+        foreach ($sertifikasi->detail_peserta_sertifikasi as $index => $peserta) {
+            $table->addRow();
+            $table->addCell(1000)->addText($index + 1);
+            $table->addCell(4000)->addText($peserta->username);
+            $table->addCell(4000)->addText($peserta->nama_lengkap);
+            $table->addCell(4000)->addText($peserta->level->nama_level ?? 'Tidak Tersedia');
+        }
+
+        // Tambahkan penutup surat
+        $section->addTextBreak(2);
+        $section->addText("Demikian permohonan ini atas perhatiannya kami sampaikan terima kasih.", ['size' => 12]);
+        $section->addTextBreak(2);
+        $section->addText("Ketua Jurusan", ['size' => 12]);
+        $section->addTextBreak(3);
+        $section->addText($user->nama_lengkap, ['size' => 12, 'bold' => true]);
+
+        // Simpan file
+        $fileName = "Draft_Surat_Tugas_{$sertifikasi->nama_sertifikasi}.docx";
+        $filePath = storage_path("app/public/{$fileName}");
+
+        $phpWordWriter = IOFactory::createWriter($phpWord, 'Word2007');
+        $phpWordWriter->save($filePath);
+
+        return response()->download($filePath)->deleteFileAfterSend(true);
     }
 }

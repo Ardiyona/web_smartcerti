@@ -58,6 +58,10 @@
                     </table>
                 </div>
                 <div class="modal-footer">
+                    @if ($sertifikasi->status_sertifikasi == 'terima')
+                        <a href="{{ url('/sertifikasi/' . $sertifikasi->id_sertifikasi . '/generate') }}" type="submit"
+                            class="btn btn-success"><i class="fa fa-file-pdf"></i>Download Draft Surat Tugas</a>
+                    @endif
                     <button type="button" data-dismiss="modal" class="btn btn-warning">Batal</button>
                     <button type="submit" class="btn btn-primary">Simpan</button>
                 </div>
@@ -75,7 +79,8 @@
                 },
                 submitHandler: function(form) {
                     var formData = new FormData(document.getElementById('form-edit'));
-                    console.log('Files in FormData:', formData.get('bukti_sertifikasi[]')); // Jika menggunakan array
+                    console.log('Files in FormData:', formData.get(
+                    'bukti_sertifikasi[]')); // Jika menggunakan array
                     console.log('All FormData:', [...formData.entries()]);
                     $.ajax({
                         url: form.action,
