@@ -138,47 +138,47 @@ class DashboardController extends Controller
         // ];
 
 
-                // Data Chart.js
-                $pelatihanData = PelatihanModel::with('periode')
-                ->selectRaw('COUNT(*) as total, periode.tahun_periode as tahun')
-                ->join('periode', 'pelatihan.id_periode', '=', 'periode.id_periode')
-                ->groupBy('periode.tahun_periode')
-                ->get();
-    
-            $sertifikasiData = SertifikasiModel::with('periode')
-                ->selectRaw('COUNT(*) as total, periode.tahun_periode as tahun')
-                ->join('periode', 'sertifikasi.id_periode', '=', 'periode.id_periode')
-                ->groupBy('periode.tahun_periode')
-                ->get();
-    
-            // Ambil semua tahun dari tabel periode (menghindari kehilangan tahun yang tidak ada di pelatihan atau sertifikasi)
-            $allYears = DB::table('periode')->pluck('tahun_periode')->unique()->sort();
-    
-            // Hitung jumlah berdasarkan tahun, pastikan semua tahun dari $allYears digunakan
-            $pelatihanCounts = $allYears->map(fn($year) => $pelatihanData->firstWhere('tahun', $year)->total ?? 0);
-            $sertifikasiCounts = $allYears->map(fn($year) => $sertifikasiData->firstWhere('tahun', $year)->total ?? 0);
-    
-            // Data untuk Chart.js
-            $chartData = [
-                'labels' => $allYears, // Tahun sebagai label
-                'datasets' => [
-                    [
-                        'label' => 'Pelatihan',
-                        'data' => $pelatihanCounts,
-                        'backgroundColor' => 'rgba(54, 162, 235, 0.6)',
-                        'borderColor' => 'rgba(54, 162, 235, 1)',
-                        'borderWidth' => 1,
-                    ],
-                    [
-                        'label' => 'Sertifikasi',
-                        'data' => $sertifikasiCounts,
-                        'backgroundColor' => 'rgba(255, 99, 132, 0.6)',
-                        'borderColor' => 'rgba(255, 99, 132, 1)',
-                        'borderWidth' => 1,
-                    ],
+        // Data Chart.js
+        $pelatihanData = PelatihanModel::with('periode')
+            ->selectRaw('COUNT(*) as total, periode.tahun_periode as tahun')
+            ->join('periode', 'pelatihan.id_periode', '=', 'periode.id_periode')
+            ->groupBy('periode.tahun_periode')
+            ->get();
+
+        $sertifikasiData = SertifikasiModel::with('periode')
+            ->selectRaw('COUNT(*) as total, periode.tahun_periode as tahun')
+            ->join('periode', 'sertifikasi.id_periode', '=', 'periode.id_periode')
+            ->groupBy('periode.tahun_periode')
+            ->get();
+
+        // Ambil semua tahun dari tabel periode (menghindari kehilangan tahun yang tidak ada di pelatihan atau sertifikasi)
+        $allYears = DB::table('periode')->pluck('tahun_periode')->unique()->sort();
+
+        // Hitung jumlah berdasarkan tahun, pastikan semua tahun dari $allYears digunakan
+        $pelatihanCounts = $allYears->map(fn($year) => $pelatihanData->firstWhere('tahun', $year)->total ?? 0);
+        $sertifikasiCounts = $allYears->map(fn($year) => $sertifikasiData->firstWhere('tahun', $year)->total ?? 0);
+
+        // Data untuk Chart.js
+        $chartData = [
+            'labels' => $allYears, // Tahun sebagai label
+            'datasets' => [
+                [
+                    'label' => 'Pelatihan',
+                    'data' => $pelatihanCounts,
+                    'backgroundColor' => 'rgba(54, 162, 235, 0.6)',
+                    'borderColor' => 'rgba(54, 162, 235, 1)',
+                    'borderWidth' => 1,
                 ],
-            ];
-    
+                [
+                    'label' => 'Sertifikasi',
+                    'data' => $sertifikasiCounts,
+                    'backgroundColor' => 'rgba(255, 99, 132, 0.6)',
+                    'borderColor' => 'rgba(255, 99, 132, 1)',
+                    'borderWidth' => 1,
+                ],
+            ],
+        ];
+
 
         // Mengirim data ke view
         return view('dashboard', compact(

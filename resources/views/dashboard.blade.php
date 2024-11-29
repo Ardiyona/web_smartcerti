@@ -186,6 +186,7 @@
             <!-- ./col -->
 
             <!-- BAR CHART -->
+            @if(in_array(Auth::user()->id_level, [1, 2]))
             <div class="card card-success" style="margin-bottom: 0;">
                 <div class="card-header" style="padding-bottom: 0.5rem;">
                     <h3 class="card-title">Bar Chart</h3>
@@ -225,6 +226,7 @@
                     }
                 });
             </script>
+             @endif
             <!-- /.card -->
         </div>
         <!-- /.row -->
