@@ -17,31 +17,30 @@ class PeriodeController extends Controller
             'title' => 'Daftar Periode',
             'list' => ['Home', 'Periode']
         ];
-    
+
         $page = (object)[
             'title' => 'Daftar periode yang terdaftar dalam sistem'
         ];
-    
+
         $activeMenu = 'periode';
-    
+
         // Mengambil daftar tahun_periode unik dari tabel Periode
         $tahun_periode_list = PeriodeModel::select('tahun_periode')->distinct()->orderBy('tahun_periode', 'asc')->get();
-    
+
         $periode = PeriodeModel::all();
-    
+
         return view('periode.index', [
-            'breadcrumb' => $breadcrumb, 
-            'page' => $page, 
+            'breadcrumb' => $breadcrumb,
+            'page' => $page,
             'activeMenu' => $activeMenu,
             'periode' => $periode,
-            'tahun_periode_list' => $tahun_periode_list  // Kirim variabel ke view
+            'tahun_periode_list' => $tahun_periode_list
         ]);
     }
-    
-    // Fetch data for DataTables (AJAX)
+
     public function list()
     {
-        $periode = PeriodeModel::select('id_periode', 'tanggal_mulai', 'tanggal_berakhir', 'tahun_periode');
+        $periode = PeriodeModel::select('id_periode', 'tahun_periode');
 
         return DataTables::of($periode)
             ->addIndexColumn()
@@ -60,13 +59,10 @@ class PeriodeController extends Controller
         return view('periode.create');
     }
 
-    // Store new periode
     public function store(Request $request)
     {
         if ($request->ajax() || $request->wantsJson()) {
             $rules = [
-                'tanggal_mulai'   => 'required|date',
-                'tanggal_berakhir' => 'required|date|after:tanggal_mulai',
                 'tahun_periode' => 'required|digits:4'
             ];
 
@@ -107,8 +103,6 @@ class PeriodeController extends Controller
     {
         if ($request->ajax() || $request->wantsJson()) {
             $rules = [
-                'tanggal_mulai'   => 'required|date',
-                'tanggal_berakhir' => 'required|date|after:tanggal_mulai',
                 'tahun_periode' => 'required|digits:4'
             ];
 
@@ -168,7 +162,7 @@ class PeriodeController extends Controller
 
     public function export_pdf()
     {
-        $periode = PeriodeModel::select('tanggal_mulai', 'tanggal_berakhir', 'tahun_periode')
+        $periode = PeriodeModel::select('tahun_periode')
             ->orderBy('tahun_periode')
             ->get();
 
@@ -190,9 +184,9 @@ class PeriodeController extends Controller
             $rules = [
                 'file_periode' => ['required', 'mimes:xlsx', 'max:1024']
             ];
-            
+
             $validator = Validator::make($request->all(), $rules);
-            
+
             if ($validator->fails()) {
                 return response()->json([
                     'status' => false,
@@ -200,7 +194,7 @@ class PeriodeController extends Controller
                     'msgField' => $validator->errors()
                 ]);
             }
-            
+
             $file = $request->file('file_periode');
             $reader = IOFactory::createReader('Xlsx');
             $reader->setReadDataOnly(true);
@@ -208,24 +202,22 @@ class PeriodeController extends Controller
             $sheet = $spreadsheet->getActiveSheet();
             $data = $sheet->toArray(null, false, true, true);
             $insert = [];
-            
+
             if (count($data) > 1) {
                 foreach ($data as $baris => $value) {
                     if ($baris > 1) {
                         $insert[] = [
-                            'tanggal_mulai' => $value['A'],
-                            'tanggal_berakhir' => $value['B'],
-                            'tahun_periode' => $value['C'],
+                            'tahun_periode' => $value['A'],
                             'created_at' => now(),
                             'updated_at' => now()
                         ];
                     }
                 }
-                
+
                 if (count($insert) > 0) {
                     PeriodeModel::insertOrIgnore($insert);
                 }
-                
+
                 return response()->json([
                     'status' => true,
                     'message' => 'Data berhasil diimport'

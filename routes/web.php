@@ -217,7 +217,7 @@ Route::prefix('periode')->group(function () {
     Route::get('/{id}/show', [PeriodeController::class, 'show']);
     Route::get('/{id}/edit', [PeriodeController::class, 'edit']);
     Route::put('/{id}/update', [PeriodeController::class, 'update']);
-    Route::post('/{id}/delete', [PeriodeController::class, 'delete']);
+    Route::delete('/{id}/delete', [PeriodeController::class, 'delete']);
     Route::get('/export_pdf', [PeriodeController::class, 'export_pdf']);
     Route::post('/import_ajax', [PeriodeController::class, 'import_ajax']);
     Route::get('/{id}/confirm', [PeriodeController::class, 'confirm']);
