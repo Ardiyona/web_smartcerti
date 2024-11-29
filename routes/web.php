@@ -230,6 +230,7 @@ Route::prefix('periode')->group(function () {
 Route::get('/penerimaanpermintaan', [PenerimaanPermintaanController::class, 'index']);
 Route::post('/penerimaanpermintaan/listSertifikasi', [PenerimaanPermintaanController::class, 'listSertifikasi']);
 Route::post('/penerimaanpermintaan/listPelatihan', [PenerimaanPermintaanController::class, 'listPelatihan']);
+Route::get('/penerimaanpermintaan/{id}/show_sertifikasi', [PenerimaanPermintaanController::class, 'show']);
 Route::put('/penerimaanpermintaan/{id}/status/{status}', [PenerimaanPermintaanController::class, 'updateStatus'])->name('penerimaanpermintaan.updateStatus');
 
 });
