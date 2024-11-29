@@ -668,7 +668,12 @@ class SertifikasiController extends Controller
     public function generate($id)
     {
         $sertifikasi = SertifikasiModel::with('vendor_sertifikasi', 'detail_peserta_sertifikasi')->find($id);
-        $user = Auth::user(); // Ambil data user yang login
+        $user = UserModel::select('user_id', 'username', 'nama_lengkap', 'avatar', 'id_level')
+        ->where('id_level', '2')
+        ->with('level')
+        ->first();
+
+        // dd($user->nama_lengkap);
 
         if (!$sertifikasi) {
             return redirect()->back()->with('error', 'Sertifikasi tidak ditemukan.');

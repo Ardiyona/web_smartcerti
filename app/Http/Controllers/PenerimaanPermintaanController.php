@@ -99,7 +99,7 @@ class PenerimaanPermintaanController extends Controller
                 'biaya',
                 DB::raw("'pelatihan' as kategori")
             )
-                ->where('status_pelatihan', 'menunggu')
+                ->whereIn('status_sertifikasi', ['tolak', 'terima', 'menunggu'])
                 ->with([
                     'vendor_pelatihan',
                     'jenis_pelatihan',
@@ -143,7 +143,7 @@ class PenerimaanPermintaanController extends Controller
     public function updateStatus($id, $status)
     {
         $sertifikasi = SertifikasiModel::find($id);
-    
+
         if ($sertifikasi) {
             // Validasi status yang diterima
             if (in_array($status, ['terima', 'tolak'])) {
