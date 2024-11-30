@@ -12,11 +12,15 @@ class ProfileController extends Controller
     // Method untuk menampilkan halaman profile
     public function index()
     {
-        // Ambil data user beserta relasi bidang minat dan mata kuliah
-        //$user = UserModel::with(['detail_daftar_user_bidang_minat', 'detail_daftar_user_matakuliah'])->findOrFail(Auth::id());
 
         // Ambil data user berdasarkan ID yang sedang login
         $user = UserModel::findOrFail(Auth::id());
+        
+        // Muat data relasi bidang minat dan mata kuliah
+        $userData = $user->load([
+            'detail_daftar_user_matakuliah', // Relasi mata kuliah
+            'detail_daftar_user_bidang_minat', // Relasi bidang minat
+        ]);
 
         // Breadcrumb dan active menu
         $breadcrumb = (object) [
@@ -30,6 +34,7 @@ class ProfileController extends Controller
             'user' => $user,
             'breadcrumb' => $breadcrumb,
             'activeMenu' => $activeMenu,
+            'data' => $userData,
         ]);
     }
 

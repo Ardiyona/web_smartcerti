@@ -38,4 +38,14 @@ class BidangMinatModel extends Model
             'id_pelatihan' // Related key di tabel pivot
         );
     }
+
+    public function detail_daftar_user_bidang_minat(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            UserModel::class,
+            'detail_user_bidang_minat', // Nama tabel pivot
+            'id_bidang_minat', // Foreign key di tabel pivot untuk mata kuliah
+            'id_user' // Foreign key di tabel pivot untuk user
+        );
+    }
 }

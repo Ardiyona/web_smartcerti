@@ -36,4 +36,14 @@ class MataKuliahModel extends Model
             'id_pelatihan' // Related key di tabel pivot
         );
     }
+
+    public function detail_daftar_user_matakuliah(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            UserModel::class,
+            'detail_user_matakuliah', // Nama tabel pivot
+            'id_matakuliah', // Foreign key di tabel pivot untuk mata kuliah
+            'id_user' // Foreign key di tabel pivot untuk user
+        );
+    }
 }
