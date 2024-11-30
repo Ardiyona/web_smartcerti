@@ -52,7 +52,7 @@ Route::get('/sertifikasiuser', [SertifikasiUserController::class, 'index']);
 Route::post('/sertifikasiuser/list', [SertifikasiUserController::class, 'list']);
 
 Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
-Route::post('/profile/update/{id}', [ProfileController::class, 'update'])->name('profile.update');
+Route::put('/profile/update/{id}', [ProfileController::class, 'update'])->name('profile.update');
 // user
 Route::group(['prefix' => 'user', 'middleware' => 'authorize:ADM'], function() {
     Route::get('/', [UserController::class, 'index']);        

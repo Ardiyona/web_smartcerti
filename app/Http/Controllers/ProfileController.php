@@ -9,34 +9,34 @@ use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
-    // Method untuk menampilkan halaman profile
-    public function index()
-    {
+   
+public function index()
+{
+    // Ambil data user berdasarkan ID yang sedang login
+    $user = UserModel::findOrFail(Auth::id());
 
-        // Ambil data user berdasarkan ID yang sedang login
-        $user = UserModel::findOrFail(Auth::id());
-        
-        // Muat data relasi bidang minat dan mata kuliah
-        $userData = $user->load([
-            'detail_daftar_user_matakuliah', // Relasi mata kuliah
-            'detail_daftar_user_bidang_minat', // Relasi bidang minat
-        ]);
+    // Muat data relasi bidang minat dan mata kuliah
+    $userData = $user->load([
+        'detail_daftar_user_matakuliah', // Relasi mata kuliah
+        'detail_daftar_user_bidang_minat', // Relasi bidang minat
+    ]);
 
-        // Breadcrumb dan active menu
-        $breadcrumb = (object) [
-            'title' => 'Profil',
-            'list' => ['Home', 'Profil']
-        ];
-        $activeMenu = 'profile';
+    // Breadcrumb dan active menu
+    $breadcrumb = (object) [
+        'title' => 'Profil',
+        'list' => ['Home', 'Profil']
+    ];
+    $activeMenu = 'profile';
 
-        // Return view, pastikan view path sesuai dengan struktur folder Anda
-        return view('profile.index', [
-            'user' => $user,
-            'breadcrumb' => $breadcrumb,
-            'activeMenu' => $activeMenu,
-            'data' => $userData,
-        ]);
-    }
+    // Return view
+    return view('profile.index', [
+        'user' => $user,
+        'breadcrumb' => $breadcrumb,
+        'activeMenu' => $activeMenu,
+        'data' => $userData,
+    ]);
+}
+
 
     // Method untuk memperbarui profile
     public function update(Request $request, $id)
@@ -44,15 +44,20 @@ class ProfileController extends Controller
         // Validasi input dari form
         $this->validate($request, [
             'username' => 'required|string|min:3|unique:user,username,' . $id . ',user_id',
-            'nama_lengkap' => 'nullable|string|max:100',
+            'nama_lengkap' => 'required|string|max:255',
+            'no_telp' => 'required|max:15',
+            'email' => 'required|max:255',
             'old_password' => 'nullable|string',
             'password' => 'nullable|min:5',
+            'avatar'   => 'image|mimes:jpeg,png,jpg|max:2048',
+
+            'id_bidang_minat' => 'required',
+            'id_matakuliah' => 'required',
         ]);
 
         // Ambil data user berdasarkan ID
         $user = UserModel::findOrFail($id);
-        $user->username = $request->username;
-        $user->nama_lengkap = $request->nama_lengkap;
+      
 
         // Jika password lama diisi dan benar, ganti password
         if ($request->filled('old_password') && Hash::check($request->old_password, $user->password)) {
@@ -76,6 +81,8 @@ class ProfileController extends Controller
             $request->file('avatar')->storeAs('public/photos', $fileName);
             $user->avatar = $fileName;
         }
+
+        $user->update($request->only('username', 'nama_lengkap', 'no_telp', 'email', 'avatar'));
 
         // Simpan perubahan data user
         $user->save();

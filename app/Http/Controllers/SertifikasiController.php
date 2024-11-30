@@ -579,7 +579,7 @@ class SertifikasiController extends Controller
 
             return response()->json([
                 'status' => true,
-                'message' => 'Data user berhasil disimpan'
+                'message' => 'Data sertifikasi berhasil disimpan'
             ]);
         }
         return redirect('/');
