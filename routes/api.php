@@ -88,6 +88,7 @@ Route::get('profiles', [ProfileController::class, 'index']);
 
 Route::get('my_accounts', [MyAccountController::class, 'index']);
 Route::put('my_accounts/update', [MyAccountController::class, 'update']);
+Route::put('my_accounts/update_password', [MyAccountController::class, 'updatePassword']);
 
 // Route::get('vendorsertifikasi', [VendorSertifikasiController::class, 'index']);
 // Route::get('jenissertifikasi', [JenisSertifikasiController::class, 'index']);
