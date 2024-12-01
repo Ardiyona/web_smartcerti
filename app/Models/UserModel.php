@@ -9,12 +9,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Yajra\DataTables\Html\Editor\Fields\Hidden;
 use Illuminate\Foundation\Auth\User as Authenticable;
+use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 
 class UserModel extends Authenticable implements JWTSubject
 {
-    use HasFactory;
+    use HasFactory, Notifiable;
 
     public function getJWTIdentifier()
     {

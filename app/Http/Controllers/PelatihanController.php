@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use PhpOffice\PhpWord\IOFactory;
+use PhpOffice\PhpWord\PhpWord;
 use Yajra\DataTables\Facades\DataTables;
 
 class PelatihanController extends Controller
@@ -508,7 +510,7 @@ class PelatihanController extends Controller
                 'lokasi' => 'required',
                 'level_pelatihan' => 'required',
                 'tanggal' => 'required|date',
-                'kuota_peserta' => 'required|integer',
+                'kuota_peserta' => 'nullable|integer',
                 'biaya' => 'required|string|max:255',
             ];
 
@@ -522,13 +524,15 @@ class PelatihanController extends Controller
                 ]);
             }
 
+            $kuotaPeserta = count($request->user_id);
+
             // Simpan data user dengan hanya field yang diperlukan
             $pelatihan = pelatihanModel::create([
                 'nama_pelatihan'  => $request->nama_pelatihan,
                 'lokasi'      => $request->lokasi,
                 'level_pelatihan'      => $request->level_pelatihan,
                 'tanggal'      => $request->tanggal,
-                'kuota_peserta'      => $request->kuota_peserta,
+                'kuota_peserta'      => $kuotaPeserta,
                 'biaya'      => $request->biaya,
                 'id_vendor_pelatihan'  => $request->id_vendor_pelatihan,
                 'id_jenis_pelatihan'  => $request->id_jenis_pelatihan,
@@ -632,5 +636,105 @@ class PelatihanController extends Controller
         }
     }
 
-    
+
+    public function generate($id)
+    {
+        $pelatihan = PelatihanModel::with('vendor_pelatihan', 'detail_peserta_pelatihan')->find($id);
+        $user = UserModel::select('user_id', 'username', 'nama_lengkap', 'avatar', 'id_level')
+        ->where('id_level', '2')
+        ->with('level')
+        ->first();
+
+        // dd($user->nama_lengkap);
+
+        if (!$pelatihan) {
+            return redirect()->back()->with('error', 'Pelatihan tidak ditemukan.');
+        }
+
+        // Buat instance PhpWord
+        $phpWord = new PhpWord();
+        $section = $phpWord->addSection();
+
+        // Tambahkan tabel untuk header dengan logo
+        $headerTable = $section->addTable();
+        $headerTable->addRow();
+
+        // Tambahkan logo
+        $logoPath = storage_path('Logo/logo.png'); // Ganti sesuai path logo Anda
+        $headerTable->addCell(2000)->addImage(
+            $logoPath,
+            [
+                'width' => 100,
+                'height' => 100,
+                'alignment' => 'left'
+            ]
+        );
+
+        // Tambahkan teks header
+        $cell = $headerTable->addCell(6000);
+        $cell->addText(
+            'KEMENTERIAN PENDIDIKAN, KEBUDAYAAN, RISET DAN TEKNOLOGI',
+            ['bold' => true, 'size' => 14, 'alignment' => 'center']
+        );
+        $cell->addText(
+            'POLITEKNIK NEGERI MALANG',
+            ['bold' => true, 'size' => 14, 'alignment' => 'center']
+        );
+        $cell->addText('Jl. Soekarno Hatta No.9 Malang 65141', ['size' => 10]);
+        $cell->addText('Telp (0341) 404424 – 404425 Fax (0341) 404420', ['size' => 10]);
+
+        $section->addTextBreak(1);
+
+        // Tambahkan informasi surat
+        $section->addText("Nomor: -", ['size' => 12]);
+        $section->addText("Lampiran: -", ['size' => 12]);
+        $section->addText("Perihal: Surat Tugas", ['size' => 12]);
+        $section->addTextBreak(1);
+
+        // Tambahkan keterangan kegiatan
+        $section->addText(
+            "Sehubungan dengan Kegiatan Peningkatan Kompetensi Sumber Daya Manusia diselenggarakan pelatihan tentang "
+                . $pelatihan->nama_pelatihan
+                . " yang diselenggarakan oleh "
+                . $pelatihan->vendor_pelatihan->nama
+                . " pada tanggal "
+                . $pelatihan->tanggal
+                . ", maka kami mohon diterbitkan Surat Tugas kepada peserta berikut:",
+            ['size' => 12]
+        );
+        $section->addTextBreak(1);
+
+        // Tambahkan tabel peserta
+        $table = $section->addTable(['borderSize' => 6, 'borderColor' => '999999', 'cellMargin' => 80]);
+        $table->addRow();
+        $table->addCell(1000)->addText("NO", ['bold' => true]);
+        $table->addCell(4000)->addText("USERNAME", ['bold' => true]);
+        $table->addCell(4000)->addText("NAMA LENGKAP", ['bold' => true]);
+        $table->addCell(4000)->addText("JABATAN", ['bold' => true]);
+
+        foreach ($pelatihan->detail_peserta_pelatihan as $index => $peserta) {
+            $table->addRow();
+            $table->addCell(1000)->addText($index + 1);
+            $table->addCell(4000)->addText($peserta->username);
+            $table->addCell(4000)->addText($peserta->nama_lengkap);
+            $table->addCell(4000)->addText($peserta->level->nama_level ?? 'Tidak Tersedia');
+        }
+
+        // Tambahkan penutup surat
+        $section->addTextBreak(2);
+        $section->addText("Demikian permohonan ini atas perhatiannya kami sampaikan terima kasih.", ['size' => 12]);
+        $section->addTextBreak(2);
+        $section->addText("Ketua Jurusan", ['size' => 12]);
+        $section->addTextBreak(3);
+        $section->addText($user->nama_lengkap, ['size' => 12, 'bold' => true]);
+
+        // Simpan file
+        $fileName = "Draft_Surat_Tugas_{$pelatihan->nama_pelatihan}.docx";
+        $filePath = storage_path("app/public/{$fileName}");
+
+        $phpWordWriter = IOFactory::createWriter($phpWord, 'Word2007');
+        $phpWordWriter->save($filePath);
+
+        return response()->download($filePath)->deleteFileAfterSend(true);
+    }
 }

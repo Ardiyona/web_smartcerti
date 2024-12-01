@@ -97,7 +97,6 @@ Route::group(['prefix' => 'sertifikasi'], function () {
     Route::put('/{id}/update', [SertifikasiController::class, 'update']);
     Route::get('/{id}/confirm', [SertifikasiController::class, 'confirm']);
     Route::delete('/{id}/delete', [SertifikasiController::class, 'delete']); 
-    Route::get('/{id}/generate', [SertifikasiController::class, 'generate']); 
 });
 Route::group(['prefix' => 'pelatihan'], function () {
     Route::get('/', [PelatihanController::class, 'index']);
@@ -113,6 +112,7 @@ Route::group(['prefix' => 'pelatihan'], function () {
     Route::put('/{id}/update', [PelatihanController::class, 'update']);
     Route::get('/{id}/confirm', [PelatihanController::class, 'confirm']);
     Route::delete('/{id}/delete', [PelatihanController::class, 'delete']); 
+    Route::get('/{id}/generate', [PelatihanController::class, 'generate']); 
 });
 
 //Route Mata Kuliah
@@ -231,6 +231,7 @@ Route::get('/penerimaanpermintaan', [PenerimaanPermintaanController::class, 'ind
 Route::post('/penerimaanpermintaan/listSertifikasi', [PenerimaanPermintaanController::class, 'listSertifikasi']);
 Route::post('/penerimaanpermintaan/listPelatihan', [PenerimaanPermintaanController::class, 'listPelatihan']);
 Route::get('/penerimaanpermintaan/{id}/show_sertifikasi', [PenerimaanPermintaanController::class, 'show']);
+Route::get('/penerimaanpermintaan/{id}/show_pelatihan', [PenerimaanPermintaanController::class, 'show']);
 Route::put('/penerimaanpermintaan/{id}/status/{status}', [PenerimaanPermintaanController::class, 'updateStatus'])->name('penerimaanpermintaan.updateStatus');
 
 });

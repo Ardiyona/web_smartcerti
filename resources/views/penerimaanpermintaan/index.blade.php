@@ -165,14 +165,14 @@
                         searchable: false
                     },
                     {
-                        data: "nama_program",
+                        data: "nama_sertifikasi",
                         className: "",
                         width: "9%",
                         orderable: true,
                         searchable: true
                     },
                     {
-                        data: "jenis_level",
+                        data: "jenis",
                         className: "",
                         width: "6%",
                         orderable: false,
@@ -196,7 +196,7 @@
                         searchable: false
                     },
                     {
-                        data: "status",
+                        data: "status_sertifikasi",
                         className: "",
                         width: "8%",
                         orderable: false,
@@ -262,14 +262,14 @@
                         searchable: false
                     },
                     {
-                        data: "nama_program",
+                        data: "nama_pelatihan",
                         className: "",
                         width: "9%",
                         orderable: true,
                         searchable: true
                     },
                     {
-                        data: "jenis_level",
+                        data: "level_pelatihan",
                         className: "",
                         width: "6%",
                         orderable: false,
@@ -293,7 +293,7 @@
                         searchable: false
                     },
                     {
-                        data: "status",
+                        data: "status_pelatihan",
                         className: "",
                         width: "8%",
                         orderable: false,

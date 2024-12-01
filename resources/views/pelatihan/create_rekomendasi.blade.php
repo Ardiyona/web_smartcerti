@@ -73,13 +73,6 @@
                     <small id="error-tanggal" class="error-text form-text text-danger"></small>
                 </div>
 
-                <!-- Kuota Peserta -->
-                <div class="form-group">
-                    <label>Kuota Peserta</label>
-                    <input type="number" name="kuota_peserta" id="kuota_peserta" class="form-control" required>
-                    <small id="error-kuota_peserta" class="error-text form-text text-danger"></small>
-                </div>
-
                 <!-- Biaya -->
                 <div class="form-group">
                     <label>Biaya</label>
@@ -166,10 +159,6 @@
                 },
                 tanggal: {
                     required: true,
-                },
-                kuota_peserta: {
-                    required: true,
-                    number: true
                 },
                 biaya: {
                     required: true,

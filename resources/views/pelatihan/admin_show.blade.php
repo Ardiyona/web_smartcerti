@@ -16,8 +16,8 @@
         </div>
     </div>
 @else
-    <form action="{{ url('/pelatihan/' . $pelatihan->id_pelatihan . '/admin_show_update') }}" method="POST"
-        id="form-edit" enctype="multipart/form-data">
+    <form action="{{ url('/pelatihan/' . $pelatihan->id_pelatihan . '/admin_show_update') }}" method="POST" id="form-edit"
+        enctype="multipart/form-data">
         @csrf
         @method('PUT')
         <div id="modal-master" class="modal-dialog modal-lg" role="document">
@@ -58,9 +58,13 @@
                     </table>
                 </div>
                 <div class="modal-footer">
+                    @if ($pelatihan->status_pelatihan == 'terima')
+                        <a href="{{ url('/pelatihan/' . $pelatihan->id_pelatihan . '/generate') }}" type="submit"
+                            class="btn btn-success"><i class="fa fa-file-pdf"></i>Download Draft Surat Tugas</a>
+                    @endif
                     <button type="button" data-dismiss="modal" class="btn btn-warning">Batal</button>
                     <button type="submit" class="btn btn-primary">Simpan</button>
-                   
+
                 </div>
             </div>
         </div>
@@ -76,7 +80,8 @@
                 },
                 submitHandler: function(form) {
                     var formData = new FormData(document.getElementById('form-edit'));
-                    console.log('Files in FormData:', formData.get('bukti_pelatihan[]')); // Jika menggunakan array
+                    console.log('Files in FormData:', formData.get(
+                    'bukti_pelatihan[]')); // Jika menggunakan array
                     console.log('All FormData:', [...formData.entries()]);
                     $.ajax({
                         url: form.action,

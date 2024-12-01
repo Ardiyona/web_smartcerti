@@ -4,8 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\PelatihanModel;
 use App\Models\SertifikasiModel;
+use App\Models\UserModel;
+use App\Notifications\NotifikasiPesertaPelatihan;
+use App\Notifications\NotifikasiPesertaSertifikasi;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification as FacadesNotification;
 use Yajra\DataTables\Facades\DataTables;
 
 class PenerimaanPermintaanController extends Controller
@@ -35,15 +39,15 @@ class PenerimaanPermintaanController extends Controller
         try {
             // Ambil data sertifikasi
             $sertifikasi = SertifikasiModel::select(
-                'id_sertifikasi as id',
+                'id_sertifikasi',
                 'id_vendor_sertifikasi',
                 'id_jenis_sertifikasi',
                 'id_periode',
-                'nama_sertifikasi as nama_program',
-                'jenis as jenis_level',
+                'nama_sertifikasi',
+                'jenis',
                 'tanggal',
                 'kuota_peserta',
-                'status_sertifikasi as status',
+                'status_sertifikasi',
                 'biaya',
                 DB::raw("'sertifikasi' as kategori")
             )
@@ -67,7 +71,7 @@ class PenerimaanPermintaanController extends Controller
                     return $peserta ? $peserta->pluck('nama_lengkap')->implode(', ') : '-';
                 })
                 ->addColumn('aksi', function ($row) {
-                    $btn = '<button onclick="modalAction(\'' . url('/penerimaanpermintaan/' . $row->id . '/show_sertifikasi') . '\')" class="btn btn-info btn-sm">Detail</button> ';
+                    $btn = '<button onclick="modalAction(\'' . url('/penerimaanpermintaan/' . $row->id_sertifikasi . '/show_sertifikasi') . '\')" class="btn btn-info btn-sm">Detail</button> ';
                     return $btn;
                 })
                 ->rawColumns(['aksi'])
@@ -87,19 +91,19 @@ class PenerimaanPermintaanController extends Controller
 
             // Ambil data pelatihan
             $pelatihan = PelatihanModel::select(
-                'id_pelatihan as id',
+                'id_pelatihan',
                 'id_vendor_pelatihan',
                 'id_jenis_pelatihan',
                 'id_periode',
-                'nama_pelatihan as nama_program',
-                'level_pelatihan as jenis_level',
+                'nama_pelatihan',
+                'level_pelatihan',
                 'tanggal',
                 'kuota_peserta',
-                'status_pelatihan as status',
+                'status_pelatihan',
                 'biaya',
                 DB::raw("'pelatihan' as kategori")
             )
-                ->whereIn('status_sertifikasi', ['tolak', 'terima', 'menunggu'])
+                ->whereIn('status_pelatihan', ['tolak', 'terima', 'menunggu'])
                 ->with([
                     'vendor_pelatihan',
                     'jenis_pelatihan',
@@ -115,7 +119,7 @@ class PenerimaanPermintaanController extends Controller
                     return $pelatihan->detail_peserta_pelatihan->pluck('nama_lengkap')->implode(', ');
                 })
                 ->addColumn('aksi', function ($row) {
-                    $btn = '<button onclick="modalAction(\'' . url('/penerimaanpermintaan/' . $row->id . '/show_pelatihan') . '\')" class="btn btn-info btn-sm">Detail</button> ';
+                    $btn = '<button onclick="modalAction(\'' . url('/penerimaanpermintaan/' . $row->id_pelatihan . '/show_pelatihan') . '\')" class="btn btn-info btn-sm">Detail</button> ';
                     return $btn;
                 })
                 ->rawColumns(['aksi'])
@@ -128,6 +132,7 @@ class PenerimaanPermintaanController extends Controller
             ], 500);
         }
     }
+
 
     public function show(String $id)
     {
@@ -143,18 +148,54 @@ class PenerimaanPermintaanController extends Controller
     public function updateStatus($id, $status)
     {
         $sertifikasi = SertifikasiModel::find($id);
+        $pelatihan = PelatihanModel::find($id);
 
         if ($sertifikasi) {
             // Validasi status yang diterima
             if (in_array($status, ['terima', 'tolak'])) {
+                // Ambil semua peserta terkait dari pivot
+                $pesertaSertifikasi = $sertifikasi->detail_peserta_sertifikasi()->pluck('detail_peserta_sertifikasi.user_id');
+
+                // dd($pesertaSertifikasi);
+    
+                // Kirim notifikasi ke setiap peserta
+                foreach ($pesertaSertifikasi as $userId) {
+                    $pesertaUser = UserModel::find($userId);
+                    if ($pesertaUser) {
+                        FacadesNotification::send($pesertaUser, new NotifikasiPesertaSertifikasi($sertifikasi));
+                    }
+                }
                 $sertifikasi->status_sertifikasi = $status;
                 $sertifikasi->save();
-                return redirect()->back()->with('success', 'Status sertifikasi berhasil diperbarui.');
+    
+                return redirect()->back()->with('success', 'Status sertifikasi berhasil diperbarui dan notifikasi telah dikirim.');
+            } else {
+                return redirect()->back()->with('error', 'Status tidak valid.');
+            }
+        } elseif ($pelatihan) {
+            // Validasi status yang diterima
+            if (in_array($status, ['terima', 'tolak'])) {
+                // Ambil semua peserta terkait dari pivot
+                $pesertaPelatihan = $pelatihan->detail_peserta_pelatihan()->pluck('detail_peserta_pelatihan.user_id');
+
+                // dd($pesertapelatihan);
+    
+                // Kirim notifikasi ke setiap peserta
+                foreach ($pesertaPelatihan as $userId) {
+                    $pesertaUser = UserModel::find($userId);
+                    if ($pesertaUser) {
+                        FacadesNotification::send($pesertaUser, new NotifikasiPesertaPelatihan($pelatihan));
+                    }
+                }
+                $pelatihan->status_pelatihan = $status;
+                $pelatihan->save();
+    
+                return redirect()->back()->with('success', 'Status pelatihan berhasil diperbarui dan notifikasi telah dikirim.');
             } else {
                 return redirect()->back()->with('error', 'Status tidak valid.');
             }
         } else {
-            return redirect()->back()->with('error', 'Sertifikasi tidak ditemukan.');
+            return redirect()->back()->with('error', 'Data Sertifikasi atau Pelatihan tidak ditemukan.');
         }
     }
 }
