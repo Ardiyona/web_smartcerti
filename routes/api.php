@@ -82,6 +82,8 @@ Route::get('pimpinanPelatihans', [PimpinanPelatihanDosenController::class, 'inde
 Route::get('pimpinanSertifikasis', [PimpinanSertifikasiDosenController::class, 'index']);
 
 Route::get('/penerimaanPelatihans', [PenerimaanPermintaanController::class, 'listPelatihan']);
+Route::put('/penerimaanPelatihans/updateStatusPelatihan/{id_pelatihan}', [PenerimaanPermintaanController::class, 'updateStatusPelatihan']);
+Route::put('/penerimaanSertifikasis/updateStatusSertifikasi/{id_sertifikasi}', [PenerimaanPermintaanController::class, 'updateStatusSertifikasi']);
 Route::get('/penerimaanSertifikasis', [PenerimaanPermintaanController::class, 'listSertifikasi']);
 
 Route::get('profiles', [ProfileController::class, 'index']);
