@@ -7,6 +7,7 @@ use App\Http\Controllers\api\MataKuliahController;
 use App\Http\Controllers\api\MyAccountController;
 use App\Http\Controllers\Api\PelatihanController;
 use App\Http\Controllers\api\PenerimaanPermintaanController;
+use App\Http\Controllers\Api\PeriodeController;
 use App\Http\Controllers\api\PimpinanPelatihanDosenController;
 use App\Http\Controllers\api\PimpinanSertifikasiDosenController;
 use App\Http\Controllers\Api\ProfileController;
@@ -92,8 +93,11 @@ Route::get('my_accounts', [MyAccountController::class, 'index']);
 Route::put('my_accounts/update', [MyAccountController::class, 'update']);
 Route::put('my_accounts/update_password', [MyAccountController::class, 'updatePassword']);
 
-// Route::get('vendorsertifikasi', [VendorSertifikasiController::class, 'index']);
-// Route::get('jenissertifikasi', [JenisSertifikasiController::class, 'index']);
+Route::get('vendorSertifikasi', [VendorSertifikasiController::class, 'index']);
+Route::get('jenisSertifikasi', [JenisSertifikasiController::class, 'index']);
+Route::get('bidangMinat', [BidangMinatController::class, 'index']);
+Route::get('periodes', [PeriodeController::class, 'index']);
+Route::get('mataKuliahs', [MataKuliahController::class, 'index']);
 
 
 });

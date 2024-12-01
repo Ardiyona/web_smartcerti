@@ -10,7 +10,18 @@ class MataKuliahController extends Controller
 {
     public function index()
     {
-        return MataKuliahModel::all();
+        try {
+            $periode = MataKuliahModel::all(); // Ambil semua data periode
+            return response()->json([
+                'success' => true,
+                'data' => $periode,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error fetching periode: ' . $e->getMessage(),
+            ], 500);
+        }
     }
     public function store(Request $request)
     {

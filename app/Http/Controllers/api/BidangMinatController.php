@@ -10,7 +10,18 @@ class BidangMinatController extends Controller
 {
     public function index()
     {
-        return BidangMinatModel::all();
+        try {
+            $bidangMinat = BidangMinatModel::all(); // Ambil semua data vendor
+            return response()->json([
+                'success' => true,
+                'data' => $bidangMinat,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error fetching bidangMinat: ' . $e->getMessage(),
+            ], 500);
+        }
     }
     public function store(Request $request)
     {

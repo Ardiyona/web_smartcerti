@@ -19,8 +19,8 @@ class SertifikasiController extends Controller
         $user = Auth::guard('api')->user();
         // Mengambil sertifikasi yang hanya dimiliki oleh user yang sedang login
         $sertifikasi = $user->detail_peserta_sertifikasi()
-        ->with('vendor_sertifikasi', 'jenis_sertifikasi', 'periode', 'bidang_minat_sertifikasi', 'mata_kuliah_sertifikasi')
-        ->get();
+            ->with('vendor_sertifikasi', 'jenis_sertifikasi', 'periode', 'bidang_minat_sertifikasi', 'mata_kuliah_sertifikasi')
+            ->get();
 
         // Mengembalikan response dalam bentuk JSON
         return response()->json([
@@ -34,7 +34,7 @@ class SertifikasiController extends Controller
         // Validasi input
         $validator = Validator::make($request->all(), [
             'nama_sertifikasi' => 'required|string|max:255',
-            'no_sertifikasi' => 'required|string|max:100|unique:sertifikasi,no_sertifikasi',
+            'no_sertifikasi' => 'required|string|max:100|unique:detail_peserta_sertifikasi,no_sertifikasi',
             'jenis' => 'required|string',
             'tanggal' => 'required|date',
             'bukti_sertifikasi' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
@@ -63,32 +63,35 @@ class SertifikasiController extends Controller
         // Cek apakah file bukti sertifikasi diunggah
         if ($request->hasFile('bukti_sertifikasi')) {
             $bukti_sertifikasi = time() . '_' . $request->file('bukti_sertifikasi')->getClientOriginalName();
-            $request->file('bukti_sertifikasi')->storeAs('public/images/', $bukti_sertifikasi);
+            $bukti_sertifikasi = $request->file('bukti_sertifikasi')->storeAs('public/images/', $bukti_sertifikasi);
         }
 
         $sertifikasi = SertifikasiModel::create([
-            'nama_sertifikasi'  => $request->nama_sertifikasi,
-            'no_sertifikasi'      => $request->no_sertifikasi,
-            'jenis'      => $request->jenis,
-            'tanggal'      => $request->tanggal,
-            'bukti_sertifikasi'      => $bukti_sertifikasi,
-            'masa_berlaku'      => $request->masa_berlaku,
-            'kuota_peserta'      => $request->kuota_peserta,
-            'biaya'      => $request->biaya,
-            'id_vendor_sertifikasi'  => $request->id_vendor_sertifikasi,
-            'id_jenis_sertifikasi'  => $request->id_jenis_sertifikasi,
-            'id_periode'  => $request->id_periode
+            'nama_sertifikasi' => $request->nama_sertifikasi,
+            'no_sertifikasi' => $request->no_sertifikasi,
+            'jenis' => $request->jenis,
+            'tanggal' => $request->tanggal,
+            'bukti_sertifikasi' => $bukti_sertifikasi,
+            'masa_berlaku' => $request->masa_berlaku,
+            'kuota_peserta' => $request->kuota_peserta,
+            'biaya' => $request->biaya,
+            'id_vendor_sertifikasi' => $request->id_vendor_sertifikasi,
+            'id_jenis_sertifikasi' => $request->id_jenis_sertifikasi,
+            'id_periode' => $request->id_periode
         ]);
         $sertifikasi->bidang_minat_sertifikasi()->sync($request->id_bidang_minat);
         $sertifikasi->mata_kuliah_sertifikasi()->sync($request->id_matakuliah);
 
         $userId = Auth::id();
 
-        $sertifikasi->detail_peserta_sertifikasi()->attach($userId);
+        $sertifikasi->detail_peserta_sertifikasi()->attach($userId, [
+            'no_sertifikasi' => $request->no_sertifikasi,
+            'bukti_sertifikasi' => $bukti_sertifikasi
+        ]);
 
         return response()->json([
             'success' => true,
-            'message' => 'Sertifikasi berhasil dibuat',
+            'message' => 'Sertifikasi berhasil dibuat terima kasih',
             'data' => $sertifikasi
         ], 201);
     }
@@ -117,18 +120,22 @@ class SertifikasiController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'nama_sertifikasi' => 'nullable|string|max:255',
-            'no_sertifikasi' => 'nullable|string|max:100|unique:sertifikasi,no_sertifikasi,' . $sertifikasi->id_sertifikasi . ',id_sertifikasi',
+            // 'no_sertifikasi' => 'nullable|string|max:100|unique:sertifikasi,no_sertifikasi,' . $sertifikasi->id_sertifikasi . ',id_sertifikasi',
+            'no_sertifikasi' => 'nullable|string',
             'jenis' => 'nullable|string',
             'tanggal' => 'nullable|date',
             'bukti_sertifikasi' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
             'masa_berlaku' => 'nullable|date',
             'kuota_peserta' => 'nullable|integer',
             'biaya' => 'nullable|numeric',
-            'id_vendor_sertifikasi' => 'nullable|integer|exists:vendor_sertifikasis,id_vendor_sertifikasi',
-            'id_jenis_sertifikasi' => 'nullable|integer|exists:jenis_sertifikasis,id_jenis_sertifikasi',
-            'id_periode' => 'nullable|integer|exists:periodes,id_periode',
-            'id_bidang_minat' => 'nullable|array',
-            'id_matakuliah' => 'nullable|array',
+            // 'id_vendor_sertifikasi' => 'nullable|integer|exists:vendor_sertifikasis,id_vendor_sertifikasi',
+            'id_vendor_sertifikasi' => 'required|integer',
+            // 'id_jenis_sertifikasi' => 'nullable|integer|exists:jenis_sertifikasis,id_jenis_sertifikasi',
+            'id_jenis_sertifikasi' => 'required|integer',
+            // 'id_periode' => 'nullable|integer|exists:periodes,id_periode',
+            'id_periode' => 'required|integer',
+            'id_bidang_minat' => 'nullable',
+            'id_matakuliah' => 'nullable',
         ]);
 
         // Return error jika validasi gagal
@@ -160,8 +167,17 @@ class SertifikasiController extends Controller
             if ($bukti_sertifikasi) {
                 Storage::delete($bukti_sertifikasi);
             }
+            $bukti_sertifikasi = time() . '_' . $request->file('bukti_sertifikasi')->getClientOriginalName();
             // Simpan file baru
-            $bukti_sertifikasi = $request->file('bukti_sertifikasi')->store('public/images');
+            $bukti_sertifikasi = $request->file('bukti_sertifikasi')->storeAs('public/bukti_sertifikasi', $bukti_sertifikasi);
+
+            $sertifikasi->detail_peserta_sertifikasi()->updateExistingPivot(
+                Auth::id(),
+                [
+                    'no_sertifikasi' => $request->no_sertifikasi,
+                    'bukti_sertifikasi' => $bukti_sertifikasi
+                ]
+            );
         }
 
         $sertifikasi->save();
