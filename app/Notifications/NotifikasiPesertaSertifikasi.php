@@ -58,6 +58,7 @@ class NotifikasiPesertaSertifikasi extends Notification
             'jenis' => $this->sertifikasi->jenis,
             'title' => 'Sertifikasi',
             'massages' => 'Terdapat kegiatan ' . $this->sertifikasi->nama_sertifikasi,
+            'url' => url('notifikasi_sertifikasi/' . $this->sertifikasi->id_sertifikasi),
         ];
     }
 }

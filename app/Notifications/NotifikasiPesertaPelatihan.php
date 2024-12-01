@@ -59,6 +59,7 @@ class NotifikasiPesertaPelatihan extends Notification
             'alamat' => $this->pelatihan->alamat,
             'title' => 'Pelatihan',
             'massages' => 'Terdapat kegiatan ' . $this->pelatihan->nama_pelatihan,
+            'url' => url('notifikasi_pelatihan/' . $this->pelatihan->id_pelatihan),
         ];
     }
 }

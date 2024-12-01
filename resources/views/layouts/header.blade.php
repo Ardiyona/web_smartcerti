@@ -25,22 +25,27 @@
             <li class="nav-item dropdown">
                 <a class="nav-link" data-toggle="dropdown" href="#">
                     <i class="far fa-bell"></i>
-                    <span class="badge badge-warning navbar-badge">{{ Auth()->user()->unreadNotifications->count() }}</span>
+                    <span
+                        class="badge badge-warning navbar-badge">{{ Auth()->user()->unreadNotifications->count() }}</span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                     <span class="dropdown-item dropdown-header">Notifications</span>
-                    @foreach (Auth()->user()->unreadNotifications as $notification)
+                    @if (Auth()->user()->unreadNotifications->count() > 0)
+                        @foreach (Auth()->user()->unreadNotifications as $notification)
+                            <div class="dropdown-divider"></div>
+                            <a href="{{ url($notification->data['url']) }}" class="dropdown-item">
+                                <p class="dropdown-item-title font-weight-bold">
+                                    {{ $notification->data['title'] }}
+                                    <span
+                                        class="float-right text-muted text-sm font-weight-normal">{{ $notification->created_at->diffForHumans() }}</span>
+                                </p>
+                                <p class="notification-text">{{ $notification->data['massages'] }}</p>
+                            </a>
+                        @endforeach
+                    @else
+                        <div class="dropdown-item">No Notifications</div>
+                    @endif
                     <div class="dropdown-divider"></div>
-                    <a href="#" class="dropdown-item">
-                        <p class="dropdown-item-title font-weight-bold">
-                            {{ $notification->data['title'] }}
-                            <span class="float-right text-muted text-sm font-weight-normal">{{ $notification->created_at->diffForHumans() }}</span>
-                        </p>
-                        <p class="notification-text">{{ $notification->data['massages'] }}</p>
-                    </a>
-                    @endforeach
-                    <div class="dropdown-divider"></div>
-                    <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
                 </div>
             </li>
         @endif

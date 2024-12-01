@@ -13,6 +13,7 @@ use App\Http\Controllers\VendorSertifikasiController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\JenisPelatihanController;
 use App\Http\Controllers\LandingPageController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PelatihanController;
 use App\Http\Controllers\PelatihanUserController;
 use App\Http\Controllers\PenerimaanPermintaanController;
@@ -233,6 +234,10 @@ Route::post('/penerimaanpermintaan/listPelatihan', [PenerimaanPermintaanControll
 Route::get('/penerimaanpermintaan/{id}/show_sertifikasi', [PenerimaanPermintaanController::class, 'show']);
 Route::get('/penerimaanpermintaan/{id}/show_pelatihan', [PenerimaanPermintaanController::class, 'show']);
 Route::put('/penerimaanpermintaan/{id}/status/{status}', [PenerimaanPermintaanController::class, 'updateStatus'])->name('penerimaanpermintaan.updateStatus');
+
+
+Route::get('notifikasi_sertifikasi/{id}', [NotificationController::class, 'indexSertifikasi'])->name('notifikasi_sertifikasi.show');
+Route::get('notifikasi_pelatihan/{id}', [NotificationController::class, 'indexPelatihan'])->name('notifikasi_pelatihan.show');
 
 });
 
