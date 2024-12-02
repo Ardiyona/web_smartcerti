@@ -1,6 +1,8 @@
 @extends('layouts.template')
 
-@section('title')| Pelatihan @endsection
+@section('title')
+    | Pelatihan
+@endsection
 
 @section('content')
     <div id="myModal" class="modal fade animate shake" tabindex="-1" role="dialog" data-backdrop="static"
@@ -9,13 +11,13 @@
         <div class="card-header">
             <h3 class="card-title">{{ $page->title }}</h3>
             <div class="card-tools">
-            @if (Auth::user()->id_level == 1)
-                <button onclick="modalAction(`{{ url('/pelatihan/create_rekomendasi') }}`)" class="btn btn-success"
-                    style="background-color: #EF5428; border-color: #EF5428;">Tambah Rekomendasi</button>
-            @endif
-                <button onclick="modalAction(`{{ url('/pelatihan/create') }}`)" class="btn btn-success" 
-                style="background-color: #EF5428; border-color: #EF5428;"> <i class="fas fa-plus"></i> Tambah</button>
-                
+                @if (Auth::user()->id_level == 1)
+                    <button onclick="modalAction(`{{ url('/pelatihan/create_rekomendasi') }}`)" class="btn btn-success"
+                        style="background-color: #EF5428; border-color: #EF5428;">Tambah Rekomendasi</button>
+                @endif
+                <button onclick="modalAction(`{{ url('/pelatihan/create') }}`)" class="btn btn-success"
+                    style="background-color: #EF5428; border-color: #EF5428;"> <i class="fas fa-plus"></i> Tambah</button>
+
             </div>
         </div>
         <div class="card-body">
@@ -29,17 +31,22 @@
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Nama Vendor</th>
+                        @if (Auth::user()->id_level != 1)
+                            <th>Nama Vendor</th>
+                        @endif
                         <th>Jenis Pelatihan</th>
-                        <th>Periode</th>          
-                        <th>Nama Pelatihan</th>                     
+                        <th>Periode</th>
+                        <th>Nama Pelatihan</th>
                         <th>Lokasi</th>
                         <th>Level Pelatihan</th>
-                        <th>Tanggal</th>
+                        @if (Auth::user()->id_level != 1)
+                            <th>Tanggal</th>
+                        @endif
                         <th>Tag Bidang Minat</th>
                         <th>Tag Mata Kuliah</th>
                         @if (Auth::user()->id_level == 1)
                             <th>Nama Peserta</th>
+                            <th>Status</th>
                         @endif
                         <th>Aksi</th>
                     </tr>
@@ -49,7 +56,7 @@
     </div>
 @endsection
 @push('css')
-<style>
+    <style>
         .card.card-outline.card-primary {
             border-color: #375E97 !important;
         }
@@ -64,119 +71,131 @@
         }
         var dataPelatihan;
         $(document).ready(function() {
-    // Cek apakah user adalah admin (id_level = 1)
-    var isAdmin = {{ Auth::user()->id_level == 1 ? 'true' : 'false' }};
+            // Cek apakah user adalah admin (id_level = 1)
+            var isAdmin = {{ Auth::user()->id_level == 1 ? 'true' : 'false' }};
 
-    var columns = [
-        {
-            data: "DT_RowIndex",
-            className: "text-center",
-            width: "4%",
-            orderable: false,
-            searchable: false
-        },
-        {
-            data: "vendor_pelatihan.nama",
-            className: "",
-            width: "9%",
-            orderable: false,
-            searchable: true
-        },
-        {
-            data: "jenis_pelatihan.nama_jenis_pelatihan",
-            className: "",
-            width: "9%",
-            orderable: false,
-            searchable: true,
-        },
-        {
-            data: "periode.tahun_periode",
-            className: "",
-            width: "6%",
-            orderable: false,
-            searchable: false
-        },
-        {
-            data: "nama_pelatihan",
-            className: "",
-            width: "9%",
-            orderable: true,
-            searchable: true
-        },
-        {
-            data: "lokasi",
-            className: "",
-            width: "6%",
-            orderable: false,
-            searchable: true
-        },
-        {
-            data: "level_pelatihan",
-            className: "",
-            width: "6%",
-            orderable: false,
-            searchable: true
-        },
-        {
-            data: "tanggal",
-            className: "",
-            width: "8%",
-            orderable: false,
-            searchable: false
-        },
-        {
-            data: "bidang_minat",
-            render: function(data, type, row) {
-                return row.bidang_minat ? row.bidang_minat : '-';
-            },
-            className: "",
-            width: "10%",
-            orderable: false,
-            searchable: false
-        },
-        {
-            data: "mata_kuliah",
-            render: function(data, type, row) {
-                return row.mata_kuliah ? row.mata_kuliah : '-';
-            },
-            className: "",
-            width: "10%",
-            orderable: false,
-            searchable: false
-        },
-        {
-            data: "aksi",
-            className: "",
-            width: "9%",
-            orderable: false,
-            searchable: false
-        }
-    ];
+            var columns = [{
+                    data: "DT_RowIndex",
+                    className: "text-center",
+                    width: "4%",
+                    orderable: false,
+                    searchable: false
+                },
+                {
+                    data: "jenis_pelatihan.nama_jenis_pelatihan",
+                    className: "",
+                    width: "9%",
+                    orderable: false,
+                    searchable: true,
+                },
+                {
+                    data: "periode.tahun_periode",
+                    className: "",
+                    width: "6%",
+                    orderable: false,
+                    searchable: false
+                },
+                {
+                    data: "nama_pelatihan",
+                    className: "",
+                    width: "9%",
+                    orderable: true,
+                    searchable: true
+                },
+                {
+                    data: "lokasi",
+                    className: "",
+                    width: "6%",
+                    orderable: false,
+                    searchable: true
+                },
+                {
+                    data: "level_pelatihan",
+                    className: "",
+                    width: "6%",
+                    orderable: false,
+                    searchable: true
+                },
+                {
+                    data: "bidang_minat",
+                    render: function(data, type, row) {
+                        return row.bidang_minat ? row.bidang_minat : '-';
+                    },
+                    className: "",
+                    width: "10%",
+                    orderable: false,
+                    searchable: false
+                },
+                {
+                    data: "mata_kuliah",
+                    render: function(data, type, row) {
+                        return row.mata_kuliah ? row.mata_kuliah : '-';
+                    },
+                    className: "",
+                    width: "10%",
+                    orderable: false,
+                    searchable: false
+                },
+                {
+                    data: "aksi",
+                    className: "",
+                    width: "9%",
+                    orderable: false,
+                    searchable: false
+                }
+            ];
 
-    // Tambahkan kolom "Nama Peserta" jika user adalah admin
-    if (isAdmin) {
-        columns.splice(10, 0, {
-            data: "peserta_pelatihan",
-            render: function(data, type, row) {
-                return row.peserta_pelatihan ? row.peserta_pelatihan : '-';
-            },
-            className: "",
-            width: "10%",
-            orderable: false,
-            searchable: false
-        });
-    }
+            // Tambahkan kolom "Nama Peserta" jika user adalah admin
+            if (isAdmin) {
+                columns.splice(8, 0, {
+                    data: "peserta_pelatihan",
+                    render: function(data, type, row) {
+                        return row.peserta_pelatihan ? row.peserta_pelatihan : '-';
+                    },
+                    className: "",
+                    width: "10%",
+                    orderable: false,
+                    searchable: false
+                });
+                columns.splice(9, 0, {
+                    data: "status_pelatihan",
+                    render: function(data, type, row) {
+                        // Jika data tersedia, tampilkan, jika tidak, tampilkan '-'
+                        return data ? data : '-';
+                    },
+                    className: "",
+                    width: "8%",
+                    orderable: false,
+                    searchable: false
+                });
+            }
+            if (!isAdmin) {
+                columns.splice(7, 0, {
+                    data: "tanggal",
+                    className: "",
+                    width: "8%",
+                    orderable: true, // Set true jika ingin sorting berdasarkan tanggal
+                    searchable: false
+                });
+                columns.splice(1, 0, {
+                    data: "vendor_pelatihan.nama",
+                    className: "",
+                    width: "9%",
+                    orderable: false,
+                    searchable: true
+                });
+            }
 
-    dataPelatihan = $('#table_pelatihan').DataTable({
-        serverSide: true,
-        ajax: {
-            url: "{{ url('pelatihan/list') }}",
-            dataType: "json",
-            type: "POST",
-        },
-        columns: columns
-    });
-    
+            dataPelatihan = $('#table_pelatihan').DataTable({
+                serverSide: true,
+                ajax: {
+                    url: "{{ url('pelatihan/list') }}",
+                    dataType: "json",
+                    type: "POST",
+                },
+                columns: columns
+            });
+
         });
     </script>
 @endpush

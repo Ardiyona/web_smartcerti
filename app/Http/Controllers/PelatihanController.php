@@ -67,7 +67,8 @@ class PelatihanController extends Controller
                 'level_pelatihan',
                 'tanggal',
                 'kuota_peserta',
-                'biaya'
+                'biaya',
+                'status_pelatihan',
             )
             ->with('vendor_pelatihan', 'jenis_pelatihan', 'periode', 'bidang_minat_pelatihan', 'mata_kuliah_pelatihan', 'detail_peserta_pelatihan');
         } else {

@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\api\BidangMinatController;
+use App\Http\Controllers\Api\JenisPelatihanController;
 use App\Http\Controllers\Api\JenisSertifikasiController;
 use App\Http\Controllers\Api\LevelController;
 use App\Http\Controllers\api\MataKuliahController;
 use App\Http\Controllers\api\MyAccountController;
+use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\PelatihanController;
 use App\Http\Controllers\api\PenerimaanPermintaanController;
 use App\Http\Controllers\Api\PeriodeController;
@@ -13,6 +15,7 @@ use App\Http\Controllers\api\PimpinanSertifikasiDosenController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\SertifikasiController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\VendorPelatihanController;
 use App\Http\Controllers\Api\VendorSertifikasiController;
 use App\Http\Controllers\PimpinanpelatihanDosenController as ControllersPimpinanpelatihanDosenController;
 use Illuminate\Http\Request;
@@ -95,9 +98,13 @@ Route::put('my_accounts/update_password', [MyAccountController::class, 'updatePa
 
 Route::get('vendorSertifikasi', [VendorSertifikasiController::class, 'index']);
 Route::get('jenisSertifikasi', [JenisSertifikasiController::class, 'index']);
+Route::get('vendorPelatihan', [VendorPelatihanController::class, 'index']);
+Route::get('jenisPelatihan', [JenisPelatihanController::class, 'index']);
 Route::get('bidangMinat', [BidangMinatController::class, 'index']);
 Route::get('periodes', [PeriodeController::class, 'index']);
 Route::get('mataKuliahs', [MataKuliahController::class, 'index']);
 
 
+Route::get('notifikasi_sertifikasis', [NotificationController::class, 'index_sertifikasi']);
+Route::get('notifikasi_pelatihans', [NotificationController::class, 'index_pelatihan']);
 });
