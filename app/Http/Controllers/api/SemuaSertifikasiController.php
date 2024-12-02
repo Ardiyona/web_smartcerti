@@ -79,8 +79,8 @@ class SemuaSertifikasiController extends Controller
 
         // Cek apakah file bukti sertifikasi diunggah
         if ($request->hasFile('bukti_sertifikasi')) {
-            $bukti_sertifikasi = time() . '_' . $request->file('bukti_sertifikasi')->getClientOriginalName();
-            $bukti_sertifikasi = $request->file('bukti_sertifikasi')->storeAs('public/images/', $bukti_sertifikasi);
+            $filename = time() . '_' . $request->file('bukti_sertifikasi')->getClientOriginalName();
+            $bukti_sertifikasi = $request->file('bukti_sertifikasi')->storeAs('public/bukti_sertifikasi/', $filename);
         }
 
         $sertifikasi = SertifikasiModel::create([
@@ -88,7 +88,7 @@ class SemuaSertifikasiController extends Controller
             'no_sertifikasi' => $request->no_sertifikasi,
             'jenis' => $request->jenis,
             'tanggal' => $request->tanggal,
-            'bukti_sertifikasi' => $bukti_sertifikasi,
+            'bukti_sertifikasi' => $filename,
             'masa_berlaku' => $request->masa_berlaku,
             'kuota_peserta' => $request->kuota_peserta,
             'biaya' => $request->biaya,
@@ -103,7 +103,7 @@ class SemuaSertifikasiController extends Controller
 
         $sertifikasi->detail_peserta_sertifikasi()->attach($userId, [
             'no_sertifikasi' => $request->no_sertifikasi,
-            'bukti_sertifikasi' => $bukti_sertifikasi
+            'bukti_sertifikasi' => $filename
         ]);
 
         return response()->json([
@@ -180,8 +180,17 @@ class SemuaSertifikasiController extends Controller
             if ($bukti_sertifikasi) {
                 Storage::delete($bukti_sertifikasi);
             }
+            $filename = time() . '_' . $request->file('bukti_sertifikasi')->getClientOriginalName();
             // Simpan file baru
-            $bukti_sertifikasi = $request->file('bukti_sertifikasi')->store('public/images');
+            $bukti_sertifikasi = $request->file('bukti_sertifikasi')->store('public/bukti_sertifikasi',  $filename);
+
+            $sertifikasi->detail_peserta_sertifikasi()->updateExistingPivot(
+                Auth::id(),
+                [
+                    'no_sertifikasi' => $request->no_sertifikasi,
+                    'bukti_sertifikasi' => $filename
+                ]
+            );
         }
 
         $sertifikasi->save();

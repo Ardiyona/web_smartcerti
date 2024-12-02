@@ -52,8 +52,16 @@ Route::post('/pelatihanuser/list', [PelatihanUserController::class, 'list']);
 Route::get('/sertifikasiuser', [SertifikasiUserController::class, 'index']);
 Route::post('/sertifikasiuser/list', [SertifikasiUserController::class, 'list']);
 
+// Menampilkan halaman profil
 Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
-Route::put('/profile/update/{id}', [ProfileController::class, 'update'])->name('profile.update');
+// Update data profil (username, email, dll)
+Route::put('/profile/{id}', [ProfileController::class, 'updateProfile'])->name('profile.updateProfile');
+// Update foto profil
+Route::put('/profile/{id}/avatar', [ProfileController::class, 'updateAvatar'])->name('profile.updateAvatar');
+// Update password
+Route::put('/profile/{id}/password', [ProfileController::class, 'updatePassword'])->name('profile.updatePassword');
+
+
 // user
 Route::group(['prefix' => 'user', 'middleware' => 'authorize:ADM'], function() {
     Route::get('/', [UserController::class, 'index']);        
