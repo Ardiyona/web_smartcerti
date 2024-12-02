@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\MataKuliahModel;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
@@ -145,23 +146,65 @@ class MataKuliahController extends Controller
     }
 
     // Menghapus data mata kuliah ajax
+    // public function delete(Request $request, $id) {
+    //     // cek apakah request dari ajax
+    //     if ($request->ajax() || $request->wantsJson()) {
+    //         $mataKuliah = MataKuliahModel::find($id);
+    //         if ($mataKuliah) {
+    //             $mataKuliah->delete();
+    //             return response()->json([
+    //                 'status'    => true,
+    //                 'message'   => 'Data berhasil dihapus'
+    //             ]);
+    //         } else {
+    //             return response()->json([
+    //                 'status'    => false,
+    //                 'message'   => 'Data tidak ditemukan'
+    //             ]);
+    //         }
+    //     }
+    //     return redirect('/');
+    // }
+
     public function delete(Request $request, $id) {
-        // cek apakah request dari ajax
+        // Cek apakah request berasal dari AJAX
         if ($request->ajax() || $request->wantsJson()) {
-            $mataKuliah = MataKuliahModel::find($id);
-            if ($mataKuliah) {
-                $mataKuliah->delete();
-                return response()->json([
-                    'status'    => true,
-                    'message'   => 'Data berhasil dihapus'
-                ]);
-            } else {
+            try {
+                // Cari data berdasarkan ID
+                $mataKuliah = MataKuliahModel::find($id);
+    
+                if ($mataKuliah) {
+                    // Coba hapus data
+                    $mataKuliah->delete();
+    
+                    // Respon sukses
+                    return response()->json([
+                        'status'    => true,
+                        'message'   => 'Data berhasil dihapus'
+                    ]);
+                } else {
+                    // Respon jika data tidak ditemukan
+                    return response()->json([
+                        'status'    => false,
+                        'message'   => 'Data tidak ditemukan'
+                    ]);
+                }
+            } catch (QueryException $e) {
+                // Tangani error database seperti Integrity Constraint Violation
                 return response()->json([
                     'status'    => false,
-                    'message'   => 'Data tidak ditemukan'
+                    'message'   => 'Data tidak dapat dihapus karena masih terkait dengan data lain.'
+                ]);
+            } catch (\Exception $e) {
+                // Tangani error lainnya
+                return response()->json([
+                    'status'    => false,
+                    'message'   => 'Terjadi kesalahan: ' . $e->getMessage()
                 ]);
             }
         }
+    
+        // Jika bukan request AJAX, redirect ke halaman utama
         return redirect('/');
     }
 

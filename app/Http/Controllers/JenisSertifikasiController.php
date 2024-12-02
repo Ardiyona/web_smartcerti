@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\JenisSertifikasiModel;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
@@ -132,25 +133,70 @@ class JenisSertifikasiController extends Controller
         return view('jenissertifikasi.confirm', ['jenisSertifikasi' => $jenisSertifikasi]);
     }
 
+    // public function delete(Request $request, $id)
+    // {
+    //     if ($request->ajax() || $request->wantsJson()) {
+    //         $jenisSertifikasi = JenisSertifikasiModel::find($id);
+    //         if ($jenisSertifikasi) {
+    //             $jenisSertifikasi->delete();
+    //             return response()->json([
+    //                 'status'    => true,
+    //                 'message'   => 'Data berhasil dihapus'
+    //             ]);
+    //         } else {
+    //             return response()->json([
+    //                 'status'    => false,
+    //                 'message'   => 'Data tidak ditemukan'
+    //             ]);
+    //         }
+    //     }
+    //     return redirect('/');
+    // }
+
+
+
+
     public function delete(Request $request, $id)
     {
         if ($request->ajax() || $request->wantsJson()) {
-            $jenisSertifikasi = JenisSertifikasiModel::find($id);
-            if ($jenisSertifikasi) {
-                $jenisSertifikasi->delete();
-                return response()->json([
-                    'status'    => true,
-                    'message'   => 'Data berhasil dihapus'
-                ]);
-            } else {
+            try {
+                // Cari data berdasarkan ID
+                $jenisSertifikasi = JenisSertifikasiModel::find($id);
+
+                if ($jenisSertifikasi) {
+                    // Coba hapus data
+                    $jenisSertifikasi->delete();
+
+                    // Berikan respon sukses
+                    return response()->json([
+                        'status'    => true,
+                        'message'   => 'Data berhasil dihapus'
+                    ]);
+                } else {
+                    // Respon jika data tidak ditemukan
+                    return response()->json([
+                        'status'    => false,
+                        'message'   => 'Data tidak ditemukan'
+                    ]);
+                }
+            } catch (QueryException $e) {
+                // Tangani error database seperti Integrity Constraint Violation
                 return response()->json([
                     'status'    => false,
-                    'message'   => 'Data tidak ditemukan'
+                    'message'   => 'Data tidak dapat dihapus karena masih terkait dengan data lain.'
+                ]);
+            } catch (\Exception $e) {
+                // Tangani error umum lainnya
+                return response()->json([
+                    'status'    => false,
+                    'message'   => 'Terjadi kesalahan: ' . $e->getMessage()
                 ]);
             }
         }
+
         return redirect('/');
     }
+
 
     public function import()
     {
@@ -158,74 +204,72 @@ class JenisSertifikasiController extends Controller
     }
 
     public function import_ajax(Request $request)
-{
-    // Memastikan request adalah AJAX atau JSON
-    if ($request->ajax() || $request->wantsJson()) {
-        // Validasi file yang diupload
-        $rules = [
-            'file_jenis_sertifikasi' => ['required', 'mimes:xlsx', 'max:1024'] // Validasi file .xlsx
-        ];
+    {
+        // Memastikan request adalah AJAX atau JSON
+        if ($request->ajax() || $request->wantsJson()) {
+            // Validasi file yang diupload
+            $rules = [
+                'file_jenis_sertifikasi' => ['required', 'mimes:xlsx', 'max:1024'] // Validasi file .xlsx
+            ];
 
-        // Melakukan validasi terhadap request
-        $validator = Validator::make($request->all(), $rules);
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Validasi Gagal',
-                'msgField' => $validator->errors()
-            ]);
-        }
+            // Melakukan validasi terhadap request
+            $validator = Validator::make($request->all(), $rules);
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Validasi Gagal',
+                    'msgField' => $validator->errors()
+                ]);
+            }
 
-        // Mengambil file dari request
-        $file = $request->file('file_jenis_sertifikasi');
-        
-        // Membaca file excel dengan PHPSpreadsheet
-        $reader = IOFactory::createReader('Xlsx');
-        $reader->setReadDataOnly(true);
-        $spreadsheet = $reader->load($file->getRealPath());
-        $sheet = $spreadsheet->getActiveSheet();
-        $data = $sheet->toArray(null, false, true, true);
+            // Mengambil file dari request
+            $file = $request->file('file_jenis_sertifikasi');
 
-        // Menyiapkan data untuk disimpan
-        $insert = [];
+            // Membaca file excel dengan PHPSpreadsheet
+            $reader = IOFactory::createReader('Xlsx');
+            $reader->setReadDataOnly(true);
+            $spreadsheet = $reader->load($file->getRealPath());
+            $sheet = $spreadsheet->getActiveSheet();
+            $data = $sheet->toArray(null, false, true, true);
 
-        // Memeriksa apakah ada data dalam file selain header
-        if (count($data) > 1) {
-            foreach ($data as $baris => $value) {
-                if ($baris > 1) {
-                    // Menyiapkan data untuk dimasukkan
-                    $insert[] = [
-                        'id_jenis_sertifikasi' => $value['A'], // Kolom A untuk id_jenis_sertifikasi
-                        'nama_jenis_sertifikasi' => $value['B'], // Kolom B untuk nama_jenis_sertifikasi
-                        'kode_jenis_sertifikasi' => $value['C'], // Kolom C untuk kode_jenis_sertifikasi
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ];
+            // Menyiapkan data untuk disimpan
+            $insert = [];
+
+            // Memeriksa apakah ada data dalam file selain header
+            if (count($data) > 1) {
+                foreach ($data as $baris => $value) {
+                    if ($baris > 1) {
+                        // Menyiapkan data untuk dimasukkan
+                        $insert[] = [
+                            'id_jenis_sertifikasi' => $value['A'], // Kolom A untuk id_jenis_sertifikasi
+                            'nama_jenis_sertifikasi' => $value['B'], // Kolom B untuk nama_jenis_sertifikasi
+                            'kode_jenis_sertifikasi' => $value['C'], // Kolom C untuk kode_jenis_sertifikasi
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ];
+                    }
                 }
-            }
 
-            // Menyimpan data ke database, jika ada data yang diinsert
-            if (count($insert) > 0) {
-                JenisSertifikasiModel::insertOrIgnore($insert); // Insert data ke tabel Jenis Sertifikasi
-            }
+                // Menyimpan data ke database, jika ada data yang diinsert
+                if (count($insert) > 0) {
+                    JenisSertifikasiModel::insertOrIgnore($insert); // Insert data ke tabel Jenis Sertifikasi
+                }
 
-            // Response jika berhasil
-            return response()->json([
-                'status' => true,
-                'message' => 'Data jenis sertifikasi berhasil diimport'
-            ]);
-        } else {
-            // Jika tidak ada data yang diimport
-            return response()->json([
-                'status' => false,
-                'message' => 'Tidak ada data jenis sertifikasi yang diimport'
-            ]);
+                // Response jika berhasil
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Data jenis sertifikasi berhasil diimport'
+                ]);
+            } else {
+                // Jika tidak ada data yang diimport
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Tidak ada data jenis sertifikasi yang diimport'
+                ]);
+            }
         }
+
+        // Jika bukan request AJAX atau JSON
+        return redirect('/');
     }
-
-    // Jika bukan request AJAX atau JSON
-    return redirect('/');
-}
-
-
 }

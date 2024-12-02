@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\JenisPelatihanModel;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
@@ -139,25 +140,67 @@ class JenisPelatihanController extends Controller
         return view('jenispelatihan.confirm', ['jenisPelatihan' => $jenisPelatihan]);
     }
 
-    public function delete(Request $request, $id)
-    {
-        if ($request->ajax() || $request->wantsJson()) {
+    // public function delete(Request $request, $id)
+    // {
+    //     if ($request->ajax() || $request->wantsJson()) {
+    //         $jenisPelatihan = JenisPelatihanModel::find($id);
+    //         if ($jenisPelatihan) {
+    //             $jenisPelatihan->delete();
+    //             return response()->json([
+    //                 'status'    => true,
+    //                 'message'   => 'Data berhasil dihapus'
+    //             ]);
+    //         } else {
+    //             return response()->json([
+    //                 'status'    => false,
+    //                 'message'   => 'Data tidak ditemukan'
+    //             ]);
+    //         }
+    //     }
+    //     return redirect('/');
+    // }
+
+
+public function delete(Request $request, $id)
+{
+    if ($request->ajax() || $request->wantsJson()) {
+        try {
+            // Cari data berdasarkan ID
             $jenisPelatihan = JenisPelatihanModel::find($id);
+
             if ($jenisPelatihan) {
+                // Coba hapus data
                 $jenisPelatihan->delete();
+
+                // Berikan respon sukses
                 return response()->json([
                     'status'    => true,
                     'message'   => 'Data berhasil dihapus'
                 ]);
             } else {
+                // Respon jika data tidak ditemukan
                 return response()->json([
                     'status'    => false,
                     'message'   => 'Data tidak ditemukan'
                 ]);
             }
+        } catch (QueryException $e) {
+            // Tangani error database seperti Integrity Constraint Violation
+            return response()->json([
+                'status'    => false,
+                'message'   => 'Data tidak dapat dihapus karena masih terkait dengan data lain.'
+            ]);
+        } catch (\Exception $e) {
+            // Tangani error lainnya
+            return response()->json([
+                'status'    => false,
+                'message'   => 'Terjadi kesalahan: ' . $e->getMessage()
+            ]);
         }
-        return redirect('/');
     }
+
+    return redirect('/');
+}
 
     public function export_pdf()
 {

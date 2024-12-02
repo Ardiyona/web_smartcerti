@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BidangMinatModel;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
@@ -139,12 +140,36 @@ class BidangMinatController extends Controller
         return view('bidangminat.confirm', ['bidangMinat' => $bidangMinat]);
     }
 
+    // public function delete(Request $request, $id)
+    // {
+    //     if ($request->ajax() || $request->wantsJson()) {
+    //         $bidangMinat = BidangMinatModel::find($id);
+    //         if ($bidangMinat) {
+    //             $bidangMinat->delete();
+    //             return response()->json([
+    //                 'status'    => true,
+    //                 'message'   => 'Data berhasil dihapus'
+    //             ]);
+    //         } else {
+    //             return response()->json([
+    //                 'status'    => false,
+    //                 'message'   => 'Data tidak ditemukan'
+    //             ]);
+    //         }
+    //     }
+    //     return redirect('/');
+    // }
+
     public function delete(Request $request, $id)
-    {
-        if ($request->ajax() || $request->wantsJson()) {
+{
+    if ($request->ajax() || $request->wantsJson()) {
+        try {
             $bidangMinat = BidangMinatModel::find($id);
+
             if ($bidangMinat) {
+                // Coba hapus data utama
                 $bidangMinat->delete();
+
                 return response()->json([
                     'status'    => true,
                     'message'   => 'Data berhasil dihapus'
@@ -155,9 +180,23 @@ class BidangMinatController extends Controller
                     'message'   => 'Data tidak ditemukan'
                 ]);
             }
+        } catch (QueryException $e) {
+            // Tangani error constraint violation
+            return response()->json([
+                'status'    => false,
+                'message'   => 'Data tidak dapat dihapus karena masih terkait dengan data lain. Silakan hapus data terkait terlebih dahulu.'
+            ]);
+        } catch (\Exception $e) {
+            // Tangani error umum lainnya
+            return response()->json([
+                'status'    => false,
+                'message'   => 'Terjadi kesalahan: ' . $e->getMessage()
+            ]);
         }
-        return redirect('/');
     }
+
+    return redirect('/');
+}
 
     public function export_pdf()
     {

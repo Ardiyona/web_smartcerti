@@ -201,7 +201,7 @@ Route::prefix('bidangminat')->group(function () {
     Route::get('/{id}/show', [BidangMinatController::class, 'show']);
     Route::get('/{id}/edit', [BidangMinatController::class, 'edit']);
     Route::put('/{id}/update', [BidangMinatController::class, 'update']);
-    Route::post('/{id}/delete', [BidangMinatController::class, 'delete']);
+    Route::delete('/{id}/delete', [BidangMinatController::class, 'delete']);
     Route::get('/export_pdf', [BidangMinatController::class, 'export_pdf']);
     Route::post('/import_ajax', [BidangMinatController::class, 'import_ajax']);
     Route::get('/{id}/confirm', [BidangMinatController::class, 'confirm']);
