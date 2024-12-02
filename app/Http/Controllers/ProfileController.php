@@ -40,28 +40,32 @@ class ProfileController extends Controller
     // Fungsi untuk update informasi profil
     public function updateProfile(Request $request, $id)
     {
-        // Validasi input dari form
-        $this->validate($request, [
-            'username' => 'required|string|min:3|unique:user,username,' . $id . ',user_id',
-            'nama_lengkap' => 'required|string|max:255',
-            'no_telp' => 'required|max:15',
-            'email' => 'required|email|max:255',
-            'id_bidang_minat' => 'required',
-            'id_matakuliah' => 'required',
-        ]);
-
+        // Validasi input
+        // $this->validate($request, [
+        //     'username' => 'required|string|min:3|unique:user,username,' . $id . ',user_id',
+        //     'nama_lengkap' => 'required|string|max:255',
+        //     'no_telp' => 'required|max:15',
+        //     'email' => 'required|email|max:255',
+        //     'id_bidang_minat' => 'required',
+        //     'id_matakuliah' => 'required',
+        // ]);
+    
         // Ambil data user berdasarkan ID
         $user = UserModel::findOrFail($id);
-
-        // Update informasi profil
-        $user->update($request->only('username', 'nama_lengkap', 'no_telp', 'email'));
-
-        // Simpan perubahan
-        $user->save();
-
+    
+        // Update data dengan metode update()
+        $user->update([
+            'username' => $request->username,
+            'nama_lengkap' => $request->nama_lengkap,
+            'no_telp' => $request->no_telp,
+            'email' => $request->email,
+        ]);
+    
+    
         // Kembali ke halaman profile dengan status sukses
         return redirect()->back()->with('status', 'Profil berhasil diperbarui');
     }
+    
 
     // Fungsi untuk update avatar (foto profil)
     public function updateAvatar(Request $request, $id)
