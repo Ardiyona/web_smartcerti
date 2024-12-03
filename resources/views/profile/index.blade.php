@@ -25,6 +25,12 @@
     <div class="col-md-4">
         <div class="card border-0 rounded-lg">
             <div class="card-body text-center">
+            @if(session('status_foto'))
+                    <div class="alert alert-success" style="background-color: #375E97; border-color: #375E97;">
+                        {{ session('status_foto') }}
+                    </div>
+                @endif
+
                 @if($user->avatar)
                     <img src="{{ asset('storage/photos/' . $user->avatar) }}" class="img-thumbnail rounded-circle shadow-sm mb-3" style="width: 150px; height: 150px; object-fit: cover;">
                 @else
@@ -35,7 +41,7 @@
                     @csrf
                     @method('PUT')
                     <input id="avatar" type="file" class="form-control mb-3" name="avatar">
-                    <button type="submit" class="btn btn-primary">{{ __('Ganti Foto Profil') }}</button>
+                    <button type="submit" class="btn btn-primary" style="background-color: #375E97; border-color: #375E97;">{{ __('Ganti Foto Profil') }}</button>
                 </form>
             </div>
         </div>
@@ -55,6 +61,13 @@
 
                 <div class="tab-content mt-4" id="profileTabContent">
                     <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+            
+                    @if(session('status_profile'))
+                        <div class="alert alert-success" style="background-color: #375E97; border-color: #375E97; text-align: center;">
+                            {{ session('status_profile') }}
+                        </div>
+                    @endif
+
                         <form method="POST" action="{{ route('profile.updateProfile', $user->user_id) }}">
                             @csrf
                             @method('PUT')
@@ -119,20 +132,28 @@
 
                             <div class="form-group row mb-0">
                                 <div class="col-md-8 offset-md-4">
-                                    <button type="submit" class="btn btn-primary">{{ __('Update Profile') }}</button>
+                                    <button type="submit" class="btn btn-primary" style="background-color: #375E97; border-color: #375E97;">{{ __('Update Profile') }}</button>
                                 </div>
                             </div>
                         </form>
                     </div>
 
                     <div class="tab-pane fade" id="password" role="tabpanel" aria-labelledby="password-tab">
-                        <form method="POST" action="{{ route('profile.updatePassword', $user->user_id) }}">
+                    @if(session('status_password'))
+                        <div class="alert alert-success" style="background-color: #375E97; border-color: #375E97; text-align: center;">
+                            {{ session('status_password') }}
+                        </div>
+                    @endif
+                    
+
+                        <form method="POST" action="{{ route('profile.updatePassword',$user->user_id) }}">
                             @csrf
                             @method('PUT')
+                            
                             <div class="form-group row mb-3">
                                 <label for="old_password" class="col-md-4 col-form-label text-md-end">{{ __('Password Lama') }}</label>
                                 <div class="col-md-8">
-                                    <input id="old_password" type="password" class="form-control @error('old_password') is-invalid @enderror" name="old_password" autocomplete="old-password">
+                                    <input id="old_password" type="password" class="form-control @error('old_password') is-invalid @enderror" name="old_password" required autocomplete="current-password">
                                     @error('old_password')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -142,10 +163,10 @@
                             </div>
 
                             <div class="form-group row mb-3">
-                                <label for="new_password" class="col-md-4 col-form-label text-md-end">{{ __('Password Baru') }}</label>
+                                <label for="password" class="col-md-4 col-form-label text-md-end">{{ __('Password Baru') }}</label>
                                 <div class="col-md-8">
-                                    <input id="new_password" type="password" class="form-control @error('new_password') is-invalid @enderror" name="new_password" autocomplete="new-password">
-                                    @error('new_password')
+                                    <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
+                                    @error('password')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
@@ -156,21 +177,19 @@
                             <div class="form-group row mb-3">
                                 <label for="password_confirmation" class="col-md-4 col-form-label text-md-end">{{ __('Konfirmasi Password Baru') }}</label>
                                 <div class="col-md-8">
-                                    <input id="password_confirmation" type="password" class="form-control @error('password_confirmation') is-invalid @enderror" name="password_confirmation" autocomplete="new-password">
-                                    @error('password_confirmation')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
+                                    <input id="password_confirmation" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
                                 </div>
                             </div>
 
                             <div class="form-group row mb-0">
                                 <div class="col-md-8 offset-md-4">
-                                    <button type="submit" class="btn btn-primary">{{ __('Ganti Password') }}</button>
+                                    <button type="submit" class="btn btn-primary" style="background-color: #375E97; border-color: #375E97;">
+                                        {{ __('Update Password') }}
+                                    </button>
                                 </div>
                             </div>
                         </form>
+
                     </div>
                 </div>
             </div>

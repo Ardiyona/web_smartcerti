@@ -63,7 +63,7 @@ class ProfileController extends Controller
     
     
         // Kembali ke halaman profile dengan status sukses
-        return redirect()->back()->with('status', 'Profil berhasil diperbarui');
+        return redirect()->back()->with('status_profile', 'Profil berhasil diperbarui');
     }
     
 
@@ -94,7 +94,7 @@ class ProfileController extends Controller
             $user->save();
 
             // Kembali ke halaman profile dengan status sukses
-            return redirect()->back()->with('status', 'Foto profil berhasil diperbarui');
+            return redirect()->back()->with('status_foto', 'Foto profil berhasil diperbarui');
         }
 
         return redirect()->back()->withErrors(['avatar' => 'Gagal memperbarui foto profil']);
@@ -119,12 +119,15 @@ class ProfileController extends Controller
             $user->save();
 
             // Kembali ke halaman profile dengan status sukses
-            return redirect()->back()->with('status', 'Password berhasil diperbarui');
+            return redirect()->back()->with('status_password', 'Password berhasil diperbarui');
+            
         } else {
             // Jika password lama tidak sesuai
             return redirect()->back()
                 ->withErrors(['old_password' => 'Password lama tidak sesuai'])
                 ->withInput();
         }
+        dd(session()->all());
+
     }
 }
