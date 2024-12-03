@@ -36,23 +36,30 @@
                             <th> </th>
                             <td> </td>
                         </tr>
-                        @if ($sertifikasi && $sertifikasi->detail_peserta_sertifikasi->count())
-                            @foreach ($sertifikasi->detail_peserta_sertifikasi as $peserta)
+                        @if ($sertifikasi->status_sertifikasi != 'menunggu')
+                            @if ($sertifikasi && $sertifikasi->detail_peserta_sertifikasi->count())
+                                @foreach ($sertifikasi->detail_peserta_sertifikasi as $peserta)
+                                    <tr>
+                                        <th class="text-right">Nama Peserta</th>
+                                        <td>{{ $peserta->nama_lengkap }}</td>
+                                        <th class="text-right">Bukti Sertifikasi</th>
+                                        <td>
+                                            <input type="file" id="bukti_sertifikasi"
+                                                name="bukti_sertifikasi[{{ $peserta->user_id }}]" class="form-control">
+                                            <small id="error-id_bukti_sertifikasi"
+                                                class="error-text form-text text-danger"></small>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @else
                                 <tr>
-                                    <th class="text-right">Nama Peserta</th>
-                                    <td>{{ $peserta->nama_lengkap }}</td>
-                                    <th class="text-right">Bukti Sertifikasi</th>
-                                    <td>
-                                        <input type="file" id="bukti_sertifikasi"
-                                            name="bukti_sertifikasi[{{ $peserta->user_id }}]" class="form-control">
-                                        <small id="error-id_bukti_sertifikasi"
-                                            class="error-text form-text text-danger"></small>
-                                    </td>
+                                    <td colspan="4" class="text-center">Tidak ada peserta terkait.</td>
                                 </tr>
-                            @endforeach
+                            @endif
                         @else
                             <tr>
-                                <td colspan="4" class="text-center">Tidak ada peserta terkait.</td>
+                                <td colspan="4" class="text-center">Rekomendasi sertifikasi belum diterima atau ditolak.
+                                </td>
                             </tr>
                         @endif
                     </table>
@@ -76,7 +83,7 @@
                 submitHandler: function(form) {
                     var formData = new FormData(document.getElementById('form-edit'));
                     console.log('Files in FormData:', formData.get(
-                    'bukti_sertifikasi[]')); // Jika menggunakan array
+                        'bukti_sertifikasi[]')); // Jika menggunakan array
                     console.log('All FormData:', [...formData.entries()]);
                     $.ajax({
                         url: form.action,

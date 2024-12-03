@@ -32,8 +32,7 @@
                         <select name="id_vendor_pelatihan" id="id_vendor_pelatihan" class="form-control" required>
                             <option value="">- Pilih Vendor -</option>
                             @foreach ($vendorpelatihan as $l)
-                                <option
-                                    {{ $l->id_vendor_pelatihan == $pelatihan->id_vendor_pelatihan ? 'selected' : '' }}
+                                <option {{ $l->id_vendor_pelatihan == $pelatihan->id_vendor_pelatihan ? 'selected' : '' }}
                                     value="{{ $l->id_vendor_pelatihan }}">{{ $l->nama }}</option>
                             @endforeach
                         </select>
@@ -45,8 +44,7 @@
                         <select name="id_jenis_pelatihan" id="id_jenis_pelatihan" class="form-control" required>
                             <option value="">- Pilih Jenis Bidang -</option>
                             @foreach ($jenispelatihan as $l)
-                                <option
-                                    {{ $l->id_jenis_pelatihan == $pelatihan->id_jenis_pelatihan ? 'selected' : '' }}
+                                <option {{ $l->id_jenis_pelatihan == $pelatihan->id_jenis_pelatihan ? 'selected' : '' }}
                                     value="{{ $l->id_jenis_pelatihan }}">{{ $l->nama_jenis_pelatihan }}</option>
                             @endforeach
                         </select>
@@ -76,8 +74,8 @@
                     <!-- Jenis -->
                     <div class="form-group">
                         <label>Level Pelatihan</label>
-                        <select value ="{{ $pelatihan->level_pelatihan }}" name="level_pelatihan" id="level_pelatihan" class="form-control"
-                            required>
+                        <select value ="{{ $pelatihan->level_pelatihan }}" name="level_pelatihan" id="level_pelatihan"
+                            class="form-control" required>
                             <option value="Nasional">Nasional</option>
                             <option value="Internasional">Internasional</option>
                         </select>
@@ -87,8 +85,8 @@
                     <!-- Lokasi pelatihan -->
                     <div class="form-group">
                         <label>Lokasi</label>
-                        <input value ="{{ $pelatihan->lokasi }}" type="text" name="lokasi"
-                            id="lokasi" class="form-control" required>
+                        <input value ="{{ $pelatihan->lokasi }}" type="text" name="lokasi" id="lokasi"
+                            class="form-control" required>
                         <small id="error-lokasi" class="error-text form-text text-danger"></small>
                     </div>
 
@@ -146,7 +144,7 @@
                     <div class="form-group">
                         <label>Kuota Peserta</label>
                         <input value ="{{ $pelatihan->kuota_peserta }}" type="number" name="kuota_peserta"
-                            id="kuota_peserta" class="form-control" required>
+                            id="kuota_peserta" class="form-control" readonly>
                         <small id="error-kuota_peserta" class="error-text form-text text-danger"></small>
                     </div>
 
@@ -206,6 +204,33 @@
                         </select>
                         <small id="error-id_matakuliah" class="error-text form-text text-danger"></small>
                     </div>
+
+                    @if ($pelatihan->status_pelatihan == 'terima' && Auth::user()->id_level == 1)
+                        <div class="form-group">
+                            <label>Surat Tugas</label>
+                            @if ($pelatihan->surat_tugas)
+                                {{-- Jika pelatihan memiliki surat tugas --}}
+                                <small class="form-text">
+                                    File saat ini:
+                                    @php
+                                        // Ambil nama file tanpa path
+                                        $fullFileName = basename($pelatihan->surat_tugas);
+
+                                        // Hilangkan tanggal di depan nama file
+                                        $cleanFileName = preg_replace('/^\d{10}_/', '', $fullFileName);
+                                    @endphp
+
+                                    <a href="{{ url('storage/surat_tugas/' . $pelatihan->surat_tugas) }}"
+                                        target="_blank" download>
+                                        {{ $cleanFileName }}
+                                    </a>
+                                </small>
+                            @endif
+                            <input type="file" name="surat_tugas" id="surat_tugas" class="form-control">
+                            <small class="form-text text-muted">Abaikan jika tidak ingin mengubah file surat tugas</small>
+                            <small id="error-surat_tugas" class="error-text form-text text-danger"></small>
+                        </div>
+                    @endif
                 </div>
                 <div class="modal-footer">
                     <button type="button" data-dismiss="modal" class="btn btn-warning">Batal</button>
@@ -262,6 +287,11 @@
                     },
                     id_matakuliah: {
                         required: true,
+                    },
+                    surat_tugas: {
+                        required: function() {
+                            return isAdmin;
+                        },
                     },
                 },
                 submitHandler: function(form) {

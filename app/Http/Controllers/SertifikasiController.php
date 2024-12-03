@@ -129,6 +129,9 @@ class SertifikasiController extends Controller
                     $btn = '<button onclick="modalAction(\'' . url('/sertifikasi/' . $sertifikasi->id_sertifikasi . '/admin_show_edit') . '\')" class="btn btn-info btn-sm">Detail</button> ';
                     $btn .= '<button onclick="modalAction(\'' . url('/sertifikasi/' . $sertifikasi->id_sertifikasi . '/edit') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
                     $btn .= '<button onclick="modalAction(\'' . url('/sertifikasi/' . $sertifikasi->id_sertifikasi . '/confirm') . '\')" class="btn btn-danger btn-sm">Hapus</button> ';
+                    if ($sertifikasi->status_sertifikasi == 'menunggu') {
+                        $btn .= '<button onclick="modalAction(\'' . url('/sertifikasi/' . $sertifikasi->id_sertifikasi . '/create_rekomendasi_peserta') . '\')" class="btn btn-info btn-sm">Peserta</button> ';
+                    }
                 } else {
                     $btn = '<button onclick="modalAction(\'' . url('/sertifikasi/' . $sertifikasi->id_sertifikasi . '/show') . '\')" class="btn btn-info btn-sm">Detail</button> ';
                     $btn .= '<button onclick="modalAction(\'' . url('/sertifikasi/' . $sertifikasi->id_sertifikasi . '/edit') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
@@ -372,7 +375,7 @@ class SertifikasiController extends Controller
                         'biaya'      => $request->biaya,
                         'id_vendor_sertifikasi'  => $request->id_vendor_sertifikasi,
                         'id_jenis_sertifikasi'  => $request->id_jenis_sertifikasi,
-                        'id_periode'  => $request->id_periode
+                        'id_periode'  => $request->id_periode,
                     ]);
                     $sertifikasi->detail_peserta_sertifikasi()->updateExistingPivot(
                         Auth::id(),
@@ -391,7 +394,7 @@ class SertifikasiController extends Controller
                         'biaya'      => $request->biaya,
                         'id_vendor_sertifikasi'  => $request->id_vendor_sertifikasi,
                         'id_jenis_sertifikasi'  => $request->id_jenis_sertifikasi,
-                        'id_periode'  => $request->id_periode
+                        'id_periode'  => $request->id_periode,
                     ]);
                     $sertifikasi->detail_peserta_sertifikasi()->updateExistingPivot(
                         Auth::id(),
@@ -505,14 +508,6 @@ class SertifikasiController extends Controller
 
         $bidangMinat = BidangMinatModel::select('id_bidang_minat', 'nama_bidang_minat')->get();
         $mataKuliah = MataKuliahModel::select('id_matakuliah', 'nama_matakuliah')->get();
-        // $user = UserModel::select('user_id', 'nama_lengkap')->get();
-        // Mengambil data user beserta status_sertifikasi dari tabel pivot
-        $user = UserModel::with(['detail_peserta_sertifikasi' => function ($query) {
-            $query->select(
-                'detail_peserta_sertifikasi.user_id',
-                'detail_peserta_sertifikasi.id_sertifikasi',
-            );
-        }])->get();
 
         return view('sertifikasi.create_rekomendasi')->with([
             'vendorSertifikasi' => $vendorSertifikasi,
@@ -520,7 +515,6 @@ class SertifikasiController extends Controller
             'periode' => $periode,
             'bidangMinat' => $bidangMinat,
             'mataKuliah' => $mataKuliah,
-            'user' => $user,
         ]);
     }
 
@@ -534,7 +528,6 @@ class SertifikasiController extends Controller
 
                 'id_bidang_minat' => 'required',
                 'id_matakuliah' => 'required',
-                'user_id' => 'required',
 
                 'nama_sertifikasi' => 'required|string|min:5',
                 'jenis' => 'required',
@@ -554,15 +547,12 @@ class SertifikasiController extends Controller
                 ]);
             }
 
-            $kuotaPeserta = count($request->user_id);
-
             // Simpan data user dengan hanya field yang diperlukan
             $sertifikasi = SertifikasiModel::create([
                 'nama_sertifikasi'  => $request->nama_sertifikasi,
                 'jenis'      => $request->jenis,
                 'tanggal'      => $request->tanggal,
                 'masa_berlaku'      => $request->masa_berlaku,
-                'kuota_peserta'      => $kuotaPeserta,
                 'biaya'      => $request->biaya,
                 'id_vendor_sertifikasi'  => $request->id_vendor_sertifikasi,
                 'id_jenis_sertifikasi'  => $request->id_jenis_sertifikasi,
@@ -574,9 +564,72 @@ class SertifikasiController extends Controller
             $sertifikasi->mata_kuliah_sertifikasi()->sync($request->id_matakuliah);
 
             // Menyimpan user_id ke dalam pivot tabel dengan status 'menunggu'
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Data sertifikasi berhasil disimpan'
+            ]);
+        }
+        return redirect('/');
+    }
+
+    public function create_rekomendasi_peserta($id)
+    {
+        $sertifikasi = SertifikasiModel::with('detail_peserta_sertifikasi')->find($id);
+    
+        // Ambil ID bidang minat dan mata kuliah yang terkait dengan sertifikasi
+        $sertifikasiBidangMinat = $sertifikasi->bidang_minat_sertifikasi->pluck('id_bidang_minat')->toArray();
+        $sertifikasiMataKuliah = $sertifikasi->mata_kuliah_sertifikasi->pluck('id_matakuliah')->toArray();
+    
+        $user = UserModel::with(['detail_daftar_user_matakuliah', 'detail_daftar_user_bidang_minat'])
+        ->where('id_level', '!=', 1) // Tambahkan kondisi ini untuk mengecualikan admin
+        ->withCount([
+            'detail_daftar_user_matakuliah as mata_kuliah_count' => function ($query) use ($sertifikasiMataKuliah) {
+                $query->whereIn('detail_daftar_user_matakuliah.id_matakuliah', $sertifikasiMataKuliah);
+            },
+            'detail_daftar_user_bidang_minat as bidang_minat_count' => function ($query) use ($sertifikasiBidangMinat) {
+                $query->whereIn('detail_daftar_user_bidang_minat.id_bidang_minat', $sertifikasiBidangMinat);
+            }
+        ])
+        ->orderByDesc('mata_kuliah_count')
+        ->orderByDesc('bidang_minat_count')
+        ->get();
+    
+        return view('sertifikasi.create_rekomendasi_peserta')->with([
+            'user' => $user,
+            'sertifikasi' => $sertifikasi,
+        ]);
+    }
+
+    public function store_rekomendasi_peserta(Request $request, $id)
+    {
+        if ($request->ajax() || $request->wantsJson()) {
+            $rules = [
+                'user_id' => 'required',
+                'kuota_peserta' => 'nullable|integer',
+            ];
+
+            $validator = Validator::make($request->all(), $rules);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Validasi Gagal',
+                    'msgField' => $validator->errors()
+                ]);
+            }
+
+            $kuotaPeserta = count($request->user_id);
+            $sertifikasi = SertifikasiModel::find($id);
+            $sertifikasi->update([
+                'kuota_peserta'      => $kuotaPeserta,
+            ]);
+
             if (!empty($request->user_id)) {
                 $sertifikasi->detail_peserta_sertifikasi()->sync($request->user_id);
             }
+
+            // Menyimpan user_id ke dalam pivot tabel dengan status 'menunggu'
 
             return response()->json([
                 'status' => true,

@@ -261,8 +261,8 @@
                     },
                     no_sertifikasi: {
                         required: function() {
-                        return !isAdmin;
-                    },
+                            return !isAdmin;
+                        },
                         minlength: 3,
                         maxlength: 255
                     },

@@ -119,6 +119,9 @@ class PelatihanController extends Controller
                     $btn = '<button onclick="modalAction(\'' . url('/pelatihan/' . $pelatihan->id_pelatihan . '/admin_show_edit') . '\')" class="btn btn-info btn-sm">Detail</button> ';
                     $btn .= '<button onclick="modalAction(\'' . url('/pelatihan/' . $pelatihan->id_pelatihan . '/edit') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
                     $btn .= '<button onclick="modalAction(\'' . url('/pelatihan/' . $pelatihan->id_pelatihan . '/confirm') . '\')" class="btn btn-danger btn-sm">Hapus</button> ';
+                    if ($pelatihan->status_pelatihan == 'menunggu') {
+                        $btn .= '<button onclick="modalAction(\'' . url('/pelatihan/' . $pelatihan->id_pelatihan . '/create_rekomendasi_peserta') . '\')" class="btn btn-info btn-sm">Peserta</button> ';
+                    }
                 } else {
                     $btn = '<button onclick="modalAction(\'' . url('/pelatihan/' . $pelatihan->id_pelatihan . '/show') . '\')" class="btn btn-info btn-sm">Detail</button> ';
                     $btn .= '<button onclick="modalAction(\'' . url('/pelatihan/' . $pelatihan->id_pelatihan . '/edit') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
@@ -337,6 +340,7 @@ class PelatihanController extends Controller
 
             // Inisialisasi variabel untuk menyimpan path file
             $bukti_pelatihan = null;
+            $surat_tugas = null;
 
             /** @var User */
             $user = Auth::user();
@@ -345,6 +349,11 @@ class PelatihanController extends Controller
             if ($request->hasFile('bukti_pelatihan')) {
                 $bukti_pelatihan = time() . '_' . $request->file('bukti_pelatihan')->getClientOriginalName();
                 $request->file('bukti_pelatihan')->storeAs('public/bukti_pelatihan/', $bukti_pelatihan);
+            }
+
+            if ($request->hasFile('surat_tugas')) {
+                $surat_tugas = time() . '_' . $request->file('surat_tugas')->getClientOriginalName();
+                $request->file('surat_tugas')->storeAs('public/surat_tugas/', $surat_tugas);
             }
 
             if ($pelatihan) {
@@ -359,7 +368,8 @@ class PelatihanController extends Controller
                         'biaya'      => $request->biaya,
                         'id_vendor_pelatihan'  => $request->id_vendor_pelatihan,
                         'id_jenis_pelatihan'  => $request->id_jenis_pelatihan,
-                        'id_periode'  => $request->id_periode
+                        'id_periode'  => $request->id_periode,
+                        'surat_tugas' => $surat_tugas,
                     ]);
                     $pelatihan->detail_peserta_pelatihan()->updateExistingPivot(
                         Auth::id(),
@@ -377,7 +387,8 @@ class PelatihanController extends Controller
                         'biaya'      => $request->biaya,
                         'id_vendor_pelatihan'  => $request->id_vendor_pelatihan,
                         'id_jenis_pelatihan'  => $request->id_jenis_pelatihan,
-                        'id_periode'  => $request->id_periode
+                        'id_periode'  => $request->id_periode,
+                        'surat_tugas' => $surat_tugas,
                     ]);
                 }
 
@@ -476,14 +487,6 @@ class PelatihanController extends Controller
 
         $bidangMinat = BidangMinatModel::select('id_bidang_minat', 'nama_bidang_minat')->get();
         $mataKuliah = MataKuliahModel::select('id_matakuliah', 'nama_matakuliah')->get();
-        // $user = UserModel::select('user_id', 'nama_lengkap')->get();
-        // Mengambil data user beserta status_pelatihan dari tabel pivot
-        $user = UserModel::with(['detail_peserta_pelatihan' => function ($query) {
-            $query->select(
-                'detail_peserta_pelatihan.user_id',
-                'detail_peserta_pelatihan.id_pelatihan',
-            );
-        }])->get();
 
         return view('pelatihan.create_rekomendasi')->with([
             'vendorpelatihan' => $vendorpelatihan,
@@ -491,7 +494,6 @@ class PelatihanController extends Controller
             'periode' => $periode,
             'bidangMinat' => $bidangMinat,
             'mataKuliah' => $mataKuliah,
-            'user' => $user,
         ]);
     }
 
@@ -505,13 +507,11 @@ class PelatihanController extends Controller
 
                 'id_bidang_minat' => 'required',
                 'id_matakuliah' => 'required',
-                'user_id' => 'required',
 
                 'nama_pelatihan' => 'required|string|min:5',
                 'lokasi' => 'required',
                 'level_pelatihan' => 'required',
                 'tanggal' => 'required|date',
-                'kuota_peserta' => 'nullable|integer',
                 'biaya' => 'required|string|max:255',
             ];
 
@@ -525,15 +525,12 @@ class PelatihanController extends Controller
                 ]);
             }
 
-            $kuotaPeserta = count($request->user_id);
-
             // Simpan data user dengan hanya field yang diperlukan
             $pelatihan = pelatihanModel::create([
                 'nama_pelatihan'  => $request->nama_pelatihan,
                 'lokasi'      => $request->lokasi,
                 'level_pelatihan'      => $request->level_pelatihan,
                 'tanggal'      => $request->tanggal,
-                'kuota_peserta'      => $kuotaPeserta,
                 'biaya'      => $request->biaya,
                 'id_vendor_pelatihan'  => $request->id_vendor_pelatihan,
                 'id_jenis_pelatihan'  => $request->id_jenis_pelatihan,
@@ -544,14 +541,75 @@ class PelatihanController extends Controller
             $pelatihan->bidang_minat_pelatihan()->sync($request->id_bidang_minat);
             $pelatihan->mata_kuliah_pelatihan()->sync($request->id_matakuliah);
 
-            // Menyimpan user_id ke dalam pivot tabel dengan status 'menunggu'
+            return response()->json([
+                'status' => true,
+                'message' => 'Data user berhasil disimpan'
+            ]);
+        }
+        return redirect('/');
+    }
+
+    public function create_rekomendasi_peserta($id)
+    {
+        $pelatihan = PelatihanModel::with('detail_peserta_pelatihan')->find($id);
+    
+        // Ambil ID bidang minat dan mata kuliah yang terkait dengan pelatihan
+        $pelatihanBidangMinat = $pelatihan->bidang_minat_pelatihan->pluck('id_bidang_minat')->toArray();
+        $pelatihanMataKuliah = $pelatihan->mata_kuliah_pelatihan->pluck('id_matakuliah')->toArray();
+    
+        $user = UserModel::with(['detail_daftar_user_matakuliah', 'detail_daftar_user_bidang_minat'])
+        ->where('id_level', '!=', 1) // Tambahkan kondisi ini untuk mengecualikan admin
+        ->withCount([
+            'detail_daftar_user_matakuliah as mata_kuliah_count' => function ($query) use ($pelatihanMataKuliah) {
+                $query->whereIn('detail_daftar_user_matakuliah.id_matakuliah', $pelatihanMataKuliah);
+            },
+            'detail_daftar_user_bidang_minat as bidang_minat_count' => function ($query) use ($pelatihanBidangMinat) {
+                $query->whereIn('detail_daftar_user_bidang_minat.id_bidang_minat', $pelatihanBidangMinat);
+            }
+        ])
+        ->orderByDesc('mata_kuliah_count')
+        ->orderByDesc('bidang_minat_count')
+        ->get();
+    
+        return view('pelatihan.create_rekomendasi_peserta')->with([
+            'user' => $user,
+            'pelatihan' => $pelatihan,
+        ]);
+    }
+
+    public function store_rekomendasi_peserta(Request $request, $id)
+    {
+        if ($request->ajax() || $request->wantsJson()) {
+            $rules = [
+                'user_id' => 'required',
+                'kuota_peserta' => 'nullable|integer',
+            ];
+
+            $validator = Validator::make($request->all(), $rules);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Validasi Gagal',
+                    'msgField' => $validator->errors()
+                ]);
+            }
+
+            $kuotaPeserta = count($request->user_id);
+            $pelatihan = PelatihanModel::find($id);
+            $pelatihan->update([
+                'kuota_peserta'      => $kuotaPeserta,
+            ]);
+
             if (!empty($request->user_id)) {
                 $pelatihan->detail_peserta_pelatihan()->sync($request->user_id);
             }
 
+            // Menyimpan user_id ke dalam pivot tabel dengan status 'menunggu'
+
             return response()->json([
                 'status' => true,
-                'message' => 'Data user berhasil disimpan'
+                'message' => 'Data pelatihan berhasil disimpan'
             ]);
         }
         return redirect('/');

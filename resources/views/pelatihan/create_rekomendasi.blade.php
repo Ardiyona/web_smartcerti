@@ -80,18 +80,6 @@
                     <small id="error-biaya" class="error-text form-text text-danger"></small>
                 </div>
 
-                    <div class="form-group">
-                        <label>Nama Peserta</label>
-                        <select multiple="multiple" name="user_id[]" id="user_id"
-                            class="js-example-basic-multiple js-states form-control form-control">
-                            <option value="">- Pilih Peserta pelatihan -</option>
-                            @foreach ($user as $l)
-                                <option value="{{ $l->user_id }}">{{ $l->nama_lengkap }}</option>
-                            @endforeach
-                        </select>
-                        <small id="error-user_id" class="error-text form-text text-danger"></small>
-                    </div>
-
                 <div class="form-group">
                     <label for="id_bidang_minat">
                         Tag Bidang Minat
@@ -170,9 +158,6 @@
                 id_matakuliah: {
                     required: true,
                 },
-                user_id: {
-                    required: true,
-                }
             },
             submitHandler: function(form) {
                 var formData = new FormData(form);
@@ -218,7 +203,7 @@
                 $(element).removeClass('is-invalid');
             }
         });
-        $("#id_matakuliah, #id_bidang_minat, #user_id").select2({
+        $("#id_matakuliah, #id_bidang_minat").select2({
             dropdownAutoWidth: true,
             theme: "classic"
         });

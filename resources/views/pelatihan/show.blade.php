@@ -117,8 +117,12 @@
                 </table>
             </div>
             <div class="modal-footer">
+                @if ($pelatihan->surat_tugas)
+                    <a href="{{ url('storage/surat_tugas/' . $pelatihan->surat_tugas) }}" target="_blank" class="btn btn-success" download>
+                        <i class="fa fa-file-pdf"></i> Download Surat Tugas
+                    </a>
+                @endif
                 <button type="button" data-dismiss="modal" class="btn btn-default">Kembali</button>
-                
             </div>
         </div>
     </div>

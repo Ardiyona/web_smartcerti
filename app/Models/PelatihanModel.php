@@ -28,6 +28,7 @@ class PelatihanModel extends Model
         'kuota_peserta',
         'biaya',
         'status_pelatihan',
+        'surat_tugas',
         'created_at',
         'updated_at'
     ];

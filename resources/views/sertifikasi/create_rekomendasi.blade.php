@@ -80,7 +80,7 @@
                     <small id="error-biaya" class="error-text form-text text-danger"></small>
                 </div>
 
-                <div class="form-group">
+                {{-- <div class="form-group">
                     <label>Nama Peserta</label>
                     <select multiple="multiple" name="user_id[]" id="user_id"
                         class="js-example-basic-multiple js-states form-control form-control">
@@ -90,7 +90,7 @@
                         @endforeach
                     </select>
                     <small id="error-user_id" class="error-text form-text text-danger"></small>
-                </div>
+                </div> --}}
 
                 <div class="form-group">
                     <label for="id_bidang_minat">
@@ -170,9 +170,9 @@
                 id_matakuliah: {
                     required: true,
                 },
-                user_id: {
-                    required: true,
-                }
+                // user_id: {
+                //     required: true,
+                // }
             },
             submitHandler: function(form) {
                 var formData = new FormData(form);

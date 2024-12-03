@@ -28,6 +28,7 @@ class SertifikasiModel extends Model
         'kuota_peserta',
         'biaya',
         'status_sertifikasi',
+        'surat_tugas',
         'created_at',
         'updated_at'
     ];

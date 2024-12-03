@@ -12,26 +12,26 @@
                     Data yang Anda cari tidak ditemukan.
                 </div>
             @else
-                <table class="table table-bordered table-striped table-hover table-sm">
+                <table class="table-bordless table-sm">
                     <tr>
-                        <th>ID</th>
-                        <td>{{ $pelatihan->id_pelatihan }}</td>
+                        <th>Nama Pelatihan</th>
+                        <td>: {{ $pelatihan->nama_pelatihan }}</td>
                     </tr>
                     <tr>
                         <th>Vendor</th>
-                        <td>{{ $pelatihan->vendor_pelatihan->nama }}</td>
+                        <td>: {{ $pelatihan->vendor_pelatihan->nama }}</td>
                     </tr>
                     <tr>
                         <th>Jenis Bidang</th>
-                        <td>{{ $pelatihan->jenis_pelatihan->nama_jenis_pelatihan }}</td>
+                        <td>: {{ $pelatihan->jenis_pelatihan->nama_jenis_pelatihan }}</td>
                     </tr>
                     <tr>
-                        <th>Nama Pelatihan</th>
-                        <td>{{ $pelatihan->nama_pelatihan }}</td>
+                        <th>Lokasi</th>
+                        <td>: {{ $pelatihan->lokasi }}</td>
                     </tr>
                 </table>
             @endempty
-            <a href="{{ url('/') }}" class="btn btn-sm btn-default mt-2">Kembali</a>
+            <a href="{{ url('/dashboard') }}" class="btn btn-sm btn-default mt-2">Kembali</a>
         </div>
     </div>
 @endsection

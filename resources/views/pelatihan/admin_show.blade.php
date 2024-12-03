@@ -36,25 +36,33 @@
                             <th> </th>
                             <td> </td>
                         </tr>
-                        @if ($pelatihan && $pelatihan->detail_peserta_pelatihan->count())
-                            @foreach ($pelatihan->detail_peserta_pelatihan as $peserta)
+                        @if ($pelatihan->status_pelatihan != 'menunggu' && $pelatihan->status_pelatihan != 'tolak')
+                            @if ($pelatihan && $pelatihan->detail_peserta_pelatihan->count())
+                                @foreach ($pelatihan->detail_peserta_pelatihan as $peserta)
+                                    <tr>
+                                        <th class="text-right">Nama Peserta</th>
+                                        <td>{{ $peserta->nama_lengkap }}</td>
+                                        <th class="text-right">Bukti Pelatihan</th>
+                                        <td>
+                                            <input type="file" id="bukti_pelatihan"
+                                                name="bukti_pelatihan[{{ $peserta->user_id }}]" class="form-control">
+                                            <small id="error-id_bukti_pelatihan"
+                                                class="error-text form-text text-danger"></small>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @else
                                 <tr>
-                                    <th class="text-right">Nama Peserta</th>
-                                    <td>{{ $peserta->nama_lengkap }}</td>
-                                    <th class="text-right">Bukti Pelatihan</th>
-                                    <td>
-                                        <input type="file" id="bukti_pelatihan"
-                                            name="bukti_pelatihan[{{ $peserta->user_id }}]" class="form-control">
-                                        <small id="error-id_bukti_pelatihan"
-                                            class="error-text form-text text-danger"></small>
-                                    </td>
+                                    <td colspan="4" class="text-center">Tidak ada peserta terkait.</td>
                                 </tr>
-                            @endforeach
+                            @endif
                         @else
                             <tr>
-                                <td colspan="4" class="text-center">Tidak ada peserta terkait.</td>
+                                <td colspan="4" class="text-center">Rekomendasi pelatihan belum diterima atau ditolak.
+                                </td>
                             </tr>
                         @endif
+
                     </table>
                 </div>
                 <div class="modal-footer">
@@ -81,7 +89,7 @@
                 submitHandler: function(form) {
                     var formData = new FormData(document.getElementById('form-edit'));
                     console.log('Files in FormData:', formData.get(
-                    'bukti_pelatihan[]')); // Jika menggunakan array
+                        'bukti_pelatihan[]')); // Jika menggunakan array
                     console.log('All FormData:', [...formData.entries()]);
                     $.ajax({
                         url: form.action,
