@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BidangMinatModel;
+use App\Models\MataKuliahModel;
 use App\Models\UserModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -14,6 +16,9 @@ class ProfileController extends Controller
     {
         // Ambil data user berdasarkan ID yang sedang login
         $user = UserModel::findOrFail(Auth::id());
+
+        $bidangMinat = BidangMinatModel::select('id_bidang_minat', 'nama_bidang_minat')->get();
+        $mataKuliah = MataKuliahModel::select('id_matakuliah', 'nama_matakuliah')->get();
 
         // Muat data relasi bidang minat dan mata kuliah
         $userData = $user->load([
@@ -34,6 +39,8 @@ class ProfileController extends Controller
             'breadcrumb' => $breadcrumb,
             'activeMenu' => $activeMenu,
             'data' => $userData,
+            'mataKuliah' => $mataKuliah,
+            'bidangMinat' => $bidangMinat
         ]);
     }
 
@@ -59,7 +66,12 @@ class ProfileController extends Controller
             'nama_lengkap' => $request->nama_lengkap,
             'no_telp' => $request->no_telp,
             'email' => $request->email,
+            'jenis_kelamin' => $request->jenis_kelamin,
         ]);
+
+        // Sinkronisasi bidang minat dan mata kuliah
+    $user->detail_daftar_user_bidang_minat()->sync($request->id_bidang_minat ?? []);
+    $user->detail_daftar_user_matakuliah()->sync($request->id_matakuliah ?? []);
     
     
         // Kembali ke halaman profile dengan status sukses
@@ -121,13 +133,14 @@ class ProfileController extends Controller
             // Kembali ke halaman profile dengan status sukses
             return redirect()->back()->with('status_password', 'Password berhasil diperbarui');
             
-        } else {
+        } 
+        
+        else {
             // Jika password lama tidak sesuai
             return redirect()->back()
                 ->withErrors(['old_password' => 'Password lama tidak sesuai'])
                 ->withInput();
         }
-        dd(session()->all());
 
     }
 }
