@@ -19,6 +19,26 @@
         background-color: #f0f0f0;
         color: #375E97 !important;
     }
+    .form-group {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        flex: 0 0 150px; /* Panjang label */
+        margin-right: 10px;
+        text-align: right;
+    }
+
+    .form-group input[type="radio"] {
+        margin-right: 5px;
+    }
+
+    .form-group .radio-group {
+        display: flex;
+        gap: 10px; /* Jarak antar radio */
+    }
 </style>
 
 <div class="row">
@@ -116,28 +136,6 @@
                                 </div>
                             </div>
 
-<style>
-    .form-group {
-        display: flex;
-        align-items: center;
-        margin-bottom: 15px;
-    }
-
-    .form-group label {
-        flex: 0 0 150px; /* Panjang label */
-        margin-right: 10px;
-        text-align: right;
-    }
-
-    .form-group input[type="radio"] {
-        margin-right: 5px;
-    }
-
-    .form-group .radio-group {
-        display: flex;
-        gap: 10px; /* Jarak antar radio */
-    }
-</style>
                             <div class="form-group row mb-3">
                                 <label for="jenis_kelamin" class="col-md-4 col-form-label text-md-end">Jenis Kelamin</label>
                                 <div class="col-md-8 d-flex align-items-center">
@@ -172,87 +170,6 @@
                                     <input id="mata_kuliah" type="text" class="form-control" value="{{ $user->detail_daftar_user_matakuliah->isEmpty() ? __('Tidak ada mata kuliah yang terdaftar.') : implode(', ', $user->detail_daftar_user_matakuliah->pluck('nama_matakuliah')->toArray()) }}" >
                                 </div>
                             </div>
-
-                            <div class="form-group">
-                        <label for="id_bidang_minat">
-                            Tag Bidang Minat
-                        </label>
-                        <select multiple="multiple" name="id_bidang_minat[]" id="id_bidang_minat"
-                            class="js-example-basic-multiple js-states form-control form-control">
-                            @foreach ($bidangMinat as $item)
-                                <option
-                                    {{ $user->detail_daftar_user_bidang_minat->contains($item->id_bidang_minat) ? 'selected' : '' }}
-                                    value="{{ $item->id_bidang_minat }}">{{ $item->nama_bidang_minat }}
-                                </option>
-                            @endforeach
-                        </select>
-                        <small id="error-id_bidang_minat" class="error-text form-text text-danger"></small>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="id_matakuliah">
-                            Tag Mata Kuliah
-                        </label>
-                        <select multiple="multiple" name="id_matakuliah[]" id="id_matakuliah"
-                            class="js-example-basic-multiple js-states form-control">
-                            @foreach ($mataKuliah as $item)
-                                <option
-                                    {{ $user->detail_daftar_user_matakuliah->contains($item->id_matakuliah) ? 'selected' : '' }}
-                                    value="{{ $item->id_matakuliah }}">{{ $item->nama_matakuliah }}</option>
-                            @endforeach
-                        </select>
-                        <small id="error-id_matakuliah" class="error-text form-text text-danger"></small>
-                    </div>
-                </div>
-
-                <script>
-                 $(document).ready(function() {
-    // Form validation
-    $('form').validate({
-        errorElement: 'small',
-        errorPlacement: function(error, element) {
-            error.addClass('error-text text-danger');
-            element.closest('.form-group').find('.error-text').remove();
-            element.closest('.form-group').append(error);
-        },
-        highlight: function(element, errorClass, validClass) {
-            $(element).addClass('is-invalid');
-        },
-        unhighlight: function(element, errorClass, validClass) {
-            $(element).removeClass('is-invalid');
-            $(element).closest('.form-group').find('.error-text').remove();
-        },
-        rules: {
-            'id_bidang_minat[]': {
-                required: true,
-                minlength: 1
-            },
-            'id_matakuliah[]': {
-                required: true,
-                minlength: 1
-            }
-        },
-        messages: {
-            'id_bidang_minat[]': {
-                required: "Pilih minimal satu bidang minat",
-                minlength: "Pilih minimal satu bidang minat"
-            },
-            'id_matakuliah[]': {
-                required: "Pilih minimal satu mata kuliah",
-                minlength: "Pilih minimal satu mata kuliah"
-            }
-        }
-    });
-
-    // Select2 initialization
-    $("#id_matakuliah, #id_bidang_minat").select2({
-        dropdownAutoWidth: true,
-        theme: "bootstrap4", // More modern theme, adjust as needed
-        placeholder: "Pilih opsi",
-        allowClear: true // Allows clearing selection
-    });
-});
-                </script>
 
                             <div class="form-group row mb-0">
                                 <div class="col-md-8 offset-md-4">
