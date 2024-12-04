@@ -532,7 +532,6 @@ class SertifikasiController extends Controller
                 'nama_sertifikasi' => 'required|string|min:5',
                 'jenis' => 'required',
                 'tanggal' => 'required|date',
-                'masa_berlaku' => 'required',
                 'kuota_peserta' => 'nullable|integer',
                 'biaya' => 'required|string|max:255',
             ];
@@ -552,7 +551,6 @@ class SertifikasiController extends Controller
                 'nama_sertifikasi'  => $request->nama_sertifikasi,
                 'jenis'      => $request->jenis,
                 'tanggal'      => $request->tanggal,
-                'masa_berlaku'      => $request->masa_berlaku,
                 'biaya'      => $request->biaya,
                 'id_vendor_sertifikasi'  => $request->id_vendor_sertifikasi,
                 'id_jenis_sertifikasi'  => $request->id_jenis_sertifikasi,

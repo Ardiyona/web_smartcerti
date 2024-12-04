@@ -66,13 +66,6 @@
                     <small id="error-tanggal" class="error-text form-text text-danger"></small>
                 </div>
 
-                <!-- Masa Berlaku -->
-                <div class="form-group">
-                    <label>Masa Berlaku</label>
-                    <input type="date" name="masa_berlaku" id="masa_berlaku" class="form-control" required>
-                    <small id="error-masa_berlaku" class="error-text form-text text-danger"></small>
-                </div>
-
                 <!-- Biaya -->
                 <div class="form-group">
                     <label>Biaya</label>
@@ -155,9 +148,6 @@
                     required: true,
                 },
                 tanggal: {
-                    required: true,
-                },
-                masa_berlaku: {
                     required: true,
                 },
                 biaya: {
