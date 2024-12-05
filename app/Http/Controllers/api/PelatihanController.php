@@ -3,8 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\BidangMinatModel;
+use App\Models\JenisPelatihanModel;
+use App\Models\MataKuliahModel;
 use App\Models\PelatihanModel;
+use App\Models\PeriodeModel;
 use App\Models\PesertaPelatihanModel;
+use App\Models\UserModel;
+use App\Models\VendorPelatihanModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -268,6 +274,97 @@ public function getPelatihanByUser($id)
     // Jika data ditemukan, kembalikan dalam bentuk JSON
     return response()->json($pesertaPelatihan);
 }
+
+
+// public function create()
+// {
+//     // Mengambil data dari berbagai tabel terkait pelatihan
+//     $vendorpelatihan = VendorPelatihanModel::select('id_vendor_pelatihan', 'nama')->get();
+//     $jenispelatihan = JenisPelatihanModel::select('id_jenis_pelatihan', 'nama_jenis_pelatihan')->get();
+//     $periode = PeriodeModel::select('id_periode', 'tahun_periode')->get();
+//     $bidangMinat = BidangMinatModel::select('id_bidang_minat', 'nama_bidang_minat')->get();
+//     $mataKuliah = MataKuliahModel::select('id_matakuliah', 'nama_matakuliah')->get();
+//     $user = UserModel::select('user_id', 'nama_lengkap')->get();
+
+//     // Mendapatkan user yang sedang login
+//     $userid = Auth::user();
+
+//     // Menentukan data tambahan berdasarkan level user
+//     if ($userid->id_level == 1) {
+//         $response = [
+//             'success' => true,
+//             'message' => 'Data pelatihan untuk admin',
+//             'data' => [
+//                 'vendorpelatihan' => $vendorpelatihan,
+//                 'jenispelatihan' => $jenispelatihan,
+//                 'periode' => $periode,
+//                 'bidangMinat' => $bidangMinat,
+//                 'mataKuliah' => $mataKuliah,
+//                 'user' => $user,
+//             ],
+//         ];
+//     } else {
+//         $response = [
+//             'success' => true,
+//             'message' => 'Data pelatihan untuk user',
+//             'data' => [
+//                 'vendorpelatihan' => $vendorpelatihan,
+//                 'jenispelatihan' => $jenispelatihan,
+//                 'periode' => $periode,
+//                 'bidangMinat' => $bidangMinat,
+//                 'mataKuliah' => $mataKuliah,
+//                 'user' => $user,
+//             ],
+//         ];
+//     }
+
+//     // Mengembalikan data dalam bentuk JSON
+//     return response()->json($response, 200);
+// }
+
+
+public function create()
+{
+    // Ambil data yang diperlukan
+    $vendorpelatihan = VendorPelatihanModel::select('id_vendor_pelatihan', 'nama')->get();
+    $jenispelatihan = JenisPelatihanModel::select('id_jenis_pelatihan', 'nama_jenis_pelatihan')->get();
+    $periode = PeriodeModel::select('id_periode', 'tahun_periode')->get();
+    $bidangMinat = BidangMinatModel::select('id_bidang_minat', 'nama_bidang_minat')->get();
+    $mataKuliah = MataKuliahModel::select('id_matakuliah', 'nama_matakuliah')->get();
+    $user = UserModel::select('user_id', 'nama_lengkap')->get();
+
+    // Periksa apakah user terautentikasi
+    $userid = Auth::user();
+    if (!$userid) {
+        return response()->json([
+            'success' => false,
+            'message' => 'User tidak terautentikasi',
+        ], 401);
+    }
+
+    // Struktur data yang akan dikembalikan
+    $data = [
+        'vendorpelatihan' => $vendorpelatihan,
+        'jenispelatihan' => $jenispelatihan,
+        'periode' => $periode,
+        'bidangMinat' => $bidangMinat,
+        'mataKuliah' => $mataKuliah,
+        'user' => $user,
+    ];
+
+    // Tentukan pesan berdasarkan level user
+    $message = $userid->id_level == 1
+        ? 'Data pelatihan untuk admin'
+        : 'Data pelatihan untuk user';
+
+    // Kembalikan data dalam format JSON
+    return response()->json([
+        'success' => true,
+        'message' => $message,
+        'data' => $data,
+    ], 200);
+}
+
 
 
 }
