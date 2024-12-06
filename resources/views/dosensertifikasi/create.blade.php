@@ -234,7 +234,8 @@
         });
         $("#id_matakuliah, #id_bidang_minat").select2({
             dropdownAutoWidth: true,
-            theme: "classic"
+            theme: "classic",
+            width: '100%' 
         });
     });
 </script>

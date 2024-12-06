@@ -85,7 +85,7 @@
                         Tag Bidang Minat
                     </label>
                     <select multiple="multiple" name="id_bidang_minat[]" id="id_bidang_minat"
-                        class="js-example-basic-multiple js-states form-control form-control">
+                        class="js-example-basic-multiple js-states form-control form-user">
                         @foreach ($bidangMinat as $item)
                             <option value="{{ $item->id_bidang_minat }}">{{ $item->nama_bidang_minat }}
                             </option>
@@ -205,7 +205,8 @@
         });
         $("#id_matakuliah, #id_bidang_minat").select2({
             dropdownAutoWidth: true,
-            theme: "classic"
+            theme: "classic",
+            width: '100%' 
         });
     });
 </script>

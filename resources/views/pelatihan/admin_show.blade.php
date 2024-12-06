@@ -66,6 +66,12 @@
                     </table>
                 </div>
                 <div class="modal-footer">
+                    @if ($pelatihan->surat_tugas)
+                        <a href="{{ url('storage/surat_tugas/' . $pelatihan->surat_tugas) }}" target="_blank"
+                            class="btn btn-success" download>
+                            <i class="fa fa-file-pdf"></i> Download Surat Tugas
+                        </a>
+                    @endif
                     @if ($pelatihan->status_pelatihan == 'terima')
                         <a href="{{ url('/pelatihan/' . $pelatihan->id_pelatihan . '/generate') }}" type="submit"
                             class="btn btn-success"><i class="fa fa-file-pdf"></i>Download Draft Surat Tugas</a>

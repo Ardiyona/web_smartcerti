@@ -186,36 +186,42 @@
                                     </div>
                                 </div>
 
-
-                                <div class="form-group ">
-                                    <label for="bidang_minat"
-                                        class="col-md-4 col-form-label text-md-end">{{ __('Bidang Minat') }}</label>
-                                    <select multiple="multiple" name="id_bidang_minat[]" id="id_bidang_minat"
-                                        class="js-example-basic-multiple js-states form-control form-control">
-                                        @foreach ($bidangMinat as $item)
-                                            <option
-                                                {{ $userData->detail_daftar_user_bidang_minat->contains($item->id_bidang_minat) ? 'selected' : '' }}
-                                                value="{{ $item->id_bidang_minat }}">{{ $item->nama_bidang_minat }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div class="form-group ">
-                                    <label for="mata_kuliah"
-                                        class="col-md-4 col-form-label text-md-end">{{ __('Mata Kuliah') }}</label>
-                                    <div class="col-md-8">
-                                        <select multiple="multiple" name="id_matakuliah[]" id="id_matakuliah"
-                                            class="js-example-basic-multiple js-states form-control">
-                                            @foreach ($mataKuliah as $item)
-                                                <option
-                                                    {{ $user->detail_daftar_user_matakuliah->contains($item->id_matakuliah) ? 'selected' : '' }}
-                                                    value="{{ $item->id_matakuliah }}">{{ $item->nama_matakuliah }}
-                                                </option>
-                                            @endforeach
-                                        </select>
+                                @if (Auth::user()->id_level != 1)
+                                    <div class="form-group row mb-3">
+                                        <label for="bidang_minat"
+                                            class="col-md-4 col-form-label text-md-end">{{ __('Bidang Minat') }}</label>
+                                        <div class="col-md-8">
+                                            <select multiple="multiple" name="id_bidang_minat[]" id="id_bidang_minat"
+                                                class="js-example-basic-multiple js-states form-control form-control">
+                                                @foreach ($bidangMinat as $item)
+                                                    <option
+                                                        {{ $userData->detail_daftar_user_bidang_minat->contains($item->id_bidang_minat) ? 'selected' : '' }}
+                                                        value="{{ $item->id_bidang_minat }}">
+                                                        {{ $item->nama_bidang_minat }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
+                                @endif
+
+                                @if (Auth::user()->id_level != 1)
+                                    <div class="form-group row mb-3">
+                                        <label for="mata_kuliah"
+                                            class="col-md-4 col-form-label text-md-end">{{ __('Mata Kuliah') }}</label>
+                                        <div class="col-md-8">
+                                            <select multiple="multiple" name="id_matakuliah[]" id="id_matakuliah"
+                                                class="js-example-basic-multiple js-states form-control">
+                                                @foreach ($mataKuliah as $item)
+                                                    <option
+                                                        {{ $user->detail_daftar_user_matakuliah->contains($item->id_matakuliah) ? 'selected' : '' }}
+                                                        value="{{ $item->id_matakuliah }}">{{ $item->nama_matakuliah }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                @endif
 
                                 <div class="form-group row mb-0">
                                     <div class="col-md-8 offset-md-4">
@@ -301,7 +307,8 @@
     <script>
         $("#id_matakuliah, #id_bidang_minat").select2({
             dropdownAutoWidth: true,
-            theme: "classic"
+            theme: "classic",
+            width: '100%'
         });
     </script>
 @endpush
