@@ -32,6 +32,7 @@
                 </a>
             </li>
 
+            @if(in_array(Auth::user()->id_level, [1, 2]))
             <li class="nav-header">Kompetensi Prodi</li>
             <li class="nav-item">
                 <a href="{{ url('/kompetensiprodi') }}" class="nav-link {{ $activeMenu == 'kompetensiprodi' ? 'active' : '' }}">
@@ -39,6 +40,7 @@
                     <p>Kompetensi Prodi</p>
                 </a>
             </li>
+            @endif
             
             <!-- Menu Umum untuk Level 1, 2, dan 3 -->
             @if(in_array(Auth::user()->id_level, [1, 2, 3]))
