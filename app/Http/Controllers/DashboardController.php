@@ -55,6 +55,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MataKuliahModel;
 use App\Models\PelatihanModel;
 use App\Models\SertifikasiModel;
 use App\Models\UserModel;
@@ -82,6 +83,9 @@ class DashboardController extends Controller
 
         // Hitung jumlah data pengguna
         $jumlahPengguna = UserModel::count(); // Menghitung jumlah pengguna yang terdaftar
+
+                // Hitung jumlah matakuliah
+                $jumlahmatakuliah = MataKuliahModel::count(); // Menghitung jumlah pengguna yang terdaftar
 
         // Ambil ID pengguna yang sedang login
         $userId = Auth::id();
@@ -189,6 +193,7 @@ class DashboardController extends Controller
             'jumlahPengguna',
             'jumlahSertifikasiUser',
             'jumlahPelatihanUser',
+            'jumlahmatakuliah',
             'chartData'
         ));
     }

@@ -130,20 +130,38 @@
             </div>
 
             <!-- Total User Sertifikasi (Untuk Admin atau Pimpinan) -->
+ 
+            <!-- Total User Sertifikasi (Untuk Admin atau Pimpinan) -->
             <div class="col-lg-3 col-6">
-                <div class="small-box bg-warning">
-                    <div class="inner">
-                        <h3>{{ $jumlahPengguna }}</h3> <!-- Tampilkan jumlah total sertifikasi -->
-                        <p>Jumlah sertifikasi dan pelatihan tiap penggun</p> <!-- Deskripsi diperjelas -->
-                    </div>
-                    <div class="icon">
-                        <i class="ion ion-person"></i>
-                    </div>
-                    <a href="{{ url('semuadosen') }}" class="small-box-footer">
-                        More info <i class="fas fa-arrow-circle-right"></i>
-                    </a>
+              <div class="small-box bg-yellow">
+                  <div class="inner">
+                      <h3>{{ $jumlahPengguna }}</h3> <!-- Tampilkan jumlah total sertifikasi -->
+                      <p>Total sertifikasi dan pelatihan tiap pengguna</p> <!-- Deskripsi diperjelas -->
+                  </div>
+                  <div class="icon">
+                      <i class="ion ion-person"></i>
+                  </div>
+                  <a href="{{ url('semuadosen') }}" class="small-box-footer">
+                      More info <i class="fas fa-arrow-circle-right"></i>
+                  </a>
+              </div>
+          </div> 
+
+          <!--matakuliah -->
+          <div class="col-lg-3 col-6">
+            <div class="small-box bg-red">
+                <div class="inner">
+                    <h3>{{ $jumlahmatakuliah }}</h3> <!-- Tampilkan jumlah total sertifikasi -->
+                    <p>Total matakuliah</p> <!-- Deskripsi diperjelas -->
                 </div>
+                <div class="icon">
+                    <i class="ion ion-person"></i>
+                </div>
+                <a href="{{ url('jumlahmatakuliah') }}" class="small-box-footer">
+                    More info <i class="fas fa-arrow-circle-right"></i>
+                </a>
             </div>
+        </div> 
             @endif
             <!-- ./col -->
 
