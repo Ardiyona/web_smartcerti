@@ -12,6 +12,7 @@ use App\Http\Controllers\VendorPelatihanController;
 use App\Http\Controllers\VendorSertifikasiController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\JenisPelatihanController;
+use App\Http\Controllers\KompetensiProdiController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PelatihanController;
@@ -239,7 +240,19 @@ Route::prefix('periode')->group(function () {
     Route::get('/{id}/confirm', [PeriodeController::class, 'confirm']);
 });
 
-
+Route::prefix('kompetensiprodi')->group(function () {
+    Route::get('/', [KompetensiProdiController::class, 'index']);
+    Route::post('/list', [KompetensiProdiController::class, 'list']);
+    Route::get('/create', [KompetensiProdiController::class, 'create']);
+    Route::post('/store', [KompetensiProdiController::class, 'store']);
+    Route::get('/{id}/show', [KompetensiProdiController::class, 'show']);
+    Route::get('/{id}/edit', [KompetensiProdiController::class, 'edit']);
+    Route::put('/{id}/update', [KompetensiProdiController::class, 'update']);
+    Route::delete('/{id}/delete', [KompetensiProdiController::class, 'delete']);
+    Route::get('/export_pdf', [KompetensiProdiController::class, 'export_pdf']); // Jika ada fitur export
+    Route::post('/import_ajax', [KompetensiProdiController::class, 'import_ajax']); // Jika ada fitur import
+    Route::get('/{id}/confirm', [KompetensiProdiController::class, 'confirm']);
+});
 
 
 Route::get('/penerimaanpermintaan', [PenerimaanPermintaanController::class, 'index']);
