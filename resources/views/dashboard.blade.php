@@ -128,8 +128,6 @@
                     </a>
                 </div>
             </div>
-
-            <!-- Total User Sertifikasi (Untuk Admin atau Pimpinan) -->
  
             <!-- Total User Sertifikasi (Untuk Admin atau Pimpinan) -->
             <div class="col-lg-3 col-6">
@@ -162,6 +160,23 @@
                 </a>
             </div>
         </div> 
+
+          <!--bidangminat -->
+          <div class="col-lg-3 col-6">
+            <div class="small-box bg-red">
+                <div class="inner">
+                    <h3>{{ $jumlahbidangminat }}</h3> <!-- Tampilkan jumlah total sertifikasi -->
+                    <p>Total bidang minat</p> <!-- Deskripsi diperjelas -->
+                </div>
+                <div class="icon">
+                    <i class="ion ion-person"></i>
+                </div>
+                <a href="{{ url('jumlahbidangminat') }}" class="small-box-footer">
+                    More info <i class="fas fa-arrow-circle-right"></i>
+                </a>
+            </div>
+        </div> 
+
             @endif
             <!-- ./col -->
 

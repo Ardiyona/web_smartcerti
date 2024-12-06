@@ -12,6 +12,8 @@ use App\Http\Controllers\VendorPelatihanController;
 use App\Http\Controllers\VendorSertifikasiController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\JenisPelatihanController;
+use App\Http\Controllers\JumlahBidangMinatController;
+use App\Http\Controllers\JumlahMatakuliahController;
 use App\Http\Controllers\KompetensiProdiController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\NotificationController;
@@ -53,6 +55,15 @@ Route::post('/pelatihanuser/list', [PelatihanUserController::class, 'list']);
 
 Route::get('/sertifikasiuser', [SertifikasiUserController::class, 'index']);
 Route::post('/sertifikasiuser/list', [SertifikasiUserController::class, 'list']);
+
+//dashboard matakuliah
+Route::get('/jumlahmatakuliah', [JumlahMatakuliahController::class, 'index']);
+Route::get('/jumlahmatakuliah/list', [JumlahMatakuliahController::class, 'list'])->name('jumlahmatakuliah.list');
+
+
+//dashboard bidangminat
+Route::get('/jumlahbidangminat', [JumlahBidangMinatController::class, 'index']);
+Route::get('/jumlahbidangminat/list', [JumlahBidangMinatController::class, 'list'])->name('jumlahbidangminat.list');
 
 // Menampilkan halaman profil
 Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
