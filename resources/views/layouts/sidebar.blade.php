@@ -126,7 +126,7 @@
                 </li>
             @endif
 
-            <!-- Menu Umum untuk Level 1, 2, dan 3 -->
+            {{-- <!-- Menu Umum untuk Level 1, 2, dan 3 -->
             @if(in_array(Auth::user()->id_level, [1, 2, 3]))
                 <li class="nav-header">Mengelola Pelatihan dan Sertifikasi</li>
                 <li class="nav-item">
@@ -141,7 +141,7 @@
                         <p>Sertifikasi</p>
                     </a>
                 </li>
-            @endif
+            @endif --}}
 
             <!-- Untuk Pimpinan -->
             @if(Auth::user()->id_level == 2)
