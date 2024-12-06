@@ -43,6 +43,7 @@ Route::post('/semuasertifikasidosen/list', [SemuaSertifikasiDosenController::cla
 
 Route::get('/semuadosen', [SemuaDosenController::class, 'index']);
 Route::post('/semuadosen/list', [SemuaDosenController::class, 'list']);
+Route::get('/semuadosen/list', [SemuaDosenController::class, 'list'])->name('semuadosen.list');
 
 Route::get('/semuapelatihandosen', [SemuaPelatihanDosenController::class, 'index']);
 Route::post('/semuapelatihandosen/list', [SemuaPelatihanDosenController::class, 'list']);

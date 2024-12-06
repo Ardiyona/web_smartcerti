@@ -131,10 +131,10 @@
 
             <!-- Total User Sertifikasi (Untuk Admin atau Pimpinan) -->
             <div class="col-lg-3 col-6">
-                <div class="small-box bg-success">
+                <div class="small-box bg-warning">
                     <div class="inner">
                         <h3>{{ $jumlahPengguna }}</h3> <!-- Tampilkan jumlah total sertifikasi -->
-                        <p>Total Pengguna</p> <!-- Deskripsi diperjelas -->
+                        <p>Jumlah sertifikasi dan pelatihan tiap penggun</p> <!-- Deskripsi diperjelas -->
                     </div>
                     <div class="icon">
                         <i class="ion ion-person"></i>
@@ -187,7 +187,7 @@
 
             <!-- BAR CHART -->
             @if(in_array(Auth::user()->id_level, [1, 2]))
-            <div class="card card-success" style="margin-bottom: 0;">
+            <div class="card card-pink" style="margin-bottom: 0;">
                 <div class="card-header" style="padding-bottom: 0.5rem;">
                     <h3 class="card-title">Bar Chart</h3>
                     <div class="card-tools">

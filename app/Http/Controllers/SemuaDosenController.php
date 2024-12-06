@@ -36,18 +36,18 @@ class SemuaDosenController extends Controller
     {
         $data = DB::table('user')
             ->leftJoin('detail_peserta_pelatihan', 'user.user_id', '=', 'detail_peserta_pelatihan.user_id')
-            ->leftJoin('detail_peserta_sertifikasi', 'user.user_id', '=', 'detail_peserta_sertifikasi.user_id') // Add join for certifications
-            ->select('users.user_id', 'user.nama_lengkap',
-                DB::raw('COUNT(detail_peserta_pelatihan.id_detail_peserta_pelatihan) as jumlah_pelatihan'),
-                DB::raw('COUNT(detail_peserta_sertifikasi.id_detail_peserta_sertifikasi) as jumlah_sertifikasi')
+            ->leftJoin('detail_peserta_sertifikasi', 'user.user_id', '=', 'detail_peserta_sertifikasi.user_id')
+            ->select(
+                'user.user_id',
+                'user.nama_lengkap',
+                DB::raw('COUNT(DISTINCT detail_peserta_pelatihan.id_detail_peserta_pelatihan) as jumlah_pelatihan'),
+                DB::raw('COUNT(DISTINCT detail_peserta_sertifikasi.id_detail_peserta_sertifikasi) as jumlah_sertifikasi')
             )
-            ->groupBy('user.user_id', 'user.nama_lengkap')
-            ->get();
-
+            ->groupBy('user.user_id', 'user.nama_lengkap');
+    
         return DataTables::of($data)
-            ->addIndexColumn()
+            ->addIndexColumn() // Tambahkan nomor urut
             ->make(true);
     }
-
 
 }
