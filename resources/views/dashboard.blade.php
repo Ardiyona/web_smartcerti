@@ -163,7 +163,7 @@
 
           <!--bidangminat -->
           <div class="col-lg-3 col-6">
-            <div class="small-box bg-red">
+            <div class="small-box bg-gray">
                 <div class="inner">
                     <h3>{{ $jumlahbidangminat }}</h3> <!-- Tampilkan jumlah total sertifikasi -->
                     <p>Total bidang minat</p> <!-- Deskripsi diperjelas -->
