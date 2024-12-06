@@ -30,18 +30,6 @@
                         <td class="col-9">{{ $sertifikasi->id_sertifikasi }}</td>
                     </tr>
                     <tr>
-                        <th class="text-right col-3">Vendor</th>
-                        <td class="col-9">{{ $sertifikasi->vendor_sertifikasi->nama }}</td>
-                    </tr>
-                    <tr>
-                        <th class="text-right col-3">Jenis Bidang</th>
-                        <td class="col-9">{{ $sertifikasi->jenis_sertifikasi->nama_jenis_sertifikasi }}</td>
-                    </tr>
-                    <tr>
-                        <th class="text-right col-3">Tahun Periode</th>
-                        <td class="col-9">{{ $sertifikasi->periode->tahun_periode }}</td>
-                    </tr>
-                    <tr>
                         <th class="text-right col-3">Nama Sertifikasi</th>
                         <td class="col-9">{{ $sertifikasi->nama_sertifikasi }}</td>
                     </tr>
@@ -62,8 +50,20 @@
                         </td>
                     </tr>
                     <tr>
+                        <th class="text-right col-3">Vendor</th>
+                        <td class="col-9">{{ $sertifikasi->vendor_sertifikasi->nama }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right col-3">Jenis Bidang</th>
+                        <td class="col-9">{{ $sertifikasi->jenis_sertifikasi->nama_jenis_sertifikasi }}</td>
+                    </tr>
+                    <tr>
                         <th class="text-right col-3">Jenis Sertifikasi</th>
                         <td class="col-9">{{ $sertifikasi->jenis }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right col-3">Tahun Periode</th>
+                        <td class="col-9">{{ $sertifikasi->periode->tahun_periode }}</td>
                     </tr>
                     <tr>
                         <th class="text-right col-3">Tanggal</th>

@@ -30,20 +30,17 @@
                 <thead>
                     <tr>
                         <th>ID</th>
+                        <th>Nama Sertifikasi</th>
                         @if (Auth::user()->id_level != 1)
                             <th>Nama Vendor</th>
                         @endif
                         <th>Jenis Bidang</th>
-                        <th>Periode</th>
-                        <th>Nama Sertifikasi</th>
-                        <th>No Sertifikasi</th>
                         <th>Jenis</th>
+                        <th>Periode</th>
                         @if (Auth::user()->id_level != 1)
                             <th>Tanggal</th>
                         @endif
                         <th>Masa Berlaku</th>
-                        <th>Tag Bidang Minat</th>
-                        <th>Tag Mata Kuliah</th>
                         @if (Auth::user()->id_level == 1)
                             <th>Nama Peserta</th>
                             <th>Status</th>
@@ -77,158 +74,125 @@
             // Cek apakah user adalah admin (id_level = 1)
             var isAdmin = {{ Auth::user()->id_level == 1 ? 'true' : 'false' }};
 
-            var columns = [{
-                    data: "DT_RowIndex",
-                    className: "text-center",
-                    width: "4%",
-                    orderable: false,
-                    searchable: false
+             var columns = [
+            {
+                data: "DT_RowIndex",
+                className: "text-center",
+                width: "4%",
+                orderable: false,
+                searchable: false
+            },
+            {
+                data: "nama_sertifikasi",
+                className: "",
+                width: "9%",
+                orderable: true,
+                searchable: true
+            },
+            {
+                data: "jenis_sertifikasi.nama_jenis_sertifikasi",
+                className: "",
+                width: "9%",
+                orderable: false,
+                searchable: true,
+            },
+            {
+                data: "jenis",
+                className: "",
+                width: "6%",
+                orderable: false,
+                searchable: true
+            },
+            {
+                data: "periode.tahun_periode",
+                className: "",
+                width: "6%",
+                orderable: false,
+                searchable: false
+            },
+            {
+                data: "masa_berlaku",
+                render: function(data, type, row) {
+                    return row.masa_berlaku ? row.masa_berlaku : '-';
                 },
-                {
-                    data: "jenis_sertifikasi.nama_jenis_sertifikasi",
-                    className: "",
-                    width: "9%",
-                    orderable: false,
-                    searchable: true,
-                },
-                {
-                    data: "periode.tahun_periode",
-                    className: "",
-                    width: "6%",
-                    orderable: false,
-                    searchable: false
-                },
-                {
-                    data: "nama_sertifikasi",
-                    className: "",
-                    width: "9%",
-                    orderable: true,
-                    searchable: true
-                },
-                {
-                    data: "no_sertifikasi",
-                    render: function(data, type, row) {
-                        return row.no_sertifikasi ? row.no_sertifikasi : '-';
-                    },
-                    className: "",
-                    width: "6%",
-                    orderable: false,
-                    searchable: true
-                },
-                {
-                    data: "jenis",
-                    className: "",
-                    width: "6%",
-                    orderable: false,
-                    searchable: true
-                },
-                // {
-                //     data: "tanggal",
-                //     className: "",
-                //     width: "8%",
-                //     orderable: false,
-                //     searchable: false
-                // },
-                {
-                    data: "masa_berlaku",
-                    render: function(data, type, row) {
-                        return row.masa_berlaku ? row.masa_berlaku : '-';
-                    },
-                    className: "",
-                    width: "7%",
-                    orderable: false,
-                    searchable: false
-                },
-                {
-                    data: "bidang_minat",
-                    render: function(data, type, row) {
-                        return row.bidang_minat ? row.bidang_minat : '-';
-                    },
-                    className: "",
-                    width: "10%",
-                    orderable: false,
-                    searchable: false
-                },
-                {
-                    data: "mata_kuliah",
-                    render: function(data, type, row) {
-                        return row.mata_kuliah ? row.mata_kuliah : '-';
-                    },
-                    className: "",
-                    width: "10%",
-                    orderable: false,
-                    searchable: false
-                },
-                {
-                    data: "aksi",
-                    className: "",
-                    width: "9%",
-                    orderable: false,
-                    searchable: false
-                }
-            ];
-
-            if (!isAdmin) {
-                columns.splice(7, 0, {
-                    data: "tanggal",
-                    className: "",
-                    width: "8%",
-                    orderable: true, // Set true jika ingin sorting berdasarkan tanggal
-                    searchable: false
-                });
-                columns.splice(1, 0, {
-                    data: "vendor_sertifikasi.nama",
-                    className: "",
-                    width: "9%",
-                    orderable: false,
-                    searchable: true
-                });
+                className: "",
+                width: "7%",
+                orderable: false,
+                searchable: false
+            },
+            {
+                data: "aksi",
+                className: "",
+                width: "12%",
+                orderable: false,
+                searchable: false
             }
-            // Tambahkan kolom "Nama Peserta" jika user adalah admin
-            if (isAdmin) {
-                columns.splice(9, 0, {
-                    data: "peserta_sertifikasi",
-                    render: function(data, type, row) {
-                        return row.peserta_sertifikasi ? row.peserta_sertifikasi : '-';
-                    },
-                    className: "",
-                    width: "10%",
-                    orderable: false,
-                    searchable: false
-                });
-                columns.splice(10, 0, {
-                    data: "status_sertifikasi",
-                    render: function(data, type, row) {
-                        if (data) {
-                            let badgeClass;
-                            // Tentukan kelas berdasarkan nilai data
-                            if (data.toLowerCase() === 'terima') {
-                                badgeClass = 'bg-success';
-                            } else if (data.toLowerCase() === 'menunggu') {
-                                badgeClass = 'bg-warning';
-                            } else {
-                                badgeClass = 'bg-danger';
-                            }
-                            return `<span class="badge ${badgeClass}">${data}</span>`;
-                        }
-                        return '-';
-                    },
-                    className: "",
-                    width: "8%",
-                    orderable: false,
-                    searchable: false
-                });
-            }
+        ];
 
-            dataSertifikasi = $('#table_sertifikasi').DataTable({
-                serverSide: true,
-                ajax: {
-                    url: "{{ url('sertifikasi/list') }}",
-                    dataType: "json",
-                    type: "POST",
-                },
-                columns: columns
+        // Tambahkan kolom vendor dan tanggal untuk non-admin
+        if (!isAdmin) {
+            columns.splice(2, 0, {
+                data: "vendor_sertifikasi.nama",
+                className: "",
+                width: "9%",
+                orderable: false,
+                searchable: true
             });
+            columns.splice(6, 0, {
+                data: "tanggal",
+                className: "",
+                width: "8%",
+                orderable: true, // Set true jika ingin sorting berdasarkan tanggal
+                searchable: false
+            });
+        }
+
+        // Tambahkan kolom "Nama Peserta" dan "Status" jika user adalah admin
+        if (isAdmin) {
+            columns.splice(6, 0, {
+                data: "peserta_sertifikasi",
+                render: function(data, type, row) {
+                    return row.peserta_sertifikasi ? row.peserta_sertifikasi : '-';
+                },
+                className: "",
+                width: "10%",
+                orderable: false,
+                searchable: false
+            });
+            columns.splice(7, 0, {
+                data: "status_sertifikasi",
+                render: function(data, type, row) {
+                    if (data) {
+                        let badgeClass;
+                        // Tentukan kelas berdasarkan nilai data
+                        if (data.toLowerCase() === 'terima') {
+                            badgeClass = 'bg-success';
+                        } else if (data.toLowerCase() === 'menunggu') {
+                            badgeClass = 'bg-warning';
+                        } else {
+                            badgeClass = 'bg-danger';
+                        }
+                        return `<span class="badge ${badgeClass}">${data}</span>`;
+                    }
+                    return '-';
+                },
+                className: "",
+                width: "3%",
+                orderable: false,
+                searchable: false
+            });
+        }
+
+        // Inisialisasi DataTable dengan konfigurasi kolom baru
+        dataSertifikasi = $('#table_sertifikasi').DataTable({
+            serverSide: true,
+            ajax: {
+                url: "{{ url('sertifikasi/list') }}",
+                dataType: "json",
+                type: "POST",
+            },
+            columns: columns
         });
+    });
     </script>
 @endpush

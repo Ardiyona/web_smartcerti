@@ -105,6 +105,7 @@ Route::group(['prefix' => 'sertifikasi'], function () {
     // Route::get('/{id}/create_rekomendasi_peserta', [SertifikasiController::class, 'create_rekomendasi_peserta']);
     // Route::put('/{id}/store_rekomendasi_peserta', [SertifikasiController::class, 'store_rekomendasi_peserta']);
     Route::get('/{id}/admin_show_edit', [SertifikasiController::class, 'admin_show_edit']);
+    Route::get('/{id}/admin_detail', [SertifikasiController::class, 'admin_detail']);
     Route::put('/{id}/admin_show_update', [SertifikasiController::class, 'admin_show_update']);
     Route::get('/{id}/show', [SertifikasiController::class, 'show']);
     Route::get('/{id}/edit', [SertifikasiController::class, 'edit']);
@@ -122,6 +123,7 @@ Route::group(['prefix' => 'pelatihan'], function () {
     Route::post('/filter_peserta', [PelatihanController::class, 'filterPeserta']);
     // Route::get('/{id}/create_rekomendasi_peserta', [PelatihanController::class, 'create_rekomendasi_peserta']);
     // Route::put('/{id}/store_rekomendasi_peserta', [PelatihanController::class, 'store_rekomendasi_peserta']);
+    Route::get('/{id}/admin_detail', [PelatihanController::class, 'admin_detail']);
     Route::get('/{id}/admin_show_edit', [PelatihanController::class, 'admin_show_edit']);
     Route::put('/{id}/admin_show_update', [PelatihanController::class, 'admin_show_update']);
     Route::get('/{id}/show', [PelatihanController::class, 'show']);
