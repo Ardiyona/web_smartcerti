@@ -40,6 +40,23 @@
                 </a>
             </li>
             
+            <!-- Menu Umum untuk Level 1, 2, dan 3 -->
+            @if(in_array(Auth::user()->id_level, [1, 2, 3]))
+                <li class="nav-header">Mengelola Pelatihan dan Sertifikasi</li>
+                <li class="nav-item">
+                    <a href="{{ url('/pelatihan') }}" class="nav-link {{ $activeMenu == 'pelatihan' ? 'active' : '' }}">
+                        <i class="nav-icon far fa-bookmark"></i>
+                        <p>Pelatihan</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url('/sertifikasi') }}" class="nav-link {{ $activeMenu == 'sertifikasi' ? 'active' : '' }}">
+                        <i class="nav-icon far fa-bookmark"></i>
+                        <p>Sertifikasi</p>
+                    </a>
+                </li>
+            @endif
+
             <!-- Untuk Admin -->
             @if(Auth::user()->id_level == 1)
                 <li class="nav-header">Data Pengguna</li>
