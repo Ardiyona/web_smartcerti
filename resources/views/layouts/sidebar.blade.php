@@ -32,6 +32,14 @@
                 </a>
             </li>
 
+            <li class="nav-header">Kompetensi Prodi</li>
+            <li class="nav-item">
+                <a href="{{ url('/kompetensiprodi') }}" class="nav-link {{ $activeMenu == 'kompetensiprodi' ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-graduation-cap"></i>
+                    <p>Kompetensi Prodi</p>
+                </a>
+            </li>
+            
             <!-- Untuk Admin -->
             @if(Auth::user()->id_level == 1)
                 <li class="nav-header">Data Pengguna</li>
