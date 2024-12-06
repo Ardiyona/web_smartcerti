@@ -70,7 +70,8 @@
             </table>
         </div>
     </div>
-    <div id="myModal" class="modal fade animate shake" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" data-width="75%" aria-hidden="true"></div>
+    <div id="myModal" class="modal fade animate shake" tabindex="-1" role="dialog" data-backdrop="static"
+        data-keyboard="false" data-width="75%" aria-hidden="true"></div>
 @endsection
 
 @push('css')
@@ -197,6 +198,15 @@
                     },
                     {
                         data: "status_sertifikasi",
+                        render: function(data) {
+                            if (data) {
+                                let badgeClass = data.toLowerCase() === 'terima' ? 'bg-success' :
+                                    data.toLowerCase() === 'menunggu' ? 'bg-warning' :
+                                    'bg-danger';
+                                return `<span class="badge ${badgeClass}">${data}</span>`;
+                            }
+                            return '-';
+                        },
                         className: "",
                         width: "8%",
                         orderable: false,
@@ -294,6 +304,15 @@
                     },
                     {
                         data: "status_pelatihan",
+                        render: function(data) {
+                            if (data) {
+                                let badgeClass = data.toLowerCase() === 'terima' ? 'bg-success' :
+                                    data.toLowerCase() === 'menunggu' ? 'bg-warning' :
+                                    'bg-danger';
+                                return `<span class="badge ${badgeClass}">${data}</span>`;
+                            }
+                            return '-';
+                        },
                         className: "",
                         width: "8%",
                         orderable: false,

@@ -3,7 +3,7 @@
     <div id="modal-master" class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Tambah Data Sertifikasi</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Tambah Data Pengajuan Sertifikasi</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -111,6 +111,14 @@
                     </select>
                     <small id="error-id_matakuliah" class="error-text form-text text-danger"></small>
                 </div>
+                
+                <div class="form-group">
+                    <label for="user_id">Nama Peserta</label>
+                    <select multiple="multiple" name="user_id[]" id="user_id" class="js-example-basic-multiple form-control">
+                        <!-- Peserta akan diisi ulang oleh JavaScript -->
+                    </select>
+                    <small id="error-user_id" class="error-text form-text text-danger"></small>
+                </div>
             </div>
 
             <div class="modal-footer">
@@ -125,6 +133,50 @@
 
 <script>
     $(document).ready(function() {
+        $("#id_bidang_minat, #id_matakuliah, #user_id").select2({
+            dropdownAutoWidth: true,
+            theme: "classic",
+            width: '100%'
+        });
+
+        // Event listener untuk bidang minat dan mata kuliah
+        $('#id_bidang_minat, #id_matakuliah').on('change', function() {
+            const bidangMinat = $('#id_bidang_minat').val();
+            const mataKuliah = $('#id_matakuliah').val();
+
+            if (bidangMinat.length > 0 && mataKuliah.length > 0) {
+                // Memulai loading peserta
+                $('#user_id').prop('disabled', true).html('<option>Loading...</option>');
+
+                // Mengirimkan data ke server via AJAX
+                $.ajax({
+                    url: "{{ url('/sertifikasi/filter_peserta') }}",
+                    type: "POST",
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        bidang_minat: bidangMinat,
+                        mata_kuliah: mataKuliah
+                    },
+                    success: function(response) {
+                        if (response.status && response.data.length > 0) {
+                            // Isi ulang select peserta
+                            const pesertaOptions = response.data.map(peserta =>
+                                `<option value="${peserta.user_id}">${peserta.nama_lengkap} (Minat: ${peserta.bidang_minat_count || 0}, Matkul: ${peserta.mata_kuliah_count || 0})</option>`
+                            ).join('');
+
+                            $('#user_id').html(pesertaOptions).prop('disabled', false);
+                        } else {
+                            // Fallback: Tetap tampilkan peserta meskipun tidak ada yang cocok
+                            $('#user_id').html('<option>Tidak ada peserta</option>').prop(
+                                'disabled', true);
+                        }
+                    },
+                    error: function() {
+                        alert('Terjadi kesalahan.');
+                    }
+                });
+            }
+        });
         $("#form-tambah").validate({
             rules: {
                 id_vendor_sertifikasi: {
@@ -160,9 +212,6 @@
                 id_matakuliah: {
                     required: true,
                 },
-                // user_id: {
-                //     required: true,
-                // }
             },
             submitHandler: function(form) {
                 var formData = new FormData(form);
@@ -211,7 +260,7 @@
         $("#id_matakuliah, #id_bidang_minat, #user_id").select2({
             dropdownAutoWidth: true,
             theme: "classic",
-            width: '100%' 
+            width: '100%'
         });
     });
 </script>

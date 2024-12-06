@@ -13,7 +13,7 @@
             <div class="card-tools">
                 @if (Auth::user()->id_level == 1)
                     <button onclick="modalAction(`{{ url('/pelatihan/create_rekomendasi') }}`)" class="btn btn-success"
-                        style="background-color: #EF5428; border-color: #EF5428;">Tambah Rekomendasi</button>
+                        style="background-color: #EF5428; border-color: #EF5428;">Tambah Pengajuan</button>
                 @endif
                 <button onclick="modalAction(`{{ url('/pelatihan/create') }}`)" class="btn btn-success"
                     style="background-color: #EF5428; border-color: #EF5428;"> <i class="fas fa-plus"></i> Tambah</button>
@@ -160,8 +160,19 @@
                 columns.splice(9, 0, {
                     data: "status_pelatihan",
                     render: function(data, type, row) {
-                        // Jika data tersedia, tampilkan, jika tidak, tampilkan '-'
-                        return data ? data : '-';
+                        if (data) {
+                            let badgeClass;
+                            // Tentukan kelas berdasarkan nilai data
+                            if (data.toLowerCase() === 'terima') {
+                                badgeClass = 'bg-success';
+                            } else if (data.toLowerCase() === 'menunggu') {
+                                badgeClass = 'bg-warning';
+                            } else {
+                                badgeClass = 'bg-danger';
+                            }
+                            return `<span class="badge ${badgeClass}">${data}</span>`;
+                        }
+                        return '-';
                     },
                     className: "",
                     width: "8%",
@@ -170,7 +181,7 @@
                 });
             }
             if (!isAdmin) {
-                columns.splice(7, 0, {
+                columns.splice(6, 0, {
                     data: "tanggal",
                     className: "",
                     width: "8%",

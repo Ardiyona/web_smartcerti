@@ -11,12 +11,12 @@
         <div class="card-header">
             <h3 class="card-title">{{ $page->title }}</h3>
             <div class="card-tools">
-                <button onclick="modalAction(`{{ url('/sertifikasi/create') }}`)" class="btn btn-success"
-                    style="background-color: #EF5428; border-color: #EF5428;"><i class="fas fa-plus"></i> Tambah</button>
                 @if (Auth::user()->id_level == 1)
                     <button onclick="modalAction(`{{ url('/sertifikasi/create_rekomendasi') }}`)" class="btn btn-success"
-                        style="background-color: #EF5428; border-color: #EF5428;"> Tambah Rekomendasi</button>
+                        style="background-color: #EF5428; border-color: #EF5428;"> Tambah Pengajuan</button>
                 @endif
+                <button onclick="modalAction(`{{ url('/sertifikasi/create') }}`)" class="btn btn-success"
+                    style="background-color: #EF5428; border-color: #EF5428;"><i class="fas fa-plus"></i> Tambah</button>
             </div>
         </div>
         <div class="card-body">
@@ -31,7 +31,7 @@
                     <tr>
                         <th>ID</th>
                         @if (Auth::user()->id_level != 1)
-                        <th>Nama Vendor</th>
+                            <th>Nama Vendor</th>
                         @endif
                         <th>Jenis Bidang</th>
                         <th>Periode</th>
@@ -107,6 +107,9 @@
                 },
                 {
                     data: "no_sertifikasi",
+                    render: function(data, type, row) {
+                        return row.no_sertifikasi ? row.no_sertifikasi : '-';
+                    },
                     className: "",
                     width: "6%",
                     orderable: false,
@@ -128,6 +131,9 @@
                 // },
                 {
                     data: "masa_berlaku",
+                    render: function(data, type, row) {
+                        return row.masa_berlaku ? row.masa_berlaku : '-';
+                    },
                     className: "",
                     width: "7%",
                     orderable: false,
@@ -193,8 +199,19 @@
                 columns.splice(10, 0, {
                     data: "status_sertifikasi",
                     render: function(data, type, row) {
-                        // Jika data tersedia, tampilkan, jika tidak, tampilkan '-'
-                        return data ? data : '-';
+                        if (data) {
+                            let badgeClass;
+                            // Tentukan kelas berdasarkan nilai data
+                            if (data.toLowerCase() === 'terima') {
+                                badgeClass = 'bg-success';
+                            } else if (data.toLowerCase() === 'menunggu') {
+                                badgeClass = 'bg-warning';
+                            } else {
+                                badgeClass = 'bg-danger';
+                            }
+                            return `<span class="badge ${badgeClass}">${data}</span>`;
+                        }
+                        return '-';
                     },
                     className: "",
                     width: "8%",

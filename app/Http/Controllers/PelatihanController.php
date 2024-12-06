@@ -119,9 +119,9 @@ class PelatihanController extends Controller
                     $btn = '<button onclick="modalAction(\'' . url('/pelatihan/' . $pelatihan->id_pelatihan . '/admin_show_edit') . '\')" class="btn btn-info btn-sm">Detail</button> ';
                     $btn .= '<button onclick="modalAction(\'' . url('/pelatihan/' . $pelatihan->id_pelatihan . '/edit') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
                     $btn .= '<button onclick="modalAction(\'' . url('/pelatihan/' . $pelatihan->id_pelatihan . '/confirm') . '\')" class="btn btn-danger btn-sm">Hapus</button> ';
-                    if ($pelatihan->status_pelatihan == 'menunggu') {
-                        $btn .= '<button onclick="modalAction(\'' . url('/pelatihan/' . $pelatihan->id_pelatihan . '/create_rekomendasi_peserta') . '\')" class="btn btn-info btn-sm">Peserta</button> ';
-                    }
+                    // if ($pelatihan->status_pelatihan == 'menunggu') {
+                    //     $btn .= '<button onclick="modalAction(\'' . url('/pelatihan/' . $pelatihan->id_pelatihan . '/create_rekomendasi_peserta') . '\')" class="btn btn-info btn-sm">Peserta</button> ';
+                    // }
                 } else {
                     $btn = '<button onclick="modalAction(\'' . url('/pelatihan/' . $pelatihan->id_pelatihan . '/show') . '\')" class="btn btn-info btn-sm">Detail</button> ';
                     $btn .= '<button onclick="modalAction(\'' . url('/pelatihan/' . $pelatihan->id_pelatihan . '/edit') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
@@ -487,6 +487,7 @@ class PelatihanController extends Controller
 
         $bidangMinat = BidangMinatModel::select('id_bidang_minat', 'nama_bidang_minat')->get();
         $mataKuliah = MataKuliahModel::select('id_matakuliah', 'nama_matakuliah')->get();
+        $user = UserModel::select('user_id', 'nama_lengkap')->get();
 
         return view('pelatihan.create_rekomendasi')->with([
             'vendorpelatihan' => $vendorpelatihan,
@@ -494,6 +495,7 @@ class PelatihanController extends Controller
             'periode' => $periode,
             'bidangMinat' => $bidangMinat,
             'mataKuliah' => $mataKuliah,
+            'user' => $user,
         ]);
     }
 
@@ -540,6 +542,7 @@ class PelatihanController extends Controller
 
             $pelatihan->bidang_minat_pelatihan()->sync($request->id_bidang_minat);
             $pelatihan->mata_kuliah_pelatihan()->sync($request->id_matakuliah);
+            $pelatihan->detail_peserta_pelatihan()->sync($request->user_id);
 
             return response()->json([
                 'status' => true,
@@ -549,71 +552,104 @@ class PelatihanController extends Controller
         return redirect('/');
     }
 
-    public function create_rekomendasi_peserta($id)
+    public function filterPeserta(Request $request)
     {
-        $pelatihan = PelatihanModel::with('detail_peserta_pelatihan')->find($id);
+        // Ambil bidang minat dan mata kuliah yang dipilih
+        $bidangMinatIds = $request->input('bidang_minat', []);
+        $mataKuliahIds = $request->input('mata_kuliah', []);
     
-        // Ambil ID bidang minat dan mata kuliah yang terkait dengan pelatihan
-        $pelatihanBidangMinat = $pelatihan->bidang_minat_pelatihan->pluck('id_bidang_minat')->toArray();
-        $pelatihanMataKuliah = $pelatihan->mata_kuliah_pelatihan->pluck('id_matakuliah')->toArray();
-    
-        $user = UserModel::with(['detail_daftar_user_matakuliah', 'detail_daftar_user_bidang_minat'])
-        ->where('id_level', '!=', 1) // Tambahkan kondisi ini untuk mengecualikan admin
+        // Ambil peserta
+        $user = UserModel::select('user_id', 'nama_lengkap') // Pastikan 'nama' termasuk dalam select
         ->withCount([
-            'detail_daftar_user_matakuliah as mata_kuliah_count' => function ($query) use ($pelatihanMataKuliah) {
-                $query->whereIn('detail_daftar_user_matakuliah.id_matakuliah', $pelatihanMataKuliah);
+            'detail_daftar_user_matakuliah as mata_kuliah_count' => function ($query) use ($mataKuliahIds) {
+                $query->whereIn('detail_daftar_user_matakuliah.id_matakuliah', $mataKuliahIds);
             },
-            'detail_daftar_user_bidang_minat as bidang_minat_count' => function ($query) use ($pelatihanBidangMinat) {
-                $query->whereIn('detail_daftar_user_bidang_minat.id_bidang_minat', $pelatihanBidangMinat);
+            'detail_daftar_user_bidang_minat as bidang_minat_count' => function ($query) use ($bidangMinatIds) {
+                $query->whereIn('detail_daftar_user_bidang_minat.id_bidang_minat', $bidangMinatIds);
             }
         ])
+        ->where('id_level', '!=', 1)
         ->orderByDesc('mata_kuliah_count')
         ->orderByDesc('bidang_minat_count')
         ->get();
     
-        return view('pelatihan.create_rekomendasi_peserta')->with([
-            'user' => $user,
-            'pelatihan' => $pelatihan,
+        // Pastikan ada fallback jika tidak ada peserta yang cocok
+        if ($user->isEmpty()) {
+            $user = UserModel::where('id_level', '!=', 1) // Eksklusi admin
+                ->get(); // Ambil semua peserta tanpa urutan
+        }
+    
+        return response()->json([
+            'status' => true,
+            'data' => $user
         ]);
     }
 
-    public function store_rekomendasi_peserta(Request $request, $id)
-    {
-        if ($request->ajax() || $request->wantsJson()) {
-            $rules = [
-                'user_id' => 'required',
-                'kuota_peserta' => 'nullable|integer',
-            ];
+    // public function create_rekomendasi_peserta($id)
+    // {
+    //     $pelatihan = PelatihanModel::with('detail_peserta_pelatihan')->find($id);
+    
+    //     // Ambil ID bidang minat dan mata kuliah yang terkait dengan pelatihan
+    //     $pelatihanBidangMinat = $pelatihan->bidang_minat_pelatihan->pluck('id_bidang_minat')->toArray();
+    //     $pelatihanMataKuliah = $pelatihan->mata_kuliah_pelatihan->pluck('id_matakuliah')->toArray();
+    
+    //     $user = UserModel::with(['detail_daftar_user_matakuliah', 'detail_daftar_user_bidang_minat'])
+    //     ->where('id_level', '!=', 1) // Tambahkan kondisi ini untuk mengecualikan admin
+    //     ->withCount([
+    //         'detail_daftar_user_matakuliah as mata_kuliah_count' => function ($query) use ($pelatihanMataKuliah) {
+    //             $query->whereIn('detail_daftar_user_matakuliah.id_matakuliah', $pelatihanMataKuliah);
+    //         },
+    //         'detail_daftar_user_bidang_minat as bidang_minat_count' => function ($query) use ($pelatihanBidangMinat) {
+    //             $query->whereIn('detail_daftar_user_bidang_minat.id_bidang_minat', $pelatihanBidangMinat);
+    //         }
+    //     ])
+    //     ->orderByDesc('mata_kuliah_count')
+    //     ->orderByDesc('bidang_minat_count')
+    //     ->get();
+    
+    //     return view('pelatihan.create_rekomendasi_peserta')->with([
+    //         'user' => $user,
+    //         'pelatihan' => $pelatihan,
+    //     ]);
+    // }
 
-            $validator = Validator::make($request->all(), $rules);
+    // public function store_rekomendasi_peserta(Request $request, $id)
+    // {
+    //     if ($request->ajax() || $request->wantsJson()) {
+    //         $rules = [
+    //             'user_id' => 'required',
+    //             'kuota_peserta' => 'nullable|integer',
+    //         ];
 
-            if ($validator->fails()) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Validasi Gagal',
-                    'msgField' => $validator->errors()
-                ]);
-            }
+    //         $validator = Validator::make($request->all(), $rules);
 
-            $kuotaPeserta = count($request->user_id);
-            $pelatihan = PelatihanModel::find($id);
-            $pelatihan->update([
-                'kuota_peserta'      => $kuotaPeserta,
-            ]);
+    //         if ($validator->fails()) {
+    //             return response()->json([
+    //                 'status' => false,
+    //                 'message' => 'Validasi Gagal',
+    //                 'msgField' => $validator->errors()
+    //             ]);
+    //         }
 
-            if (!empty($request->user_id)) {
-                $pelatihan->detail_peserta_pelatihan()->sync($request->user_id);
-            }
+    //         $kuotaPeserta = count($request->user_id);
+    //         $pelatihan = PelatihanModel::find($id);
+    //         $pelatihan->update([
+    //             'kuota_peserta'      => $kuotaPeserta,
+    //         ]);
 
-            // Menyimpan user_id ke dalam pivot tabel dengan status 'menunggu'
+    //         if (!empty($request->user_id)) {
+    //             $pelatihan->detail_peserta_pelatihan()->sync($request->user_id);
+    //         }
 
-            return response()->json([
-                'status' => true,
-                'message' => 'Data pelatihan berhasil disimpan'
-            ]);
-        }
-        return redirect('/');
-    }
+    //         // Menyimpan user_id ke dalam pivot tabel dengan status 'menunggu'
+
+    //         return response()->json([
+    //             'status' => true,
+    //             'message' => 'Data pelatihan berhasil disimpan'
+    //         ]);
+    //     }
+    //     return redirect('/');
+    // }
 
     public function admin_show_edit(string $id)
     {
