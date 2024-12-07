@@ -7,7 +7,7 @@
     <span class="brand-text font-weight-bold text-light">SMARTCERTI</span>
 </a>
 
-<!-- Sidebar Search Form -->
+<!-- Sidebar Search Form 
 <div class="form-inline mt-2 mx-3">
     <div class="input-group" data-widget="sidebar-search">
         <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
@@ -17,7 +17,7 @@
             </button>
         </div>
     </div>
-</div>
+</div> -->
 
 <div class="sidebar">
     <!-- Sidebar Menu -->
