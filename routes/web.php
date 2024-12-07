@@ -12,6 +12,9 @@ use App\Http\Controllers\VendorPelatihanController;
 use App\Http\Controllers\VendorSertifikasiController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\JenisPelatihanController;
+use App\Http\Controllers\JumlahBidangMinatController;
+use App\Http\Controllers\JumlahMatakuliahController;
+use App\Http\Controllers\KompetensiProdiController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PelatihanController;
@@ -42,6 +45,7 @@ Route::post('/semuasertifikasidosen/list', [SemuaSertifikasiDosenController::cla
 
 Route::get('/semuadosen', [SemuaDosenController::class, 'index']);
 Route::post('/semuadosen/list', [SemuaDosenController::class, 'list']);
+Route::get('/semuadosen/list', [SemuaDosenController::class, 'list'])->name('semuadosen.list');
 
 Route::get('/semuapelatihandosen', [SemuaPelatihanDosenController::class, 'index']);
 Route::post('/semuapelatihandosen/list', [SemuaPelatihanDosenController::class, 'list']);
@@ -51,6 +55,15 @@ Route::post('/pelatihanuser/list', [PelatihanUserController::class, 'list']);
 
 Route::get('/sertifikasiuser', [SertifikasiUserController::class, 'index']);
 Route::post('/sertifikasiuser/list', [SertifikasiUserController::class, 'list']);
+
+//dashboard matakuliah
+Route::get('/jumlahmatakuliah', [JumlahMatakuliahController::class, 'index']);
+Route::get('/jumlahmatakuliah/list', [JumlahMatakuliahController::class, 'list'])->name('jumlahmatakuliah.list');
+
+
+//dashboard bidangminat
+Route::get('/jumlahbidangminat', [JumlahBidangMinatController::class, 'index']);
+Route::get('/jumlahbidangminat/list', [JumlahBidangMinatController::class, 'list'])->name('jumlahbidangminat.list');
 
 // Menampilkan halaman profil
 Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
@@ -99,9 +112,11 @@ Route::group(['prefix' => 'sertifikasi'], function () {
     Route::post('/store', [SertifikasiController::class, 'store']);
     Route::get('/create_rekomendasi', [SertifikasiController::class, 'create_rekomendasi']);
     Route::post('/store_rekomendasi', [SertifikasiController::class, 'store_rekomendasi']);
-    Route::get('/{id}/create_rekomendasi_peserta', [SertifikasiController::class, 'create_rekomendasi_peserta']);
-    Route::put('/{id}/store_rekomendasi_peserta', [SertifikasiController::class, 'store_rekomendasi_peserta']);
+    Route::post('/filter_peserta', [SertifikasiController::class, 'filterPeserta']);
+    // Route::get('/{id}/create_rekomendasi_peserta', [SertifikasiController::class, 'create_rekomendasi_peserta']);
+    // Route::put('/{id}/store_rekomendasi_peserta', [SertifikasiController::class, 'store_rekomendasi_peserta']);
     Route::get('/{id}/admin_show_edit', [SertifikasiController::class, 'admin_show_edit']);
+    Route::get('/{id}/admin_detail', [SertifikasiController::class, 'admin_detail']);
     Route::put('/{id}/admin_show_update', [SertifikasiController::class, 'admin_show_update']);
     Route::get('/{id}/show', [SertifikasiController::class, 'show']);
     Route::get('/{id}/edit', [SertifikasiController::class, 'edit']);
@@ -116,8 +131,10 @@ Route::group(['prefix' => 'pelatihan'], function () {
     Route::post('/store', [PelatihanController::class, 'store']);
     Route::get('/create_rekomendasi', [PelatihanController::class, 'create_rekomendasi']);
     Route::post('/store_rekomendasi', [PelatihanController::class, 'store_rekomendasi']);
-    Route::get('/{id}/create_rekomendasi_peserta', [PelatihanController::class, 'create_rekomendasi_peserta']);
-    Route::put('/{id}/store_rekomendasi_peserta', [PelatihanController::class, 'store_rekomendasi_peserta']);
+    Route::post('/filter_peserta', [PelatihanController::class, 'filterPeserta']);
+    // Route::get('/{id}/create_rekomendasi_peserta', [PelatihanController::class, 'create_rekomendasi_peserta']);
+    // Route::put('/{id}/store_rekomendasi_peserta', [PelatihanController::class, 'store_rekomendasi_peserta']);
+    Route::get('/{id}/admin_detail', [PelatihanController::class, 'admin_detail']);
     Route::get('/{id}/admin_show_edit', [PelatihanController::class, 'admin_show_edit']);
     Route::put('/{id}/admin_show_update', [PelatihanController::class, 'admin_show_update']);
     Route::get('/{id}/show', [PelatihanController::class, 'show']);
@@ -237,7 +254,19 @@ Route::prefix('periode')->group(function () {
     Route::get('/{id}/confirm', [PeriodeController::class, 'confirm']);
 });
 
-
+Route::prefix('kompetensiprodi')->group(function () {
+    Route::get('/', [KompetensiProdiController::class, 'index']);
+    Route::post('/list', [KompetensiProdiController::class, 'list']);
+    Route::get('/create', [KompetensiProdiController::class, 'create']);
+    Route::post('/store', [KompetensiProdiController::class, 'store']);
+    Route::get('/{id}/show', [KompetensiProdiController::class, 'show']);
+    Route::get('/{id}/edit', [KompetensiProdiController::class, 'edit']);
+    Route::put('/{id}/update', [KompetensiProdiController::class, 'update']);
+    Route::delete('/{id}/delete', [KompetensiProdiController::class, 'delete']);
+    Route::get('/export_pdf', [KompetensiProdiController::class, 'export_pdf']); // Jika ada fitur export
+    Route::post('/import_ajax', [KompetensiProdiController::class, 'import_ajax']); // Jika ada fitur import
+    Route::get('/{id}/confirm', [KompetensiProdiController::class, 'confirm']);
+});
 
 
 Route::get('/penerimaanpermintaan', [PenerimaanPermintaanController::class, 'index']);

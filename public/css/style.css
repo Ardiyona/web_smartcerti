@@ -48,7 +48,7 @@
 }
 
 /* Pastikan link navigasi memiliki teks putih */
-.nav-link {
+.navbar-light .navbar-nav .nav-link {
     color: #ffffff !important; /* Teks putih */
     text-decoration: none; /* Menghapus garis bawah jika ada */
 }
@@ -75,9 +75,7 @@
 .nav-link {
     display: flex;
     align-items: center;
-    text-decoration: none; /* Menghapus garis bawah pada teks */
-    color: #ffffff; /* Warna teks */
-    font-weight: bold;
+    font-weight: normal !important;
 }
 
 .nav-link:hover {
@@ -90,7 +88,6 @@
 .brand-link {
     background-color: #EF5428;
     color: #ffffff;
-    margin-left: -5px; /* Geser logo sedikit ke kiri */
     padding-left: 10px; /* Tambahkan jarak kiri untuk teks */
 }
 

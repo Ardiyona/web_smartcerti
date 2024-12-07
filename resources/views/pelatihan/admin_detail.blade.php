@@ -16,6 +16,10 @@
         </div>
     </div>
 @else
+<form action="{{ url('/pelatihan/' . $pelatihan->id_pelatihan . '/admin_detail') }}" method="POST" id="form-edit"
+        enctype="multipart/form-data">
+        @csrf
+        @method('PUT')
     <div id="modal-master" class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -82,6 +86,10 @@
                         <th class="text-right col-3">Mata Kuliah</th>
                         <td class="col-9">
                             {{ $pelatihan->mata_kuliah_pelatihan->pluck('nama_matakuliah')->implode(', ') }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right col-3">Status</th>
+                        <td class="col-9">{{ $pelatihan->status_pelatihan}}</td>
                     </tr>
                     <tr>
                         <th class="text-right col-3">Bukti Pelatihan</th>

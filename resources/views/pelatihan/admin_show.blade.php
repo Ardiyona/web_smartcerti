@@ -23,7 +23,7 @@
         <div id="modal-master" class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Detail Data Pelatihan</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Upload Bukti Pelatihan</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -66,6 +66,12 @@
                     </table>
                 </div>
                 <div class="modal-footer">
+                    @if ($pelatihan->surat_tugas)
+                        <a href="{{ url('storage/surat_tugas/' . $pelatihan->surat_tugas) }}" target="_blank"
+                            class="btn btn-success" download>
+                            <i class="fa fa-file-pdf"></i> Download Surat Tugas
+                        </a>
+                    @endif
                     @if ($pelatihan->status_pelatihan == 'terima')
                         <a href="{{ url('/pelatihan/' . $pelatihan->id_pelatihan . '/generate') }}" type="submit"
                             class="btn btn-success"><i class="fa fa-file-pdf"></i>Download Draft Surat Tugas</a>

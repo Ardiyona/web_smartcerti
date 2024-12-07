@@ -13,7 +13,7 @@
             <div class="card-tools">
                 @if (Auth::user()->id_level == 1)
                     <button onclick="modalAction(`{{ url('/pelatihan/create_rekomendasi') }}`)" class="btn btn-success"
-                        style="background-color: #EF5428; border-color: #EF5428;">Tambah Rekomendasi</button>
+                        style="background-color: #EF5428; border-color: #EF5428;">Tambah Pengajuan</button>
                 @endif
                 <button onclick="modalAction(`{{ url('/pelatihan/create') }}`)" class="btn btn-success"
                     style="background-color: #EF5428; border-color: #EF5428;"> <i class="fas fa-plus"></i> Tambah</button>
@@ -27,23 +27,24 @@
             @if (session('error'))
                 <div class="alert alert-danger">{{ session('error') }}</div>
             @endif
-            <table class="table table-bordered table-striped table-hover table-sm" id="table_pelatihan">
+            <table class="table responsive table-bordered table-striped table-hover table-sm" id="table_pelatihan">
                 <thead>
                     <tr>
                         <th>ID</th>
+                        <th>Nama Pelatihan</th>
                         @if (Auth::user()->id_level != 1)
                             <th>Nama Vendor</th>
                         @endif
                         <th>Jenis Pelatihan</th>
-                        <th>Periode</th>
-                        <th>Nama Pelatihan</th>
-                        <th>Lokasi</th>
                         <th>Level Pelatihan</th>
+                        <th>Lokasi</th>
+                        <th>Periode</th>
+                        
+                        
+                        
                         @if (Auth::user()->id_level != 1)
                             <th>Tanggal</th>
                         @endif
-                        <th>Tag Bidang Minat</th>
-                        <th>Tag Mata Kuliah</th>
                         @if (Auth::user()->id_level == 1)
                             <th>Nama Peserta</th>
                             <th>Status</th>
@@ -59,6 +60,9 @@
     <style>
         .card.card-outline.card-primary {
             border-color: #375E97 !important;
+        }
+        .table {
+            width: 100% !important;
         }
     </style>
 @endpush
@@ -82,6 +86,13 @@
                     searchable: false
                 },
                 {
+                    data: "nama_pelatihan",
+                    className: "",
+                    width: "9%",
+                    orderable: true,
+                    searchable: true
+                },
+                {
                     data: "jenis_pelatihan.nama_jenis_pelatihan",
                     className: "",
                     width: "9%",
@@ -89,17 +100,10 @@
                     searchable: true,
                 },
                 {
-                    data: "periode.tahun_periode",
+                    data: "level_pelatihan",
                     className: "",
                     width: "6%",
                     orderable: false,
-                    searchable: false
-                },
-                {
-                    data: "nama_pelatihan",
-                    className: "",
-                    width: "9%",
-                    orderable: true,
                     searchable: true
                 },
                 {
@@ -110,29 +114,9 @@
                     searchable: true
                 },
                 {
-                    data: "level_pelatihan",
+                    data: "periode.tahun_periode",
                     className: "",
-                    width: "6%",
-                    orderable: false,
-                    searchable: true
-                },
-                {
-                    data: "bidang_minat",
-                    render: function(data, type, row) {
-                        return row.bidang_minat ? row.bidang_minat : '-';
-                    },
-                    className: "",
-                    width: "10%",
-                    orderable: false,
-                    searchable: false
-                },
-                {
-                    data: "mata_kuliah",
-                    render: function(data, type, row) {
-                        return row.mata_kuliah ? row.mata_kuliah : '-';
-                    },
-                    className: "",
-                    width: "10%",
+                    width: "1%",
                     orderable: false,
                     searchable: false
                 },
@@ -147,7 +131,7 @@
 
             // Tambahkan kolom "Nama Peserta" jika user adalah admin
             if (isAdmin) {
-                columns.splice(8, 0, {
+                columns.splice(6, 0, {
                     data: "peserta_pelatihan",
                     render: function(data, type, row) {
                         return row.peserta_pelatihan ? row.peserta_pelatihan : '-';
@@ -157,23 +141,34 @@
                     orderable: false,
                     searchable: false
                 });
-                columns.splice(9, 0, {
+                columns.splice(7, 0, {
                     data: "status_pelatihan",
                     render: function(data, type, row) {
-                        // Jika data tersedia, tampilkan, jika tidak, tampilkan '-'
-                        return data ? data : '-';
+                        if (data) {
+                            let badgeClass;
+                            // Tentukan kelas berdasarkan nilai data
+                            if (data.toLowerCase() === 'terima') {
+                                badgeClass = 'bg-success';
+                            } else if (data.toLowerCase() === 'menunggu') {
+                                badgeClass = 'bg-warning';
+                            } else {
+                                badgeClass = 'bg-danger';
+                            }
+                            return `<span class="badge ${badgeClass}">${data}</span>`;
+                        }
+                        return '-';
                     },
                     className: "",
-                    width: "8%",
+                    width: "1%",
                     orderable: false,
                     searchable: false
                 });
             }
             if (!isAdmin) {
-                columns.splice(7, 0, {
+                columns.splice(6, 0, {
                     data: "tanggal",
                     className: "",
-                    width: "8%",
+                    width: "3%",
                     orderable: true, // Set true jika ingin sorting berdasarkan tanggal
                     searchable: false
                 });
@@ -193,7 +188,8 @@
                     dataType: "json",
                     type: "POST",
                 },
-                columns: columns
+                columns: columns,
+                responsive: true
             });
 
         });

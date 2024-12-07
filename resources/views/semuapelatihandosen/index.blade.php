@@ -20,7 +20,7 @@
             @if (session('error'))
                 <div class="alert alert-danger">{{ session('error') }}</div>
             @endif
-            <table class="table table-bordered table-striped table-hover table-sm" id="table_pelatihan">
+            <table class="table responsive table-bordered table-striped table-hover table-sm" id="table_pelatihan">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -48,6 +48,10 @@
         .card.card-outline.card-primary {
             border-color: #375E97 !important;
         }
+
+        .table {
+            width: 100% !important;
+        }
     </style>
 @endpush
 
@@ -58,10 +62,9 @@
                 $('#myModal').modal('show');
             });
         }
-        
+
         $(document).ready(function() {
-            var columns = [
-                {
+            var columns = [{
                     data: "DT_RowIndex",
                     className: "text-center",
                     width: "4%",
@@ -140,7 +143,7 @@
                     orderable: false,
                     searchable: false
                 },
-                
+
             ];
 
             dataPelatihan = $('#table_pelatihan').DataTable({
@@ -150,7 +153,8 @@
                     dataType: "json",
                     type: "POST",
                 },
-                columns: columns
+                columns: columns,
+                responsive: true,
             });
         });
     </script>

@@ -7,7 +7,7 @@
     <span class="brand-text font-weight-bold text-light">SMARTCERTI</span>
 </a>
 
-<!-- Sidebar Search Form -->
+<!-- Sidebar Search Form 
 <div class="form-inline mt-2 mx-3">
     <div class="input-group" data-widget="sidebar-search">
         <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
@@ -17,7 +17,7 @@
             </button>
         </div>
     </div>
-</div>
+</div> -->
 
 <div class="sidebar">
     <!-- Sidebar Menu -->
@@ -31,6 +31,33 @@
                     <p>Dashboard</p>
                 </a>
             </li>
+
+            @if(in_array(Auth::user()->id_level, [1, 2]))
+            <li class="nav-header">Kompetensi Prodi</li>
+            <li class="nav-item">
+                <a href="{{ url('/kompetensiprodi') }}" class="nav-link {{ $activeMenu == 'kompetensiprodi' ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-graduation-cap"></i>
+                    <p>Kompetensi Prodi</p>
+                </a>
+            </li>
+            @endif
+            
+            <!-- Menu Umum untuk Level 1, 2, dan 3 -->
+            @if(in_array(Auth::user()->id_level, [1, 2, 3]))
+                <li class="nav-header">Mengelola Pelatihan dan Sertifikasi</li>
+                <li class="nav-item">
+                    <a href="{{ url('/pelatihan') }}" class="nav-link {{ $activeMenu == 'pelatihan' ? 'active' : '' }}">
+                        <i class="nav-icon far fa-bookmark"></i>
+                        <p>Pelatihan</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url('/sertifikasi') }}" class="nav-link {{ $activeMenu == 'sertifikasi' ? 'active' : '' }}">
+                        <i class="nav-icon far fa-bookmark"></i>
+                        <p>Sertifikasi</p>
+                    </a>
+                </li>
+            @endif
 
             <!-- Untuk Admin -->
             @if(Auth::user()->id_level == 1)
@@ -101,7 +128,7 @@
                 </li>
             @endif
 
-            <!-- Menu Umum untuk Level 1, 2, dan 3 -->
+            {{-- <!-- Menu Umum untuk Level 1, 2, dan 3 -->
             @if(in_array(Auth::user()->id_level, [1, 2, 3]))
                 <li class="nav-header">Mengelola Pelatihan dan Sertifikasi</li>
                 <li class="nav-item">
@@ -116,7 +143,7 @@
                         <p>Sertifikasi</p>
                     </a>
                 </li>
-            @endif
+            @endif --}}
 
             <!-- Untuk Pimpinan -->
             @if(Auth::user()->id_level == 2)

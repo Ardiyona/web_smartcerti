@@ -1,4 +1,4 @@
-<form action="{{ url('/pelatihan/store') }}" method="POST" id="form-tambah">
+<form action="{{ url('/pelatihan/store') }}" method="POST" id="form-tambah" >
     @csrf
     <div id="modal-master" class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -96,9 +96,8 @@
 
                 @if (Auth::user()->id_level == 1)
                     <div class="form-group">
-                        <label>Nama Peserta</label>
-                        <select name="user_id" id="user_id" class="form-control" required>
-                            <option value="">- Pilih Peserta Pelatihan -</option>
+                        <label for="user_id">Nama Peserta</label>
+                        <select multiple="multiple" name="user_id[]" id="user_id" class="js-example-basic-multiple js-states form-control form-control">
                             @foreach ($user as $l)
                                 <option value="{{ $l->user_id }}">{{ $l->nama_lengkap }}</option>
                             @endforeach
@@ -241,9 +240,10 @@
                 $(element).removeClass('is-invalid');
             }
         });
-        $("#id_matakuliah, #id_bidang_minat").select2({
+        $("#id_matakuliah, #id_bidang_minat, #user_id").select2({
             dropdownAutoWidth: true,
-            theme: "classic"
+            theme: "classic",
+            width: '100%' 
         });
     });
 </script>

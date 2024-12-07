@@ -1,16 +1,18 @@
 @extends('layouts.template')
 @section('content')
-    
     <div class="card card-outline card-primary">
         <div class="card-header">
             <h3 class="card-title">{{ $page->title }}</h3>
             <div class="card-tools">
-                <a href="{{ url('/bidangminat/export_pdf') }}" class="btn btn-warning"><i class="fa fa-file-pdf"></i> Export PDF</a>
-                <a href="{{ url('/bidangminat/export_excel') }}" class="btn btn-primary"><i class="fa fa-file-excel"></i> Export Excel</a>
-                <button onclick="modalAction(`{{ url('/bidangminat/import') }}`)" class="btn btn-info" 
-                style="background-color: #EF5428; border-color: #EF5428;"> <i class="fas fa-file-import"></i> Import</button>
-                <button onclick="modalAction(`{{ url('/bidangminat/create') }}`)" class="btn btn-success" 
-                style="background-color: #EF5428; border-color: #EF5428;">  <i class="fas fa-plus"></i> Tambah</button>
+                <a href="{{ url('/bidangminat/export_pdf') }}" class="btn btn-warning"><i class="fa fa-file-pdf"></i> Export
+                    PDF</a>
+                <a href="{{ url('/bidangminat/export_excel') }}" class="btn btn-primary"><i class="fa fa-file-excel"></i>
+                    Export Excel</a>
+                <button onclick="modalAction(`{{ url('/bidangminat/import') }}`)" class="btn btn-info"
+                    style="background-color: #EF5428; border-color: #EF5428;"> <i class="fas fa-file-import"></i>
+                    Import</button>
+                <button onclick="modalAction(`{{ url('/bidangminat/create') }}`)" class="btn btn-success"
+                    style="background-color: #EF5428; border-color: #EF5428;"> <i class="fas fa-plus"></i> Tambah</button>
             </div>
         </div>
         <div class="card-body">
@@ -45,7 +47,7 @@
                     </div>
                 </div>
             </div>
-            <table class="table table-bordered table-striped table-hover table-sm" id="table-bidang-minat">
+            <table class="table responsive table-bordered table-striped table-hover table-sm" id="table-bidang-minat">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -62,6 +64,11 @@
         data-keyboard="false" data-width="75%" aria-hidden="true"></div>
 @endsection
 @push('css')
+    <style>
+        .table {
+            width: 100% !important;
+        }
+    </style>
 @endpush
 @push('js')
     <script>
@@ -69,11 +76,12 @@
             $('#myModal').load(url, function() {
                 $('#myModal').modal('show');
             });
-        } 
+        }
         var dataBidangMinat;
         $(document).ready(function() {
             dataBidangMinat = $('#table-bidang-minat').DataTable({
                 serverSide: true,
+                responsive: true,
                 ajax: {
                     "url": "{{ url('bidangminat/list') }}",
                     "dataType": "json",
@@ -83,8 +91,7 @@
                         d.kode_bidang_minat = $('#kode_bidang_minat').val();
                     }
                 },
-                columns: [
-                    {
+                columns: [{
                         data: "id_bidang_minat",
                         className: "text-center",
                         orderable: true,

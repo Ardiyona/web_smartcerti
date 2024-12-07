@@ -1,4 +1,4 @@
-@empty($pelatihan)
+@empty($sertifikasi)
     <div id="modal-master" class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -11,15 +11,19 @@
                     <h5><i class="icon fas fa-ban"></i> Kesalahan!!!</h5>
                     Data yang anda cari tidak ditemukan
                 </div>
-                <a href="{{ url('/pelatihan') }}" class="btn btn-warning">Kembali</a>
+                <a href="{{ url('/sertifikasi') }}" class="btn btn-warning">Kembali</a>
             </div>
         </div>
     </div>
 @else
+ <form action="{{ url('/sertifikasi/' . $sertifikasi->id_sertifikasi . '/admin_detail') }}" method="POST"
+ id="form-edit" enctype="multipart/form-data">
+        @csrf
+        @method('PUT')
     <div id="modal-master" class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Detail Data Pelatihan</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Detail Data Sertifikasi</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                         aria-hidden="true">&times;</span></button>
             </div>
@@ -27,101 +31,116 @@
                 <table class="table table-sm table-bordered table-striped">
                     <tr>
                         <th class="text-right col-3">ID</th>
-                        <td class="col-9">{{ $pelatihan->id_pelatihan }}</td>
+                        <td class="col-9">{{ $sertifikasi->id_sertifikasi }}</td>
                     </tr>
                     <tr>
-                        <th class="text-right col-3">Nama Pelatihan</th>
-                        <td class="col-9">{{ $pelatihan->nama_pelatihan }}</td>
+                        <th class="text-right col-3">Nama Sertifikasi</th>
+                        <td class="col-9">{{ $sertifikasi->nama_sertifikasi }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right col-3">No Sertifikasi</th>
+                        <td class="col-9">
+                            @php
+                                $currentUser = Auth::user();
+                                $userNoSertifikasi =
+                                    $sertifikasi->detail_peserta_sertifikasi
+                                        ->filter(function ($peserta) use ($currentUser) {
+                                            return $peserta->user_id == $currentUser->user_id;
+                                        })
+                                        ->pluck('pivot.no_sertifikasi')
+                                        ->implode('- ') ?? ''; // Berikan default kosong
+                            @endphp
+                            {{ $userNoSertifikasi }}
+                        </td>
                     </tr>
                     <tr>
                         <th class="text-right col-3">Vendor</th>
-                        <td class="col-9">{{ $pelatihan->vendor_pelatihan->nama }}</td>
+                        <td class="col-9">{{ $sertifikasi->vendor_sertifikasi->nama }}</td>
                     </tr>
                     <tr>
                         <th class="text-right col-3">Jenis Bidang</th>
-                        <td class="col-9">{{ $pelatihan->jenis_pelatihan->nama_jenis_pelatihan }}</td>
+                        <td class="col-9">{{ $sertifikasi->jenis_sertifikasi->nama_jenis_sertifikasi }}</td>
                     </tr>
                     <tr>
-                        <th class="text-right col-3">level Pelatihan</th>
-                        <td class="col-9">{{ $pelatihan->level_pelatihan }}</td>
-                    </tr>
-                    <tr>
-                        <th class="text-right col-3">Lokasi</th>
-                        <td class="col-9">{{ $pelatihan->lokasi }}</td>
-                    </tr>
-                    <tr>
-                        <th class="text-right col-3">Tanggal</th>
-                        <td class="col-9">{{ $pelatihan->tanggal }}</td>
+                        <th class="text-right col-3">Jenis Sertifikasi</th>
+                        <td class="col-9">{{ $sertifikasi->jenis }}</td>
                     </tr>
                     <tr>
                         <th class="text-right col-3">Tahun Periode</th>
-                        <td class="col-9">{{ $pelatihan->periode->tahun_periode }}</td>
+                        <td class="col-9">{{ $sertifikasi->periode->tahun_periode }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right col-3">Tanggal</th>
+                        <td class="col-9">{{ $sertifikasi->tanggal }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right col-3">Masa Berlaku</th>
+                        <td class="col-9">{{ $sertifikasi->masa_berlaku }}</td>
                     </tr>
                     <tr>
                         <th class="text-right col-3">Kuota Peserta</th>
-                        <td class="col-9">{{ $pelatihan->kuota_peserta }}</td>
+                        <td class="col-9">{{ $sertifikasi->kuota_peserta }}</td>
                     </tr>
                     <tr>
                         <th class="text-right col-3">Biaya</th>
-                        <td class="col-9">{{ $pelatihan->biaya }}</td>
+                        <td class="col-9">{{ $sertifikasi->biaya }}</td>
                     </tr>
 
                     @if (Auth::user()->id_level == 1)
                         <tr>
                             <th class="text-right col-3">Nama Peserta</th>
                             <td class="col-9">
-                                {{ $pelatihan->detail_peserta_pelatihan->pluck('nama_lengkap')->implode(', ') }}</td>
+                                {{ $sertifikasi->detail_peserta_sertifikasi->pluck('nama_lengkap')->implode(', ') }}</td>
                         </tr>
                     @endif
                     <tr>
                         <th class="text-right col-3">Bidang Minat</th>
                         <td class="col-9">
-                            {{ $pelatihan->bidang_minat_pelatihan->pluck('nama_bidang_minat')->implode(', ') }}</td>
+                            {{ $sertifikasi->bidang_minat_sertifikasi->pluck('nama_bidang_minat')->implode(', ') }}</td>
                     </tr>
                     <tr>
                         <th class="text-right col-3">Mata Kuliah</th>
                         <td class="col-9">
-                            {{ $pelatihan->mata_kuliah_pelatihan->pluck('nama_matakuliah')->implode(', ') }}</td>
+                            {{ $sertifikasi->mata_kuliah_sertifikasi->pluck('nama_matakuliah')->implode(', ') }}</td>
                     </tr>
                     <tr>
-                        <th class="text-right col-3">Bukti Pelatihan</th>
+                        <th class="text-right col-3">Status</th>
+                        <td class="col-9">{{ $sertifikasi->status_sertifikasi }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right col-3">Bukti Sertifikasi</th>
                         <td class="col-9">
                             @php
                                 // Mendapatkan user yang sedang login
                                 $currentUser = Auth::user();
 
-                                // Filter detail_peserta_pelatihan milik user yang login
-                                $userDetail = $pelatihan->detail_peserta_pelatihan
+                                // Filter detail_peserta_sertifikasi milik user yang login
+                                $userDetail = $sertifikasi->detail_peserta_sertifikasi
                                     ->where('user_id', $currentUser->user_id)
                                     ->first();
                             @endphp
-                            @if ($userDetail && $userDetail->pivot->bukti_pelatihan)
-                                {{-- Jika user memiliki bukti pelatihan --}}
+                            @if ($userDetail && $userDetail->pivot->bukti_sertifikasi)
+                                {{-- Jika user memiliki bukti sertifikasi --}}
                                 @php
                                     // Ambil nama file tanpa path
-                                    $fullFileName = basename($userDetail->pivot->bukti_pelatihan);
+                                    $fullFileName = basename($userDetail->pivot->bukti_sertifikasi);
 
                                     // Hilangkan tanggal di depan nama file
                                     $cleanFileName = preg_replace('/^\d{10}_/', '', $fullFileName);
                                 @endphp
 
-                                <a href="{{ url('storage/bukti_pelatihan/' . $userDetail->pivot->bukti_pelatihan) }}"
+                                <a href="{{ url('storage/bukti_sertifikasi/' . $userDetail->pivot->bukti_sertifikasi) }}"
                                     target="_blank" download>
                                     {{ $cleanFileName }}
                                 </a>
                             @else
-                                <span class="text-danger">Tidak ada bukti pelatihan</span>
+                                <span class="text-danger">Tidak ada bukti sertifikasi</span>
                             @endif
                         </td>
                     </tr>
                 </table>
             </div>
             <div class="modal-footer">
-                @if ($pelatihan->surat_tugas)
-                    <a href="{{ url('storage/surat_tugas/' . $pelatihan->surat_tugas) }}" target="_blank" class="btn btn-success" download>
-                        <i class="fa fa-file-pdf"></i> Download Surat Tugas
-                    </a>
-                @endif
                 <button type="button" data-dismiss="modal" class="btn btn-default">Kembali</button>
             </div>
         </div>

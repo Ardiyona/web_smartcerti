@@ -34,6 +34,8 @@ class MyAccountController extends Controller
         /** @var User */
         $user = Auth::guard('api')->user();
 
+        // Log::info('Received Bidang Minat IDs:', $request->input('id_bidang_minat', []));
+
         // Proses avatar jika ada file yang diunggah
         if ($request->hasFile('avatar')) {
             $fileName = time() . '.' . $request->file('avatar')->getClientOriginalExtension();
@@ -49,13 +51,9 @@ class MyAccountController extends Controller
         Log::info('Query setelah update:', $user->toArray());
 
         // Sinkronisasi relasi hanya jika data dikirim
-        if ($request->has('id_bidang_minat')) {
             $user->detail_daftar_user_bidang_minat()->sync($request->id_bidang_minat);
-        }
 
-        if ($request->has('id_matakuliah')) {
             $user->detail_daftar_user_matakuliah()->sync($request->id_matakuliah);
-        }
 
         return response()->json([
             'success' => true,

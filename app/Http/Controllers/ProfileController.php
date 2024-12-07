@@ -38,7 +38,7 @@ class ProfileController extends Controller
             'user' => $user,
             'breadcrumb' => $breadcrumb,
             'activeMenu' => $activeMenu,
-            'data' => $userData,
+            'userData' => $userData,
             'mataKuliah' => $mataKuliah,
             'bidangMinat' => $bidangMinat
         ]);
@@ -56,10 +56,10 @@ class ProfileController extends Controller
         //     'id_bidang_minat' => 'required',
         //     'id_matakuliah' => 'required',
         // ]);
-    
+
         // Ambil data user berdasarkan ID
         $user = UserModel::findOrFail($id);
-    
+
         // Update data dengan metode update()
         $user->update([
             'username' => $request->username,
@@ -70,14 +70,15 @@ class ProfileController extends Controller
         ]);
 
         // Sinkronisasi bidang minat dan mata kuliah
-    $user->detail_daftar_user_bidang_minat()->sync($request->id_bidang_minat ?? []);
-    $user->detail_daftar_user_matakuliah()->sync($request->id_matakuliah ?? []);
-    
-    
+        $user->detail_daftar_user_bidang_minat()->sync($request->id_bidang_minat ?? []);
+        $user->detail_daftar_user_matakuliah()->sync($request->id_matakuliah ?? []);
+
+
         // Kembali ke halaman profile dengan status sukses
+
         return redirect()->back()->with('status_profile', 'Profil berhasil diperbarui');
     }
-    
+
 
     // Fungsi untuk update avatar (foto profil)
     public function updateAvatar(Request $request, $id)
@@ -132,10 +133,8 @@ class ProfileController extends Controller
 
             // Kembali ke halaman profile dengan status sukses
             return redirect()->back()->with('status_password', 'Password berhasil diperbarui');
-            
-        } 
-        
-        else {
+
+        } else {
             // Jika password lama tidak sesuai
             return redirect()->back()
                 ->withErrors(['old_password' => 'Password lama tidak sesuai'])

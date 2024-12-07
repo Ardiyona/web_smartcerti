@@ -3,11 +3,9 @@
 
 <div class="card card-outline card-primary">
     <div class="card-header">
-        <h3 class="card-title">Periode Management</h3>
+        <h3 class="card-title">Manajemen Kompetensi Prodi</h3>
         <div class="card-tools">
-            <a href="{{ url('/periode/export_pdf') }}" class="btn btn-warning"><i class="fa fa-file-pdf"></i> Export PDF</a>
-            <a href="{{ url('/periode/export_excel') }}" class="btn btn-primary"><i class="fa fa-file-excel"></i> Export Excel</a>
-            <button onclick="modalAction(`{{ url('/periode/create') }}`)" class="btn btn-success"
+            <button onclick="modalAction(`{{ url('/kompetensiprodi/create') }}`)" class="btn btn-success"
             style="background-color: #EF5428; border-color: #EF5428;"> <i class="fas fa-plus"></i> Tambah</button>
         </div>
     </div>
@@ -23,24 +21,23 @@
                 <div class="form-group row">
                     <label class="col-1 control-label col-form-label">Filter:</label>
                     <div class="col-3">
-                        <select class="form-control" id="tahun_periode" name="tahun_periode">
+                        <select class="form-control" id="prodi_filter" name="prodi_filter">
                             <option value="">- Semua -</option>
-                            @foreach ($tahun_periode_list as $tahun)
-                                <option value="{{ $tahun->tahun_periode }}">{{ $tahun->tahun_periode }}</option>
+                            @foreach ($kompetensi as $prodi)
+                                <option value="{{ $prodi->prodi }}">{{ $prodi->prodi }}</option>
                             @endforeach
                         </select>
-                        <small class="form-text text-muted">Tahun Periode</small>
+                        <small class="form-text text-muted">Filter berdasarkan Prodi</small>
                     </div>
                 </div>
             </div>
         </div>
-        <table class="table table-bordered table-striped table-hover table-sm" id="table-periode">
+        <table class="table table-bordered table-striped table-hover table-sm" id="table-kompetensi">
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Tanggal Mulai</th>
-                    <th>Tanggal Berakhir</th>
-                    <th>Tahun Periode</th>
+                    <th>Prodi</th>
+                    <th>Bidang Terkait</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -62,29 +59,28 @@
         });
     }
     
-    var dataPeriode;
+    var dataKompetensi;
     $(document).ready(function() {
-        dataPeriode = $('#table-periode').DataTable({
+        dataKompetensi = $('#table-kompetensi').DataTable({
             serverSide: true,
             ajax: {
-                "url": "{{ url('periode/list') }}",
+                "url": "{{ url('kompetensiprodi/list') }}",
                 "dataType": "json",
                 "type": "POST",
                 "data": function(d) {
-                    d.tahun_periode = $('#tahun_periode').val();
+                    d.prodi_filter = $('#prodi_filter').val();
                 }
             },
             columns: [
-                { data: "id_periode", className: "text-center", orderable: true, searchable: true },
-                { data: "tanggal_mulai", className: "", orderable: true, searchable: true },
-                { data: "tanggal_berakhir", className: "", orderable: true, searchable: true },
-                { data: "tahun_periode", className: "", orderable: true, searchable: true },
-                { data: "aksi", className: "", orderable: false, searchable: false }
+                { data: "id_kompetensi", className: "text-center", orderable: true, searchable: true },
+                { data: "prodi", className: "", orderable: true, searchable: true },
+                { data: "bidang_terkait", className: "", orderable: true, searchable: true },
+                { data: "aksi", className: "text-center", orderable: false, searchable: false }
             ]
         });
 
-        $('#tahun_periode').on('change', function() {
-            dataPeriode.ajax.reload();
+        $('#prodi_filter').on('change', function() {
+            dataKompetensi.ajax.reload();
         });
     });
 </script>
@@ -92,16 +88,16 @@
 
 
 @extends('layouts.template')
+@section('title')
+    | Kompetensi Prodi
+@endsection
+
 @section('content')
     <div class="card card-outline card-primary">
         <div class="card-header">
-            <h3 class="card-title">Periode Management</h3>
+            <h3 class="card-title">{{ $page->title }}</h3>
             <div class="card-tools">
-                <a href="{{ url('/periode/export_pdf') }}" class="btn btn-warning"><i class="fa fa-file-pdf"></i> Export
-                    PDF</a>
-                <a href="{{ url('/periode/export_excel') }}" class="btn btn-primary"><i class="fa fa-file-excel"></i> Export
-                    Excel</a>
-                <button onclick="modalAction(`{{ url('/periode/create') }}`)" class="btn btn-success"
+                <button onclick="modalAction(`{{ url('/kompetensiprodi/create') }}`)" class="btn btn-success"
                     style="background-color: #EF5428; border-color: #EF5428;"> <i class="fas fa-plus"></i> Tambah</button>
             </div>
         </div>
@@ -117,40 +113,54 @@
                     <div class="form-group row">
                         <label class="col-1 control-label col-form-label">Filter:</label>
                         <div class="col-3">
-                            <select class="form-control" id="tahun_periode" name="tahun_periode">
+                            <select class="form-control" id="prodi_filter" name="prodi_filter" required>
                                 <option value="">- Semua -</option>
-                                @foreach ($tahun_periode_list as $tahun)
-                                    <option value="{{ $tahun->tahun_periode }}">{{ $tahun->tahun_periode }}</option>
+                                @foreach ($kompetensi as $prodi)
+                                    <option value="{{ $prodi->prodi }}">{{ $prodi->prodi }}</option>
                                 @endforeach
                             </select>
-                            <small class="form-text text-muted">Tahun Periode</small>
+                            <small class="form-text text-muted">Filter berdasarkan Prodi</small>
+                        </div>
+                        <div class="col-3">
+                            <select class="form-control" id="bidang_filter" name="bidang_filter" required>
+                                <option value="">- Semua -</option>
+                                @foreach ($kompetensi as $prodi)
+                                    <option value="{{ $prodi->bidang_terkait }}">{{ $prodi->bidang_terkait }}</option>
+                                @endforeach
+                            </select>
+                            <small class="form-text text-muted">Filter berdasarkan Bidang Terkait</small>
                         </div>
                     </div>
                 </div>
             </div>
-            <table class="table responsive table-bordered table-striped table-hover table-sm" id="table-periode">
+            <table class="table responsive table-bordered table-striped table-hover table-sm" id="table-kompetensi-prodi">
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Tahun Periode</th>
+                        <th>Prodi</th>
+                        <th>Bidang Terkait</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
             </table>
         </div>
     </div>
-
     <div id="myModal" class="modal fade animate shake" tabindex="-1" role="dialog" data-backdrop="static"
         data-keyboard="false" data-width="75%" aria-hidden="true"></div>
 @endsection
 
 @push('css')
     <style>
+        .card.card-outline.card-primary {
+            border-color: #375E97 !important;
+        }
+
         .table {
             width: 100% !important;
         }
     </style>
 @endpush
+
 @push('js')
     <script>
         function modalAction(url = '') {
@@ -159,27 +169,34 @@
             });
         }
 
-        var dataPeriode;
+        var dataKompetensiProdi;
         $(document).ready(function() {
-            dataPeriode = $('#table-periode').DataTable({
+            dataKompetensiProdi = $('#table-kompetensi-prodi').DataTable({
                 serverSide: true,
                 responsive: true,
                 ajax: {
-                    "url": "{{ url('periode/list') }}",
+                    "url": "{{ url('kompetensiprodi/list') }}",
                     "dataType": "json",
                     "type": "POST",
                     "data": function(d) {
-                        d.tahun_periode = $('#tahun_periode').val();
+                        d.prodi_filter = $('#prodi_filter').val();
+                        d.bidang_filter = $('#bidang_filter').val();
                     }
                 },
                 columns: [{
-                        data: "id_periode",
+                        data: "id_kompetensi",
                         className: "text-center",
                         orderable: true,
                         searchable: true
                     },
                     {
-                        data: "tahun_periode",
+                        data: "prodi",
+                        className: "",
+                        orderable: true,
+                        searchable: true
+                    },
+                    {
+                        data: "bidang_terkait",
                         className: "",
                         orderable: true,
                         searchable: true
@@ -193,9 +210,12 @@
                 ]
             });
 
-            $('#tahun_periode').on('change', function() {
-                dataPeriode.ajax.reload();
-            });
+            // $('#prodi_filter').on('change', function() {
+            //     dataKompetensiProdi.ajax.reload();
+            // });
+            // $('#bidang_filter').on('change', function() {
+            //     dataKompetensiProdi.ajax.reload();
+            // });
         });
     </script>
 @endpush

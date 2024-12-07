@@ -11,11 +11,12 @@
         <div class="card-header">
             <h3 class="card-title">{{ $page->title }}</h3>
             <div class="card-tools">
-                <button onclick="modalAction(`{{ url('/user/import') }}`)" class="btn btn-info" 
-                style="background-color: #EF5428; border-color: #EF5428;"> <i class="fas fa-file-import"></i> Import</button>
+                <button onclick="modalAction(`{{ url('/user/import') }}`)" class="btn btn-info"
+                    style="background-color: #EF5428; border-color: #EF5428;"> <i class="fas fa-file-import"></i>
+                    Import</button>
                 <button onclick="modalAction(`{{ url('/user/create') }}`)" class="btn btn-success"
-                    style="background-color: #EF5428; border-color: #EF5428;">  <i class="fas fa-plus"> </i> Tambah</button>
-               
+                    style="background-color: #EF5428; border-color: #EF5428;"> <i class="fas fa-plus"> </i> Tambah</button>
+
 
             </div>
         </div>
@@ -29,7 +30,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group row">
-                        <label class="col-1 control-label col-form-label">Filter:</label>
+                        <label class="col-1 control-label col-form-label">Filter: </label>
                         <div class="col-3">
                             <select class="form-control" id="id_level" name="id_level" required>
                                 <option value="">- Semua -</option>
@@ -37,19 +38,22 @@
                                     <option value="{{ $item->id_level }}">{{ $item->nama_level }}</option>
                                 @endforeach
                             </select>
-                            <small class="form-text text-muted">Level Pengguna</small>
                         </div>
                     </div>
                 </div>
             </div>
-            <table class="table table-bordered table-striped table-hover table-sm" id="table_user">
+            <table class="table responsive table-bordered table-striped table-hover table-sm" id="table_user">
                 <style>
                     table.dataTable td.text-center {
-                        vertical-align: middle; /* Memastikan elemen di dalam sel sejajar vertikal */
-                        text-align: center;    /* Memastikan elemen sejajar horizontal */
+                        vertical-align: middle;
+                        /* Memastikan elemen di dalam sel sejajar vertikal */
+                        text-align: center;
+                        /* Memastikan elemen sejajar horizontal */
                     }
+
                     table.dataTable img {
-                        display: inline-block; /* Pastikan gambar dianggap elemen blok sejajar */
+                        display: inline-block;
+                        /* Pastikan gambar dianggap elemen blok sejajar */
                     }
                 </style>
                 <thead>
@@ -71,6 +75,10 @@
         .card.card-outline.card-primary {
             border-color: #375E97 !important;
         }
+
+        .table {
+            width: 100% !important;
+        }
     </style>
 @endpush
 @push('js')
@@ -85,6 +93,7 @@
             dataUser = $('#table_user').DataTable({
                 // serverSide: true, jika ingin menggunakan server side processing
                 serverSide: true,
+                responsive: true,
                 ajax: {
                     "url": "{{ url('user/list') }}",
                     "dataType": "json",

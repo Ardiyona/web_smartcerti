@@ -3,7 +3,7 @@
     <div id="modal-master" class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Tambah Data Pelatihan</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Tambah Data Pengajuan Pelatihan</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -55,7 +55,7 @@
                     <small id="error-lokasi" class="error-text form-text text-danger"></small>
                 </div>
 
- 
+
                 <!-- level pelatihan -->
                 <div class="form-group">
                     <label>Level Pelatihan</label>
@@ -85,7 +85,7 @@
                         Tag Bidang Minat
                     </label>
                     <select multiple="multiple" name="id_bidang_minat[]" id="id_bidang_minat"
-                        class="js-example-basic-multiple js-states form-control form-control">
+                        class="js-example-basic-multiple js-states form-control form-user">
                         @foreach ($bidangMinat as $item)
                             <option value="{{ $item->id_bidang_minat }}">{{ $item->nama_bidang_minat }}
                             </option>
@@ -106,6 +106,15 @@
                     </select>
                     <small id="error-id_matakuliah" class="error-text form-text text-danger"></small>
                 </div>
+
+                <div class="form-group">
+                    <label for="user_id">Nama Peserta</label>
+                    <select multiple="multiple" name="user_id[]" id="user_id"
+                        class="js-example-basic-multiple form-control">
+                        <!-- Peserta akan diisi ulang oleh JavaScript -->
+                    </select>
+                    <small id="error-user_id" class="error-text form-text text-danger"></small>
+                </div>
             </div>
 
             <div class="modal-footer">
@@ -120,6 +129,44 @@
 
 <script>
     $(document).ready(function() {
+        // Event listener untuk bidang minat dan mata kuliah
+        $('#id_bidang_minat, #id_matakuliah').on('change', function() {
+            const bidangMinat = $('#id_bidang_minat').val();
+            const mataKuliah = $('#id_matakuliah').val();
+
+            if (bidangMinat.length > 0 && mataKuliah.length > 0) {
+                // Memulai loading peserta
+                $('#user_id').prop('disabled', true).html('<option>Loading...</option>');
+
+                // Mengirimkan data ke server via AJAX
+                $.ajax({
+                    url: "{{ url('/pelatihan/filter_peserta') }}",
+                    type: "POST",
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        bidang_minat: bidangMinat,
+                        mata_kuliah: mataKuliah
+                    },
+                    success: function(response) {
+                        if (response.status && response.data.length > 0) {
+                            // Isi ulang select peserta
+                            const pesertaOptions = response.data.map(peserta =>
+                                `<option value="${peserta.user_id}">${peserta.nama_lengkap} (Minat: ${peserta.bidang_minat_count || 0}, Matkul: ${peserta.mata_kuliah_count || 0})</option>`
+                            ).join('');
+
+                            $('#user_id').html(pesertaOptions).prop('disabled', false);
+                        } else {
+                            // Fallback: Tetap tampilkan peserta meskipun tidak ada yang cocok
+                            $('#user_id').html('<option>Tidak ada peserta</option>').prop(
+                                'disabled', true);
+                        }
+                    },
+                    error: function() {
+                        alert('Terjadi kesalahan.');
+                    }
+                });
+            }
+        });
         $("#form-tambah").validate({
             rules: {
                 id_vendor_pelatihan: {
@@ -203,9 +250,10 @@
                 $(element).removeClass('is-invalid');
             }
         });
-        $("#id_matakuliah, #id_bidang_minat").select2({
+        $("#id_matakuliah, #id_bidang_minat, #user_id").select2({
             dropdownAutoWidth: true,
-            theme: "classic"
+            theme: "classic",
+            width: '100%'
         });
     });
 </script>

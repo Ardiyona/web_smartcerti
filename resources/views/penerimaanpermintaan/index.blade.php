@@ -51,7 +51,7 @@
             <h3 class="card-title">{{ $page->title }} - Pelatihan</h3>
         </div>
         <div class="card-body">
-            <table class="table table-bordered table-striped table-hover table-sm" id="table_pelatihan">
+            <table class="table responsive table-bordered table-striped table-hover table-sm" id="table_pelatihan">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -70,7 +70,8 @@
             </table>
         </div>
     </div>
-    <div id="myModal" class="modal fade animate shake" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" data-width="75%" aria-hidden="true"></div>
+    <div id="myModal" class="modal fade animate shake" tabindex="-1" role="dialog" data-backdrop="static"
+        data-keyboard="false" data-width="75%" aria-hidden="true"></div>
 @endsection
 
 @push('css')
@@ -84,7 +85,6 @@
         }
     </style>
 
-    </style>
 @endpush
 
 @push('js')
@@ -197,6 +197,15 @@
                     },
                     {
                         data: "status_sertifikasi",
+                        render: function(data) {
+                            if (data) {
+                                let badgeClass = data.toLowerCase() === 'terima' ? 'bg-success' :
+                                    data.toLowerCase() === 'menunggu' ? 'bg-warning' :
+                                    'bg-danger';
+                                return `<span class="badge ${badgeClass}">${data}</span>`;
+                            }
+                            return '-';
+                        },
                         className: "",
                         width: "8%",
                         orderable: false,
@@ -216,6 +225,7 @@
             var dataPelatihan = $('#table_pelatihan').DataTable({
                 processing: true,
                 serverSide: true,
+                responsive: true,
                 ajax: {
                     url: "{{ url('penerimaanpermintaan/listPelatihan') }}",
                     type: "POST",
@@ -294,6 +304,15 @@
                     },
                     {
                         data: "status_pelatihan",
+                        render: function(data) {
+                            if (data) {
+                                let badgeClass = data.toLowerCase() === 'terima' ? 'bg-success' :
+                                    data.toLowerCase() === 'menunggu' ? 'bg-warning' :
+                                    'bg-danger';
+                                return `<span class="badge ${badgeClass}">${data}</span>`;
+                            }
+                            return '-';
+                        },
                         className: "",
                         width: "8%",
                         orderable: false,

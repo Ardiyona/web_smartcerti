@@ -1,6 +1,6 @@
 @extends('layouts.template')
 @section('title')
-    | Daftar Pelatihan dan Sertifikasi
+    | Daftar Bidang Minat
 @endsection
 @section('content')
     <div id="myModal" class="modal fade animate shake" tabindex="-1" role="dialog" data-backdrop="static"
@@ -16,11 +16,11 @@
             @if (session('error'))
                 <div class="alert alert-danger">{{ session('error') }}</div>
             @endif
-            <table class="table responsive table-bordered table-striped table-hover table-sm" id="table_user">
+            <table class="table responsive table-bordered table-striped table-hover table-sm" id="table_bidang_minat">
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Nama Lengkap</th>
+                        <th>Nama Bidang Minat</th>
                         <th>Jumlah Pelatihan</th>
                         <th>Jumlah Sertifikasi</th>
                     </tr>
@@ -51,7 +51,7 @@
                     searchable: false
                 },
                 {
-                    data: "nama_lengkap",
+                    data: "nama_bidang_minat",
                     className: "",
                     width: "40%",
                     orderable: true,
@@ -73,15 +73,15 @@
                 }
             ];
 
-            $('#table_user').DataTable({
+            $('#table_bidang_minat').DataTable({
                 serverSide: true,
                 processing: true,
+                responsive: true,
                 ajax: {
-                    url: "{{ url('semuadosen/list') }}", // Ganti dengan route yang benar
+                    url: "{{ url('jumlahbidangminat/list') }}", // Sesuaikan dengan route Anda
                     type: "GET"
                 },
-                columns: columns,
-                responsive: true
+                columns: columns
             });
         });
     </script>

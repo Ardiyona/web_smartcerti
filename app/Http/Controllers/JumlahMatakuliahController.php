@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
-class SemuaDosenController extends Controller
+class JumlahMatakuliahController extends Controller
 {
     public function index()
     {
@@ -25,7 +25,7 @@ class SemuaDosenController extends Controller
         $activeMenu = 'dashboardpimpinan';
 
 
-        return view('semuadosen.index', [
+        return view('jumlahmatakuliah.index', [
             'breadcrumb' => $breadcrumb,
             'page' => $page,
             'activeMenu' => $activeMenu
@@ -34,20 +34,21 @@ class SemuaDosenController extends Controller
 
     public function list()
     {
-        $data = DB::table('user')
-            ->leftJoin('detail_peserta_pelatihan', 'user.user_id', '=', 'detail_peserta_pelatihan.user_id')
-            ->leftJoin('detail_peserta_sertifikasi', 'user.user_id', '=', 'detail_peserta_sertifikasi.user_id')
+        $data = DB::table('mata_kuliah')
+            ->leftJoin('detail_matakuliah_pelatihan', 'mata_kuliah.id_matakuliah', '=', 'detail_matakuliah_pelatihan.id_matakuliah')
+            ->leftJoin('detail_matakuliah_sertifikasi', 'mata_kuliah.id_matakuliah', '=', 'detail_matakuliah_sertifikasi.id_matakuliah')
             ->select(
-                'user.user_id',
-                'user.nama_lengkap',
-                DB::raw('COUNT(DISTINCT detail_peserta_pelatihan.id_detail_peserta_pelatihan) as jumlah_pelatihan'),
-                DB::raw('COUNT(DISTINCT detail_peserta_sertifikasi.id_detail_peserta_sertifikasi) as jumlah_sertifikasi')
+                'mata_kuliah.id_matakuliah',
+                'mata_kuliah.nama_matakuliah',
+                DB::raw('COUNT(DISTINCT detail_matakuliah_pelatihan.id_detail_matakuliah_pelatihan) as jumlah_pelatihan'),
+                DB::raw('COUNT(DISTINCT detail_matakuliah_sertifikasi.id_detail_matakuliah_sertifikasi) as jumlah_sertifikasi')
             )
-            ->groupBy('user.user_id', 'user.nama_lengkap');
-    
+            ->groupBy('mata_kuliah.id_matakuliah', 'mata_kuliah.nama_matakuliah');
+        
         return DataTables::of($data)
             ->addIndexColumn() // Tambahkan nomor urut
             ->make(true);
     }
+    
 
 }
