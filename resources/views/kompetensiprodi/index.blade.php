@@ -88,15 +88,17 @@
 
 
 @extends('layouts.template')
-@section('title')| Kompetensi Prodi @endsection
+@section('title')
+    | Kompetensi Prodi
+@endsection
 
 @section('content')
     <div class="card card-outline card-primary">
         <div class="card-header">
             <h3 class="card-title">{{ $page->title }}</h3>
             <div class="card-tools">
-                <button onclick="modalAction(`{{ url('/kompetensiprodi/create') }}`)" class="btn btn-success"  
-                style="background-color: #EF5428; border-color: #EF5428;"> <i class="fas fa-plus"></i> Tambah</button>
+                <button onclick="modalAction(`{{ url('/kompetensiprodi/create') }}`)" class="btn btn-success"
+                    style="background-color: #EF5428; border-color: #EF5428;"> <i class="fas fa-plus"></i> Tambah</button>
             </div>
         </div>
         <div class="card-body">
@@ -131,7 +133,7 @@
                     </div>
                 </div>
             </div>
-            <table class="table table-bordered table-striped table-hover table-sm" id="table-kompetensi-prodi">
+            <table class="table responsive table-bordered table-striped table-hover table-sm" id="table-kompetensi-prodi">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -144,15 +146,19 @@
         </div>
     </div>
     <div id="myModal" class="modal fade animate shake" tabindex="-1" role="dialog" data-backdrop="static"
-    data-keyboard="false" data-width="75%" aria-hidden="true"></div>
+        data-keyboard="false" data-width="75%" aria-hidden="true"></div>
 @endsection
 
 @push('css')
-<style>
-    .card.card-outline.card-primary {
-        border-color: #375E97 !important;
-    }
-</style>
+    <style>
+        .card.card-outline.card-primary {
+            border-color: #375E97 !important;
+        }
+
+        .table {
+            width: 100% !important;
+        }
+    </style>
 @endpush
 
 @push('js')
@@ -167,6 +173,7 @@
         $(document).ready(function() {
             dataKompetensiProdi = $('#table-kompetensi-prodi').DataTable({
                 serverSide: true,
+                responsive: true,
                 ajax: {
                     "url": "{{ url('kompetensiprodi/list') }}",
                     "dataType": "json",
@@ -176,8 +183,7 @@
                         d.bidang_filter = $('#bidang_filter').val();
                     }
                 },
-                columns: [
-                    {
+                columns: [{
                         data: "id_kompetensi",
                         className: "text-center",
                         orderable: true,

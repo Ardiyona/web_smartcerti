@@ -18,7 +18,7 @@
             @if (session('error'))
                 <div class="alert alert-danger">{{ session('error') }}</div>
             @endif
-            <table class="table table-bordered table-striped table-hover table-sm" id="table_sertifikasi">
+            <table class="table responsive table-bordered table-striped table-hover table-sm" id="table_sertifikasi">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -44,25 +44,109 @@
         .card.card-outline.card-primary {
             border-color: #375E97 !important;
         }
+
+        .table {
+            width: 100% !important;
+        }
     </style>
 @endpush
 @push('js')
     <script>
         var dataSertifikasi;
         $(document).ready(function() {
-            var columns = [
-                { data: "DT_RowIndex", className: "text-center", width: "4%", orderable: false, searchable: false },
-                { data: "vendor_sertifikasi.nama", className: "", width: "9%", orderable: false, searchable: true },
-                { data: "jenis_sertifikasi.nama_jenis_sertifikasi", className: "", width: "9%", orderable: false, searchable: true },
-                { data: "periode.tahun_periode", className: "", width: "6%", orderable: false, searchable: false },
-                { data: "nama_sertifikasi", className: "", width: "9%", orderable: true, searchable: true },
-                { data: "no_sertifikasi", className: "", width: "6%", orderable: false, searchable: true },
-                { data: "jenis", className: "", width: "6%", orderable: false, searchable: true },
-                { data: "tanggal", className: "", width: "8%", orderable: false, searchable: false },
-                { data: "masa_berlaku", className: "", width: "7%", orderable: false, searchable: false },
-                { data: "bidang_minat", render: function(data) { return data ? data : '-'; }, className: "", width: "10%", orderable: false, searchable: false },
-                { data: "mata_kuliah", render: function(data) { return data ? data : '-'; }, className: "", width: "10%", orderable: false, searchable: false },
-                { data: "peserta_sertifikasi", render: function(data) { return data ? data : '-'; }, className: "", width: "10%", orderable: false, searchable: false }
+            var columns = [{
+                    data: "DT_RowIndex",
+                    className: "text-center",
+                    width: "4%",
+                    orderable: false,
+                    searchable: false
+                },
+                {
+                    data: "vendor_sertifikasi.nama",
+                    className: "",
+                    width: "9%",
+                    orderable: false,
+                    searchable: true
+                },
+                {
+                    data: "jenis_sertifikasi.nama_jenis_sertifikasi",
+                    className: "",
+                    width: "9%",
+                    orderable: false,
+                    searchable: true
+                },
+                {
+                    data: "periode.tahun_periode",
+                    className: "",
+                    width: "6%",
+                    orderable: false,
+                    searchable: false
+                },
+                {
+                    data: "nama_sertifikasi",
+                    className: "",
+                    width: "9%",
+                    orderable: true,
+                    searchable: true
+                },
+                {
+                    data: "no_sertifikasi",
+                    className: "",
+                    width: "6%",
+                    orderable: false,
+                    searchable: true
+                },
+                {
+                    data: "jenis",
+                    className: "",
+                    width: "6%",
+                    orderable: false,
+                    searchable: true
+                },
+                {
+                    data: "tanggal",
+                    className: "",
+                    width: "8%",
+                    orderable: false,
+                    searchable: false
+                },
+                {
+                    data: "masa_berlaku",
+                    className: "",
+                    width: "7%",
+                    orderable: false,
+                    searchable: false
+                },
+                {
+                    data: "bidang_minat",
+                    render: function(data) {
+                        return data ? data : '-';
+                    },
+                    className: "",
+                    width: "10%",
+                    orderable: false,
+                    searchable: false
+                },
+                {
+                    data: "mata_kuliah",
+                    render: function(data) {
+                        return data ? data : '-';
+                    },
+                    className: "",
+                    width: "10%",
+                    orderable: false,
+                    searchable: false
+                },
+                {
+                    data: "peserta_sertifikasi",
+                    render: function(data) {
+                        return data ? data : '-';
+                    },
+                    className: "",
+                    width: "10%",
+                    orderable: false,
+                    searchable: false
+                }
             ];
 
             dataSertifikasi = $('#table_sertifikasi').DataTable({
@@ -72,7 +156,8 @@
                     dataType: "json",
                     type: "POST",
                 },
-                columns: columns
+                columns: columns,
+                responsiveL: true,
             });
         });
     </script>

@@ -27,7 +27,7 @@
             @if (session('error'))
                 <div class="alert alert-danger">{{ session('error') }}</div>
             @endif
-            <table class="table table-bordered table-striped table-hover table-sm" id="table_pelatihan">
+            <table class="table responsive table-bordered table-striped table-hover table-sm" id="table_pelatihan">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -60,6 +60,9 @@
     <style>
         .card.card-outline.card-primary {
             border-color: #375E97 !important;
+        }
+        .table {
+            width: 100% !important;
         }
     </style>
 @endpush
@@ -185,7 +188,8 @@
                     dataType: "json",
                     type: "POST",
                 },
-                columns: columns
+                columns: columns,
+                responsive: true
             });
 
         });

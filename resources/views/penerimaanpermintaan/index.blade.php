@@ -51,7 +51,7 @@
             <h3 class="card-title">{{ $page->title }} - Pelatihan</h3>
         </div>
         <div class="card-body">
-            <table class="table table-bordered table-striped table-hover table-sm" id="table_pelatihan">
+            <table class="table responsive table-bordered table-striped table-hover table-sm" id="table_pelatihan">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -85,7 +85,6 @@
         }
     </style>
 
-    </style>
 @endpush
 
 @push('js')
@@ -226,6 +225,7 @@
             var dataPelatihan = $('#table_pelatihan').DataTable({
                 processing: true,
                 serverSide: true,
+                responsive: true,
                 ajax: {
                     url: "{{ url('penerimaanpermintaan/listPelatihan') }}",
                     type: "POST",

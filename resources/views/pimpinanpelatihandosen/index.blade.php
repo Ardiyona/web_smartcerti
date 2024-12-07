@@ -18,7 +18,7 @@
             @if (session('error'))
                 <div class="alert alert-danger">{{ session('error') }}</div>
             @endif
-            <table class="table table-bordered table-striped table-hover table-sm" id="table_pelatihan">
+            <table class="table responsive table-bordered table-striped table-hover table-sm" id="table_pelatihan">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -44,25 +44,109 @@
         .card.card-outline.card-primary {
             border-color: #375E97 !important;
         }
+
+        .table {
+            width: 100% !important;
+        }
     </style>
 @endpush
 @push('js')
     <script>
         var datapelatihan;
         $(document).ready(function() {
-            var columns = [
-                { data: "DT_RowIndex", className: "text-center", width: "4%", orderable: false, searchable: false },
-                { data: "vendor_pelatihan.nama", className: "", width: "9%", orderable: false, searchable: true },
-                { data: "jenis_pelatihan.nama_jenis_pelatihan", className: "", width: "9%", orderable: false, searchable: true },
-                { data: "periode.tahun_periode", className: "", width: "6%", orderable: false, searchable: false },
-                { data: "nama_pelatihan", className: "", width: "9%", orderable: true, searchable: true },
-                { data: "no_pelatihan", className: "", width: "6%", orderable: false, searchable: true },
-                { data: "lokasi", className: "", width: "6%", orderable: false, searchable: true },
-                { data: "level_pelatihan", className: "", width: "6%", orderable: false, searchable: true },
-                { data: "tanggal", className: "", width: "8%", orderable: false, searchable: false },
-                { data: "bidang_minat", render: function(data) { return data ? data : '-'; }, className: "", width: "10%", orderable: false, searchable: false },
-                { data: "mata_kuliah", render: function(data) { return data ? data : '-'; }, className: "", width: "10%", orderable: false, searchable: false },
-                { data: "peserta_pelatihan", render: function(data) { return data ? data : '-'; }, className: "", width: "10%", orderable: false, searchable: false }
+            var columns = [{
+                    data: "DT_RowIndex",
+                    className: "text-center",
+                    width: "4%",
+                    orderable: false,
+                    searchable: false
+                },
+                {
+                    data: "vendor_pelatihan.nama",
+                    className: "",
+                    width: "9%",
+                    orderable: false,
+                    searchable: true
+                },
+                {
+                    data: "jenis_pelatihan.nama_jenis_pelatihan",
+                    className: "",
+                    width: "9%",
+                    orderable: false,
+                    searchable: true
+                },
+                {
+                    data: "periode.tahun_periode",
+                    className: "",
+                    width: "6%",
+                    orderable: false,
+                    searchable: false
+                },
+                {
+                    data: "nama_pelatihan",
+                    className: "",
+                    width: "9%",
+                    orderable: true,
+                    searchable: true
+                },
+                {
+                    data: "no_pelatihan",
+                    className: "",
+                    width: "6%",
+                    orderable: false,
+                    searchable: true
+                },
+                {
+                    data: "lokasi",
+                    className: "",
+                    width: "6%",
+                    orderable: false,
+                    searchable: true
+                },
+                {
+                    data: "level_pelatihan",
+                    className: "",
+                    width: "6%",
+                    orderable: false,
+                    searchable: true
+                },
+                {
+                    data: "tanggal",
+                    className: "",
+                    width: "8%",
+                    orderable: false,
+                    searchable: false
+                },
+                {
+                    data: "bidang_minat",
+                    render: function(data) {
+                        return data ? data : '-';
+                    },
+                    className: "",
+                    width: "10%",
+                    orderable: false,
+                    searchable: false
+                },
+                {
+                    data: "mata_kuliah",
+                    render: function(data) {
+                        return data ? data : '-';
+                    },
+                    className: "",
+                    width: "10%",
+                    orderable: false,
+                    searchable: false
+                },
+                {
+                    data: "peserta_pelatihan",
+                    render: function(data) {
+                        return data ? data : '-';
+                    },
+                    className: "",
+                    width: "10%",
+                    orderable: false,
+                    searchable: false
+                }
             ];
 
             datapelatihan = $('#table_pelatihan').DataTable({
@@ -72,7 +156,8 @@
                     dataType: "json",
                     type: "POST",
                 },
-                columns: columns
+                columns: columns,
+                responsive: true,
             });
         });
     </script>
