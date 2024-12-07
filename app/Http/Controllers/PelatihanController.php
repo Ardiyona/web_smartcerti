@@ -35,17 +35,19 @@ class PelatihanController extends Controller
         $activeMenu = 'pelatihan';
 
         $vendorpelatihan = VendorPelatihanModel::all();
+        $periode = PeriodeModel::all();
 
         return view('pelatihan.index', [
             'breadcrumb' => $breadcrumb,
             'page' => $page,
             'vendorpelatihan' => $vendorpelatihan,
+            'periode' => $periode,
             'activeMenu' => $activeMenu
         ]);
     }
 
     // Ambil data user dalam bentuk json untuk datatables
-    public function list()
+    public function list(Request $request)
     {
         // Mengambil data user beserta level
         /** @var User */
@@ -70,7 +72,10 @@ class PelatihanController extends Controller
                 'biaya',
                 'status_pelatihan',
             )
-            ->with('vendor_pelatihan', 'jenis_pelatihan', 'periode', 'bidang_minat_pelatihan', 'mata_kuliah_pelatihan', 'detail_peserta_pelatihan');
+                ->with('vendor_pelatihan', 'jenis_pelatihan', 'periode', 'bidang_minat_pelatihan', 'mata_kuliah_pelatihan', 'detail_peserta_pelatihan');
+            if (!empty($request->id_periode)) {
+                $pelatihans->where('id_periode', $request->id_periode);
+            }
         } else {
             // Jika user bukan admin atau pimpinan, hanya tampilkan pelatihan yang dimiliki oleh user tersebut
             $pelatihans = $user->detail_peserta_pelatihan()
@@ -97,6 +102,9 @@ class PelatihanController extends Controller
                         $query->where('detail_peserta_pelatihan.user_id', $user->user_id);
                     }
                 ]);
+            if (!empty($request->id_periode)) {
+                $pelatihans->where('id_periode', $request->id_periode);
+            }
         }
 
         // Mengembalikan data dengan DataTables
@@ -558,28 +566,28 @@ class PelatihanController extends Controller
         // Ambil bidang minat dan mata kuliah yang dipilih
         $bidangMinatIds = $request->input('bidang_minat', []);
         $mataKuliahIds = $request->input('mata_kuliah', []);
-    
+
         // Ambil peserta
         $user = UserModel::select('user_id', 'nama_lengkap') // Pastikan 'nama' termasuk dalam select
-        ->withCount([
-            'detail_daftar_user_matakuliah as mata_kuliah_count' => function ($query) use ($mataKuliahIds) {
-                $query->whereIn('detail_daftar_user_matakuliah.id_matakuliah', $mataKuliahIds);
-            },
-            'detail_daftar_user_bidang_minat as bidang_minat_count' => function ($query) use ($bidangMinatIds) {
-                $query->whereIn('detail_daftar_user_bidang_minat.id_bidang_minat', $bidangMinatIds);
-            }
-        ])
-        ->where('id_level', '!=', 1)
-        ->orderByDesc('mata_kuliah_count')
-        ->orderByDesc('bidang_minat_count')
-        ->get();
-    
+            ->withCount([
+                'detail_daftar_user_matakuliah as mata_kuliah_count' => function ($query) use ($mataKuliahIds) {
+                    $query->whereIn('detail_daftar_user_matakuliah.id_matakuliah', $mataKuliahIds);
+                },
+                'detail_daftar_user_bidang_minat as bidang_minat_count' => function ($query) use ($bidangMinatIds) {
+                    $query->whereIn('detail_daftar_user_bidang_minat.id_bidang_minat', $bidangMinatIds);
+                }
+            ])
+            ->where('id_level', '!=', 1)
+            ->orderByDesc('mata_kuliah_count')
+            ->orderByDesc('bidang_minat_count')
+            ->get();
+
         // Pastikan ada fallback jika tidak ada peserta yang cocok
         if ($user->isEmpty()) {
             $user = UserModel::where('id_level', '!=', 1) // Eksklusi admin
                 ->get(); // Ambil semua peserta tanpa urutan
         }
-    
+
         return response()->json([
             'status' => true,
             'data' => $user
@@ -589,11 +597,11 @@ class PelatihanController extends Controller
     // public function create_rekomendasi_peserta($id)
     // {
     //     $pelatihan = PelatihanModel::with('detail_peserta_pelatihan')->find($id);
-    
+
     //     // Ambil ID bidang minat dan mata kuliah yang terkait dengan pelatihan
     //     $pelatihanBidangMinat = $pelatihan->bidang_minat_pelatihan->pluck('id_bidang_minat')->toArray();
     //     $pelatihanMataKuliah = $pelatihan->mata_kuliah_pelatihan->pluck('id_matakuliah')->toArray();
-    
+
     //     $user = UserModel::with(['detail_daftar_user_matakuliah', 'detail_daftar_user_bidang_minat'])
     //     ->where('id_level', '!=', 1) // Tambahkan kondisi ini untuk mengecualikan admin
     //     ->withCount([
@@ -607,7 +615,7 @@ class PelatihanController extends Controller
     //     ->orderByDesc('mata_kuliah_count')
     //     ->orderByDesc('bidang_minat_count')
     //     ->get();
-    
+
     //     return view('pelatihan.create_rekomendasi_peserta')->with([
     //         'user' => $user,
     //         'pelatihan' => $pelatihan,
@@ -743,9 +751,9 @@ class PelatihanController extends Controller
     {
         $pelatihan = PelatihanModel::with('vendor_pelatihan', 'detail_peserta_pelatihan')->find($id);
         $user = UserModel::select('user_id', 'username', 'nama_lengkap', 'avatar', 'id_level')
-        ->where('id_level', '2')
-        ->with('level')
-        ->first();
+            ->where('id_level', '2')
+            ->with('level')
+            ->first();
 
         // dd($user->nama_lengkap);
 

@@ -47,11 +47,7 @@ class SertifikasiController extends Controller
     // Ambil data user dalam bentuk json untuk datatables
     public function list(Request $request)
     {
-        $periode = PeriodeModel::select('id_periode', 'nama_periode');
 
-        if ($request->id_periode){
-            $periode->where('id_periode', $request->id_periode);
-        }
         // Mengambil data user beserta level
         /** @var User */
         $user = Auth::user();
@@ -72,6 +68,10 @@ class SertifikasiController extends Controller
                 'status_sertifikasi'
             )
                 ->with('vendor_sertifikasi', 'jenis_sertifikasi', 'periode', 'bidang_minat_sertifikasi', 'mata_kuliah_sertifikasi', 'detail_peserta_sertifikasi');
+
+            if (!empty($request->id_periode)) {
+                $sertifikasis->where('id_periode', $request->id_periode);
+            }
         } else {
             // Jika user bukan admin atau pimpinan, hanya tampilkan sertifikasi yang dimiliki oleh user tersebut
             $sertifikasis = $user->detail_peserta_sertifikasi()
@@ -97,6 +97,9 @@ class SertifikasiController extends Controller
                         $query->where('detail_peserta_sertifikasi.user_id', $user->user_id);
                     }
                 ]);
+            if ($request->id_periode) {
+                $sertifikasis->where('id_periode', $request->id_periode);
+            }
         }
 
         // Mengembalikan data dengan DataTables
@@ -143,7 +146,7 @@ class SertifikasiController extends Controller
                     $btn .= '<button onclick="modalAction(\'' . url('/sertifikasi/' . $sertifikasi->id_sertifikasi . '/admin_show_edit') . '\')" class="btn btn-info btn-sm">Upload</button> ';
                     $btn .= '<button onclick="modalAction(\'' . url('/sertifikasi/' . $sertifikasi->id_sertifikasi . '/edit') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
                     $btn .= '<button onclick="modalAction(\'' . url('/sertifikasi/' . $sertifikasi->id_sertifikasi . '/confirm') . '\')" class="btn btn-danger btn-sm">Hapus</button> ';
-                    
+
                     // if ($sertifikasi->status_sertifikasi == 'menunggu') {
                     //     $btn .= '<button onclick="modalAction(\'' . url('/sertifikasi/' . $sertifikasi->id_sertifikasi . '/create_rekomendasi_peserta') . '\')" class="btn btn-info btn-sm">Peserta</button> ';
                     // }
@@ -625,28 +628,28 @@ class SertifikasiController extends Controller
         // Ambil bidang minat dan mata kuliah yang dipilih
         $bidangMinatIds = $request->input('bidang_minat', []);
         $mataKuliahIds = $request->input('mata_kuliah', []);
-    
+
         // Ambil peserta
         $user = UserModel::select('user_id', 'nama_lengkap') // Pastikan 'nama' termasuk dalam select
-        ->withCount([
-            'detail_daftar_user_matakuliah as mata_kuliah_count' => function ($query) use ($mataKuliahIds) {
-                $query->whereIn('detail_daftar_user_matakuliah.id_matakuliah', $mataKuliahIds);
-            },
-            'detail_daftar_user_bidang_minat as bidang_minat_count' => function ($query) use ($bidangMinatIds) {
-                $query->whereIn('detail_daftar_user_bidang_minat.id_bidang_minat', $bidangMinatIds);
-            }
-        ])
-        ->where('id_level', '!=', 1)
-        ->orderByDesc('mata_kuliah_count')
-        ->orderByDesc('bidang_minat_count')
-        ->get();
-    
+            ->withCount([
+                'detail_daftar_user_matakuliah as mata_kuliah_count' => function ($query) use ($mataKuliahIds) {
+                    $query->whereIn('detail_daftar_user_matakuliah.id_matakuliah', $mataKuliahIds);
+                },
+                'detail_daftar_user_bidang_minat as bidang_minat_count' => function ($query) use ($bidangMinatIds) {
+                    $query->whereIn('detail_daftar_user_bidang_minat.id_bidang_minat', $bidangMinatIds);
+                }
+            ])
+            ->where('id_level', '!=', 1)
+            ->orderByDesc('mata_kuliah_count')
+            ->orderByDesc('bidang_minat_count')
+            ->get();
+
         // Pastikan ada fallback jika tidak ada peserta yang cocok
         if ($user->isEmpty()) {
             $user = UserModel::where('id_level', '!=', 1) // Eksklusi admin
                 ->get(); // Ambil semua peserta tanpa urutan
         }
-    
+
         return response()->json([
             'status' => true,
             'data' => $user
