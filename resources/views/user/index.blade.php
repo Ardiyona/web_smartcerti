@@ -99,7 +99,7 @@
                     "dataType": "json",
                     "type": "POST",
                     "data": function(d) {
-                        d.level_id = $('#id_level').val();
+                        d.id_level = $('#id_level').val();
                     }
                 },
                 columns: [{
@@ -158,8 +158,9 @@
                     tableUser.search(this.value).draw();
                 }
             });
-            $('.filter_kategori').change(function() {
-                tableUser.draw();
+            $('#id_level').on('change', function() {
+                console.log("Filter changed: ", $(this).val());
+                dataUser.ajax.reload(null, false);
             });
         });
     </script>
