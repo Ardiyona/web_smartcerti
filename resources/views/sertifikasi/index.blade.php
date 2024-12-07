@@ -31,7 +31,7 @@
                     <div class="form-group row">
                         <label class="col-1 control-label col-form-label">Filter: </label>
                         <div class="col-3">
-                            <select class="form-control" id="id_periode" name="id_periode" required>
+                            <select class="form-control" id="periode" name="periode" required>
                                 <option value="">- Semua -</option>
                                 @foreach ($periode as $item)
                                     <option value="{{ $item->id_periode }}">{{ $item->tahun_periode }}</option>
@@ -209,14 +209,13 @@
                     dataType: "json",
                     type: "POST",
                     data: function(d) {
-                        d.id_periode = $('#id_periode').val();
+                        d.id_periode = $('#periode').val();
                     },
                 },
                 columns: columns,
                 responsive: true
             });
-            $('#id_periode').on('change', function() {
-                console.log("Filter changed: ", $(this).val());
+            $('#periode').on('change', function(e) {
                 dataSertifikasi.ajax.reload(null, false);
             });
         });

@@ -32,7 +32,7 @@
                     <div class="form-group row">
                         <label class="col-1 control-label col-form-label">Filter: </label>
                         <div class="col-3">
-                            <select class="form-control" id="id_level" name="id_level" required>
+                            <select class="form-control" id="level" name="level" required>
                                 <option value="">- Semua -</option>
                                 @foreach ($level as $item)
                                     <option value="{{ $item->id_level }}">{{ $item->nama_level }}</option>
@@ -99,7 +99,7 @@
                     "dataType": "json",
                     "type": "POST",
                     "data": function(d) {
-                        d.id_level = $('#id_level').val();
+                        d.id_level = $('#level').val();
                     }
                 },
                 columns: [{
@@ -158,8 +158,7 @@
                     tableUser.search(this.value).draw();
                 }
             });
-            $('#id_level').on('change', function() {
-                console.log("Filter changed: ", $(this).val());
+            $('#level').on('change', function() {
                 dataUser.ajax.reload(null, false);
             });
         });

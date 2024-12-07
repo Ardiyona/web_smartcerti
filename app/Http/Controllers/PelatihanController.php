@@ -57,7 +57,7 @@ class PelatihanController extends Controller
         // return response()->json($pelatihans);
 
         // Jika user adalah admin (id_level = 1) atau pimpinan (id_level = 2), tampilkan semua pelatihan
-        if ($user->id_level == 1 || $user->id_level == 2) {
+        if ($user->id_level == 1) {
             // Mengambil semua pelatihan yang ada di database
             $pelatihans = PelatihanModel::select(
                 'id_pelatihan',
@@ -73,7 +73,7 @@ class PelatihanController extends Controller
                 'status_pelatihan',
             )
                 ->with('vendor_pelatihan', 'jenis_pelatihan', 'periode', 'bidang_minat_pelatihan', 'mata_kuliah_pelatihan', 'detail_peserta_pelatihan');
-            if (!empty($request->id_periode)) {
+            if ($request->id_periode) {
                 $pelatihans->where('id_periode', $request->id_periode);
             }
         } else {
@@ -102,7 +102,7 @@ class PelatihanController extends Controller
                         $query->where('detail_peserta_pelatihan.user_id', $user->user_id);
                     }
                 ]);
-            if (!empty($request->id_periode)) {
+            if ($request->id_periode) {
                 $pelatihans->where('id_periode', $request->id_periode);
             }
         }
@@ -524,6 +524,7 @@ class PelatihanController extends Controller
                 'level_pelatihan' => 'required',
                 'tanggal' => 'required|date',
                 'biaya' => 'required|string|max:255',
+                'kuota_peserta' => "nullable|integer"
             ];
 
             $validator = Validator::make($request->all(), $rules);
@@ -535,6 +536,8 @@ class PelatihanController extends Controller
                     'msgField' => $validator->errors()
                 ]);
             }
+            
+            $kuotaPeserta = count($request->user_id);
 
             // Simpan data user dengan hanya field yang diperlukan
             $pelatihan = pelatihanModel::create([
@@ -543,6 +546,7 @@ class PelatihanController extends Controller
                 'level_pelatihan'      => $request->level_pelatihan,
                 'tanggal'      => $request->tanggal,
                 'biaya'      => $request->biaya,
+                'kuota_peserta'      => $kuotaPeserta,
                 'id_vendor_pelatihan'  => $request->id_vendor_pelatihan,
                 'id_jenis_pelatihan'  => $request->id_jenis_pelatihan,
                 'id_periode'  => $request->id_periode,

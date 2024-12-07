@@ -220,8 +220,8 @@
                                         $cleanFileName = preg_replace('/^\d{10}_/', '', $fullFileName);
                                     @endphp
 
-                                    <a href="{{ url('storage/surat_tugas/' . $pelatihan->surat_tugas) }}"
-                                        target="_blank" download>
+                                    <a href="{{ url('storage/surat_tugas/' . $pelatihan->surat_tugas) }}" target="_blank"
+                                        download>
                                         {{ $cleanFileName }}
                                     </a>
                                 </small>
@@ -289,9 +289,7 @@
                         required: true,
                     },
                     surat_tugas: {
-                        required: function() {
-                            return isAdmin;
-                        },
+                        required: false,
                     },
                 },
                 submitHandler: function(form) {
@@ -344,7 +342,7 @@
             $("#id_matakuliah, #id_bidang_minat, #user_id").select2({
                 dropdownAutoWidth: true,
                 theme: "classic",
-                width: '100%' 
+                width: '100%'
             });
         });
     </script>

@@ -69,7 +69,7 @@ class SertifikasiController extends Controller
             )
                 ->with('vendor_sertifikasi', 'jenis_sertifikasi', 'periode', 'bidang_minat_sertifikasi', 'mata_kuliah_sertifikasi', 'detail_peserta_sertifikasi');
 
-            if (!empty($request->id_periode)) {
+            if ($request->id_periode) {
                 $sertifikasis->where('id_periode', $request->id_periode);
             }
         } else {
@@ -438,7 +438,8 @@ class SertifikasiController extends Controller
                 }
                 return response()->json([
                     'status' => true,
-                    'message' => 'Data berhasil diupdate'
+                    'message' => 'Data berhasil diupdate',
+                    'response' => 'success'
                 ]);
             } else {
                 return response()->json([
@@ -554,6 +555,7 @@ class SertifikasiController extends Controller
                 'jenis' => 'required',
                 'tanggal' => 'required|date',
                 'biaya' => 'required|string|max:255',
+                'kuota_peserta' => "nullable|integer"
             ];
 
             $validator = Validator::make($request->all(), $rules);
@@ -565,6 +567,8 @@ class SertifikasiController extends Controller
                     'msgField' => $validator->errors()
                 ]);
             }
+            
+            $kuotaPeserta = count($request->user_id);
 
             // Simpan data sertifikasi
             $sertifikasi = SertifikasiModel::create([
@@ -572,6 +576,7 @@ class SertifikasiController extends Controller
                 'jenis'      => $request->jenis,
                 'tanggal'      => $request->tanggal,
                 'biaya'      => $request->biaya,
+                'kuota_peserta'      => $kuotaPeserta,
                 'id_vendor_sertifikasi'  => $request->id_vendor_sertifikasi,
                 'id_jenis_sertifikasi'  => $request->id_jenis_sertifikasi,
                 'id_periode'  => $request->id_periode,
