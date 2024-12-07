@@ -26,6 +26,21 @@
             @if (session('error'))
                 <div class="alert alert-danger">{{ session('error') }}</div>
             @endif
+            <div class="row">
+            <div class="col-md-12">
+                <div class="form-group row">
+                    <label class="col-1 control-label col-form-label">Filter: </label>
+                    <div class="col-3">
+                        <select class="form-control" id="id_periode" name="id_periode" required>
+                            <option value="">- Semua -</option>
+                            @foreach ($periode as $item)
+                                <option value="{{ $item->id_periode }}">{{ $item->nama_periode }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
             <table class="table table-bordered table-striped table-hover table-sm" id="table_sertifikasi">
                 <thead>
                     <tr>
@@ -106,7 +121,7 @@
             {
                 data: "periode.tahun_periode",
                 className: "",
-                width: "6%",
+                width: "1%",
                 orderable: false,
                 searchable: false
             },
@@ -116,7 +131,7 @@
                     return row.masa_berlaku ? row.masa_berlaku : '-';
                 },
                 className: "",
-                width: "7%",
+                width: "3%",
                 orderable: false,
                 searchable: false
             },
@@ -141,7 +156,7 @@
             columns.splice(6, 0, {
                 data: "tanggal",
                 className: "",
-                width: "8%",
+                width: "3%",
                 orderable: true, // Set true jika ingin sorting berdasarkan tanggal
                 searchable: false
             });

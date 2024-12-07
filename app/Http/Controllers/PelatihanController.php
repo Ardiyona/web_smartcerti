@@ -116,7 +116,8 @@ class PelatihanController extends Controller
             ->addColumn('aksi', function ($pelatihan) {
                 $levelId = Auth::user();
                 if ($levelId->id_level == 1) {
-                    $btn = '<button onclick="modalAction(\'' . url('/pelatihan/' . $pelatihan->id_pelatihan . '/admin_show_edit') . '\')" class="btn btn-info btn-sm">Detail</button> ';
+                    $btn = '<button onclick="modalAction(\'' . url('/pelatihan/' . $pelatihan->id_pelatihan . '/admin_detail') . '\')" class="btn btn-success btn-sm">Detail</button> ';
+                    $btn .= '<button onclick="modalAction(\'' . url('/pelatihan/' . $pelatihan->id_pelatihan . '/admin_show_edit') . '\')" class="btn btn-info btn-sm">Upload</button> ';
                     $btn .= '<button onclick="modalAction(\'' . url('/pelatihan/' . $pelatihan->id_pelatihan . '/edit') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
                     $btn .= '<button onclick="modalAction(\'' . url('/pelatihan/' . $pelatihan->id_pelatihan . '/confirm') . '\')" class="btn btn-danger btn-sm">Hapus</button> ';
                     // if ($pelatihan->status_pelatihan == 'menunggu') {
@@ -650,6 +651,12 @@ class PelatihanController extends Controller
     //     }
     //     return redirect('/');
     // }
+    public function admin_detail(String $id)
+    {
+        $pelatihan = PelatihanModel::with('vendor_pelatihan', 'jenis_pelatihan', 'periode', 'bidang_minat_pelatihan', 'mata_kuliah_pelatihan')->find($id);
+
+        return view('pelatihan.admin_detail', ['pelatihan' => $pelatihan]);
+    }
 
     public function admin_show_edit(string $id)
     {

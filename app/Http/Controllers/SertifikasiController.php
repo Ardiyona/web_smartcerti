@@ -33,18 +33,25 @@ class SertifikasiController extends Controller
         $activeMenu = 'sertifikasi';
 
         $vendorSertifikasi = VendorSertifikasiModel::all();
+        $periode = PeriodeModel::all();
 
         return view('sertifikasi.index', [
             'breadcrumb' => $breadcrumb,
             'page' => $page,
             'vendorSertifikasi' => $vendorSertifikasi,
+            'periode' => $periode,
             'activeMenu' => $activeMenu
         ]);
     }
 
     // Ambil data user dalam bentuk json untuk datatables
-    public function list()
+    public function list(Request $request)
     {
+        $periode = PeriodeModel::select('id_periode', 'nama_periode');
+
+        if ($request->id_periode){
+            $periode->where('id_periode', $request->id_periode);
+        }
         // Mengambil data user beserta level
         /** @var User */
         $user = Auth::user();
@@ -132,9 +139,11 @@ class SertifikasiController extends Controller
             ->addColumn('aksi', function ($sertifikasi) {
                 $levelId = Auth::user();
                 if ($levelId->id_level == 1) {
-                    $btn = '<button onclick="modalAction(\'' . url('/sertifikasi/' . $sertifikasi->id_sertifikasi . '/admin_show_edit') . '\')" class="btn btn-info btn-sm">Detail</button> ';
+                    $btn  = '<button onclick="modalAction(\'' . url('/sertifikasi/' . $sertifikasi->id_sertifikasi . '/admin_detail') . '\')" class="btn btn-success btn-sm">Detail</button> ';
+                    $btn .= '<button onclick="modalAction(\'' . url('/sertifikasi/' . $sertifikasi->id_sertifikasi . '/admin_show_edit') . '\')" class="btn btn-info btn-sm">Upload</button> ';
                     $btn .= '<button onclick="modalAction(\'' . url('/sertifikasi/' . $sertifikasi->id_sertifikasi . '/edit') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
                     $btn .= '<button onclick="modalAction(\'' . url('/sertifikasi/' . $sertifikasi->id_sertifikasi . '/confirm') . '\')" class="btn btn-danger btn-sm">Hapus</button> ';
+                    
                     // if ($sertifikasi->status_sertifikasi == 'menunggu') {
                     //     $btn .= '<button onclick="modalAction(\'' . url('/sertifikasi/' . $sertifikasi->id_sertifikasi . '/create_rekomendasi_peserta') . '\')" class="btn btn-info btn-sm">Peserta</button> ';
                     // }
@@ -709,6 +718,14 @@ class SertifikasiController extends Controller
     //     }
     //     return redirect('/');
     // }
+
+    public function admin_detail(String $id)
+    {
+        $sertifikasi = SertifikasiModel::with('vendor_sertifikasi', 'jenis_sertifikasi', 'periode', 'bidang_minat_sertifikasi', 'mata_kuliah_sertifikasi')->find($id);
+        return view('sertifikasi.admin_detail', ['sertifikasi' => $sertifikasi]);
+    }
+
+
 
     public function admin_show_edit(string $id)
     {

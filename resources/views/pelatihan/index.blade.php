@@ -113,14 +113,10 @@
                 {
                     data: "periode.tahun_periode",
                     className: "",
-                    width: "6%",
+                    width: "1%",
                     orderable: false,
                     searchable: false
                 },
-                
-                
-                
-               
                 {
                     data: "aksi",
                     className: "",
@@ -169,7 +165,7 @@
                 columns.splice(6, 0, {
                     data: "tanggal",
                     className: "",
-                    width: "8%",
+                    width: "3%",
                     orderable: true, // Set true jika ingin sorting berdasarkan tanggal
                     searchable: false
                 });
