@@ -230,7 +230,7 @@
                 },
                 columns: [
                     { data: "id_kompetensi", className: "text-center", orderable: true, searchable: true },
-                    { data: "prodi.nama_prodi", className: "", orderable: true, searchable: true },
+                    { data: "prodi", className: "", orderable: true, searchable: true },
                     { data: "bidang_terkait", className: "", orderable: true, searchable: true },
                     { data: "aksi", className: "text-center", orderable: false, searchable: false }
                 ]

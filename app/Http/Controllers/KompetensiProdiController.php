@@ -52,8 +52,7 @@ class KompetensiProdiController extends Controller
     public function list(Request $request)
     {
         // Ambil data dari tabel kompetensi_prodi beserta relasi ke tabel prodi
-        $kompetensi = KompetensiProdiModel::with('prodi') // Mengambil relasi ke tabel prodi
-            ->select('id_kompetensi', 'id_prodi', 'bidang_terkait'); // Pilih kolom yang relevan
+        $kompetensi = KompetensiProdiModel::select('id_kompetensi', 'id_prodi', 'bidang_terkait')->with('prodi'); // Pilih kolom yang relevan
     
         return DataTables::of($kompetensi)
             ->addIndexColumn()

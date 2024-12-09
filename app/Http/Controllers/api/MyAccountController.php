@@ -38,9 +38,9 @@ class MyAccountController extends Controller
 
         // Proses avatar jika ada file yang diunggah
         if ($request->hasFile('avatar')) {
-            $fileName = time() . '.' . $request->file('avatar')->getClientOriginalExtension();
-            $path = $request->file('avatar')->storeAs('images', $fileName);
-            $request['avatar'] = '/storage/' . $path;
+            $fileName = time() . '_' . $request->file('avatar')->getClientOriginalName(); // Unique filename
+            $request->file('avatar')->storeAs('public/photos', $fileName);
+            $request['avatar'] = $fileName;
         } else {
             $request->request->remove('avatar');
         }
