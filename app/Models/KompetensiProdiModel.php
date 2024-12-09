@@ -16,8 +16,14 @@ class KompetensiProdiModel extends Model
     protected $primaryKey = 'id_kompetensi';
 
     // Kolom yang dapat diisi secara massal
-    protected $fillable = ['prodi', 'bidang_terkait'];
+    protected $fillable = ['id_prodi', 'bidang_terkait'];
 
-    // // Nonaktifkan timestamps jika tabel tidak memiliki created_at dan updated_at
-    // public $timestamps = false;
+    // Aktifkan timestamps jika tabel memiliki created_at dan updated_at
+    public $timestamps = true;
+
+    // Definisikan relasi dengan model Prodi
+    public function prodi()
+    {
+        return $this->belongsTo(ProdiModel::class, 'id_prodi', 'id_prodi');
+    }
 }

@@ -21,6 +21,7 @@ use App\Http\Controllers\PelatihanController;
 use App\Http\Controllers\PelatihanUserController;
 use App\Http\Controllers\PenerimaanPermintaanController;
 use App\Http\Controllers\PeriodeController;
+use App\Http\Controllers\ProdiController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SemuaDosenController;
 use App\Http\Controllers\SemuaPelatihanDosenController;
@@ -266,6 +267,20 @@ Route::prefix('kompetensiprodi')->group(function () {
     Route::get('/export_pdf', [KompetensiProdiController::class, 'export_pdf']); // Jika ada fitur export
     Route::post('/import_ajax', [KompetensiProdiController::class, 'import_ajax']); // Jika ada fitur import
     Route::get('/{id}/confirm', [KompetensiProdiController::class, 'confirm']);
+});
+
+Route::prefix('prodi')->group(function () {
+    Route::get('/', [ProdiController::class, 'index']); // Halaman utama
+    Route::post('/list', [ProdiController::class, 'list']); // DataTables
+    Route::get('/create', [ProdiController::class, 'create']); // Form create
+    Route::post('/store', [ProdiController::class, 'store']); // Simpan data baru
+    Route::get('/{id}/show', [ProdiController::class, 'show']); // Detail data
+    Route::get('/{id}/edit', [ProdiController::class, 'edit']); // Form edit data
+    Route::put('/{id}/update', [ProdiController::class, 'update']); // Update data
+    Route::delete('/{id}/delete', [ProdiController::class, 'delete']); // Hapus data
+    Route::get('/export_pdf', [ProdiController::class, 'export_pdf']); // Export ke PDF
+    Route::post('/import_ajax', [ProdiController::class, 'import_ajax']); // Import data
+    Route::get('/{id}/confirm', [ProdiController::class, 'confirm']); // Konfirmasi hapus
 });
 
 

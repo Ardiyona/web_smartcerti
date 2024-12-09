@@ -40,6 +40,14 @@
                     <p>Kompetensi Prodi</p>
                 </a>
             </li>
+
+            <li class="nav-header">Prodi</li>
+            <li class="nav-item">
+                <a href="{{ url('/prodi') }}" class="nav-link {{ $activeMenu == 'prodi' ? 'active' : '' }}">
+                    <i class="nav-icon fas fa-graduation-cap"></i>
+                    <p> Prodi</p>
+                </a>
+            </li>
             @endif
             
             <!-- Menu Umum untuk Level 1, 2, dan 3 -->
