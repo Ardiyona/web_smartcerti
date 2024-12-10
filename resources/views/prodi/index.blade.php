@@ -16,7 +16,7 @@
             @if (session('error'))
                 <div class="alert alert-danger">{{ session('error') }}</div>
             @endif
-            <div class="row">
+            {{-- <div class="row">
                 <div class="col-md-12">
                     <div class="form-group row">
                         <label class="col-1 control-label col-form-label">Filter:</label>
@@ -26,7 +26,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
             <table class="table responsive table-bordered table-striped table-hover table-sm" id="table-prodi">
                 <thead>
                     <tr>
