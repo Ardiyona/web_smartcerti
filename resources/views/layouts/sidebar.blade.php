@@ -40,7 +40,9 @@
                     <p>Kompetensi Prodi</p>
                 </a>
             </li>
+            @endif
 
+            @if(in_array(Auth::user()->id_level, [1]))
             <li class="nav-header">Program Studi</li>
             <li class="nav-item">
                 <a href="{{ url('/prodi') }}" class="nav-link {{ $activeMenu == 'prodi' ? 'active' : '' }}">

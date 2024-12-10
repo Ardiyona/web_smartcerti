@@ -51,6 +51,7 @@ class KompetensiProdiController extends Controller
     // }
     public function list(Request $request)
     {
+        
         // Ambil data dari tabel kompetensi_prodi beserta relasi ke tabel prodi
         $kompetensi = KompetensiProdiModel::select('id_kompetensi', 'id_prodi', 'bidang_terkait')->with('prodi'); // Pilih kolom yang relevan
     
@@ -60,12 +61,16 @@ class KompetensiProdiController extends Controller
                 // Ambil nama_prodi dari relasi prodi
                 return $kompetensi->prodi->nama_prodi ?? '-';
             })
+            
             ->addColumn('aksi', function ($kompetensi) {
+                $levelId = Auth::user();
+                if ($levelId->id_level == 1) {
                 // Tombol aksi (Detail, Edit, Hapus)
                 $btn = '<button onclick="modalAction(\'' . url('/kompetensiprodi/' . $kompetensi->id_kompetensi . '/show') . '\')" class="btn btn-info btn-sm">Detail</button> ';
                 // $btn .= '<button onclick="modalAction(\'' . url('/kompetensiprodi/' . $kompetensi->id_kompetensi . '/edit') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
                 $btn .= '<button onclick="modalAction(\'' . url('/kompetensiprodi/' . $kompetensi->id_kompetensi . '/confirm') . '\')" class="btn btn-danger btn-sm">Hapus</button> ';
                 return $btn;
+                }
             })
             ->rawColumns(['aksi']) // Pastikan kolom aksi dirender dengan HTML
             ->make(true);

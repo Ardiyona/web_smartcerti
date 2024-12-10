@@ -144,10 +144,12 @@
         <div class="card-header">
             <h3 class="card-title">Manajemen Kompetensi Prodi</h3>
             <div class="card-tools">
+                @if (Auth::user()->id_level == 1)
                 <button onclick="modalAction(`{{ url('/kompetensiprodi/create') }}`)" class="btn btn-success"
                     style="background-color: #EF5428; border-color: #EF5428;">
                     <i class="fas fa-plus"></i> Tambah
                 </button>
+                @endif
             </div>
         </div>
         <div class="card-body">
