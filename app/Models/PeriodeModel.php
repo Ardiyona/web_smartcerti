@@ -1,5 +1,6 @@
 <?php
 
+
 // namespace App\Models;
 
 // use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -32,6 +33,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PeriodeModel extends Model
 {
@@ -44,5 +46,12 @@ class PeriodeModel extends Model
         'tahun_periode',
     ];
 
+    public function sertifikasi(): BelongsTo
+{
+    return $this->belongsTo(PeriodeModel::class, 'id_periode', 'id_periode');
+}
+
     // Timestamps (created_at, updated_at) akan otomatis dikelola oleh Laravel
 }
+
+

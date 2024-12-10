@@ -22,31 +22,7 @@
             @if (session('error'))
                 <div class="alert alert-danger">{{ session('error') }}</div>
             @endif
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group row">
-                        <label class="col-1 control-label col-form-label">Filter:</label>
-                        <div class="col-3">
-                            <select class="form-control" id="nama_bidang_minat" name="nama_bidang_minat" required>
-                                <option value="">- Semua -</option>
-                                @foreach ($bidang_minat as $item)
-                                    <option value="{{ $item->nama_bidang_minat }}">{{ $item->nama_bidang_minat }}</option>
-                                @endforeach
-                            </select>
-                            <small class="form-text text-muted">Nama Bidang Minat</small>
-                        </div>
-                        <div class="col-3">
-                            <select class="form-control" id="kode_bidang_minat" name="kode_bidang_minat" required>
-                                <option value="">- Semua -</option>
-                                @foreach ($bidang_minat as $item)
-                                    <option value="{{ $item->kode_bidang_minat }}">{{ $item->kode_bidang_minat }}</option>
-                                @endforeach
-                            </select>
-                            <small class="form-text text-muted">Kode Bidang Minat</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
+           
             <table class="table responsive table-bordered table-striped table-hover table-sm" id="table-bidang-minat">
                 <thead>
                     <tr>

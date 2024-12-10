@@ -39,6 +39,7 @@
             color: white;
             border-color: #375E97;
         }
+        
     </style>
 </head>
 <body class="hold-transition login-page">

@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BidangMinatController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DatabaseController;
 use App\Http\Controllers\DosenSertifikasiController;
 use App\Http\Controllers\JenisSertifikasiController;
 use App\Http\Controllers\UserController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\JumlahMatakuliahController;
 use App\Http\Controllers\KompetensiProdiController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PageController;
 use App\Http\Controllers\PelatihanController;
 use App\Http\Controllers\PelatihanUserController;
 use App\Http\Controllers\PenerimaanPermintaanController;
@@ -33,6 +35,22 @@ use App\Http\Controllers\SertifikasiUserController;
 Route::pattern('id', '[0-9]+'); // artinya ketika ada parameter {id}, maka harus berupa angka
 
 Route::get('/', [LandingPageController::class, 'index'])->name('landingpage'); // Mengarahkan ke tampilan utama
+// Route untuk halaman index database
+Route::get('/database', [PageController::class, 'index'])->name('database.index');
+// Route untuk halaman index Gamedev
+Route::get('/gamedev', [PageController::class, 'gamedev'])->name('gamedev.index');
+// Route untuk halaman index iot
+Route::get('/iot', [PageController::class, 'iot'])->name('iot.index');
+// Route untuk halaman index ar
+Route::get('/ar', [PageController::class, 'ar'])->name('ar.index');
+// Route untuk halaman index machine learning
+Route::get('/machinelearning', [PageController::class, 'machinelearning'])->name('machinelearning.index');
+// Route untuk halaman index bi
+Route::get('/bi', [PageController::class, 'bi'])->name('bi.index');
+// Route untuk halaman index computer network
+Route::get('/network', [PageController::class, 'network'])->name('network.index');
+// Route untuk halaman index big data
+Route::get('/bigdata', [PageController::class, 'bigdata'])->name('bigdata.index');
 
 Route::get('login', [AuthController::class, 'login'])->name('login');
 Route::post('login', [AuthController::class, 'postlogin']);

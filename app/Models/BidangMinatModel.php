@@ -15,7 +15,7 @@ class BidangMinatModel extends Model
 
     protected $primaryKey = 'id_bidang_minat';
 
-    protected $fillable = ['nama_bidang_minat', 'kode_bidang_minat'];
+    protected $fillable = ['nama_bidang_minat', 'kode_bidang_minat', 'foto_bidang_minat'];
 
     // Relasi ke Sertifikasi
     public function bidang_minat_sertifikasi(): BelongsToMany

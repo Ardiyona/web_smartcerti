@@ -18,22 +18,6 @@
         @if (session('error'))
             <div class="alert alert-danger">{{ session('error') }}</div>
         @endif
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group row">
-                    <label class="col-1 control-label col-form-label">Filter:</label>
-                    <div class="col-3">
-                        <select class="form-control" id="tahun_periode" name="tahun_periode">
-                            <option value="">- Semua -</option>
-                            @foreach ($tahun_periode_list as $tahun)
-                                <option value="{{ $tahun->tahun_periode }}">{{ $tahun->tahun_periode }}</option>
-                            @endforeach
-                        </select>
-                        <small class="form-text text-muted">Tahun Periode</small>
-                    </div>
-                </div>
-            </div>
-        </div>
         <table class="table table-bordered table-striped table-hover table-sm" id="table-periode">
             <thead>
                 <tr>
