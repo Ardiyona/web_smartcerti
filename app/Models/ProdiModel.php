@@ -16,7 +16,7 @@ class ProdiModel extends Model
     protected $primaryKey = 'id_prodi';
 
     // Kolom yang dapat diisi secara massal
-    protected $fillable = ['nama_prodi'];
+    protected $fillable = ['nama_prodi', 'kode_prodi'];
 
     // Aktifkan timestamps agar created_at dan updated_at dikelola Laravel
     public $timestamps = true;

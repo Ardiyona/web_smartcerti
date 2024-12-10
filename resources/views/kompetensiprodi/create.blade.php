@@ -85,7 +85,7 @@ $("#form-tambah").validate({
                         title: 'Berhasil',
                         text: response.message
                     });
-                    dataJenisPelatihan.ajax.reload(); // Reload data DataTables jenis pelatihan
+                    dataKompetensiProdi.ajax.reload(); // Reload data DataTables jenis pelatihan
                 } else {
                     $('.error-text').text('');
                     $.each(response.msgField, function(prefix, val) {

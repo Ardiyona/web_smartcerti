@@ -229,7 +229,13 @@
                     }
                 },
                 columns: [
-                    { data: "id_kompetensi", className: "text-center", orderable: true, searchable: true },
+                    {
+                        data: "DT_RowIndex",
+                        className: "text-center",
+                        width: "4%",
+                        orderable: false,
+                        searchable: false
+                    },
                     { data: "prodi", className: "", orderable: true, searchable: true },
                     { data: "bidang_terkait", className: "", orderable: true, searchable: true },
                     { data: "aksi", className: "text-center", orderable: false, searchable: false }

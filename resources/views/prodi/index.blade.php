@@ -31,6 +31,7 @@
                 <thead>
                     <tr>
                         <th>ID</th>
+                        <th>Kode Prodi</th>
                         <th>Nama Prodi</th>
                         <th>Aksi</th>
                     </tr>
@@ -73,8 +74,15 @@
                 },
                 columns: [
                     {
-                        data: "id_prodi",
+                        data: "DT_RowIndex",
                         className: "text-center",
+                        width: "4%",
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: "kode_prodi",
+                        className: "",
                         orderable: true,
                         searchable: true
                     },
@@ -82,7 +90,9 @@
                         data: "nama_prodi",
                         className: "",
                         orderable: true,
-                        searchable: true
+                        searchable: true,
+                        minlength: 3,
+                        maxlength: 100
                     },
                     {
                         data: "aksi",

@@ -35,13 +35,13 @@ class ProdiController extends Controller
 
     public function list()
     {
-        $prodi = ProdiModel::select('id_prodi', 'nama_prodi');
+        $prodi = ProdiModel::select('id_prodi', 'nama_prodi', 'kode_prodi');
 
         return DataTables::of($prodi)
             ->addIndexColumn()
             ->addColumn('aksi', function ($prodi) {
                 $btn = '<button onclick="modalAction(\'' . url('/prodi/' . $prodi->id_prodi . '/show') . '\')" class="btn btn-info btn-sm">Detail</button> ';
-                $btn .= '<button onclick="modalAction(\'' . url('/prodi/' . $prodi->id_prodi . '/edit') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
+                // $btn .= '<button onclick="modalAction(\'' . url('/prodi/' . $prodi->id_prodi . '/edit') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
                 $btn .= '<button onclick="modalAction(\'' . url('/prodi/' . $prodi->id_prodi . '/confirm') . '\')" class="btn btn-danger btn-sm">Hapus</button> ';
                 return $btn;
             })
@@ -58,7 +58,8 @@ class ProdiController extends Controller
     {
         if ($request->ajax() || $request->wantsJson()) {
             $rules = [
-                'nama_prodi' => 'required|string|max:255'
+                'nama_prodi' => 'required|string|max:255',
+                'kode_prodi' => 'required|string|max:255|min:3'
             ];
 
             $validator = Validator::make($request->all(), $rules);
@@ -98,7 +99,8 @@ class ProdiController extends Controller
     {
         if ($request->ajax() || $request->wantsJson()) {
             $rules = [
-                'nama_prodi' => 'required|string|max:255'
+                'nama_prodi' => 'required|string|max:255',
+                'kode_prodi' => 'required|string|max:255'
             ];
 
             $validator = Validator::make($request->all(), $rules);
@@ -135,12 +137,36 @@ class ProdiController extends Controller
         return view('prodi.confirm', ['prodi' => $prodi]);
     }
 
+    // public function delete(Request $request, $id)
+    // {
+    //     if ($request->ajax() || $request->wantsJson()) {
+    //         $prodi = ProdiModel::find($id);
+    //         if ($prodi) {
+    //             $prodi->delete();
+    //             return response()->json([
+    //                 'status'    => true,
+    //                 'message'   => 'Data berhasil dihapus'
+    //             ]);
+    //         } else {
+    //             return response()->json([
+    //                 'status'    => false,
+    //                 'message'   => 'Data tidak ditemukan'
+    //             ]);
+    //         }
+    //     }
+    //     return redirect('/');
+    // }
+
     public function delete(Request $request, $id)
-    {
-        if ($request->ajax() || $request->wantsJson()) {
+{
+    if ($request->ajax() || $request->wantsJson()) {
+        try {
+            // Cari data berdasarkan ID
             $prodi = ProdiModel::find($id);
             if ($prodi) {
+                // Hapus data
                 $prodi->delete();
+
                 return response()->json([
                     'status'    => true,
                     'message'   => 'Data berhasil dihapus'
@@ -151,9 +177,27 @@ class ProdiController extends Controller
                     'message'   => 'Data tidak ditemukan'
                 ]);
             }
+        } catch (\Illuminate\Database\QueryException $e) {
+            // Tangkap kesalahan constraint database (misalnya, kunci asing)
+            return response()->json([
+                'status'    => false,
+                'message'   => 'Data tidak dapat dihapus karena terkait dengan data lain.',
+                'error'     => $e->getMessage() // Opsional: hapus pada produksi
+            ]);
+        } catch (\Exception $e) {
+            // Tangkap kesalahan umum lainnya
+            return response()->json([
+                'status'    => false,
+                'message'   => 'Terjadi kesalahan saat menghapus data.',
+                'error'     => $e->getMessage() // Opsional: hapus pada produksi
+            ]);
         }
-        return redirect('/');
     }
+
+    // Jika permintaan bukan AJAX, arahkan kembali ke halaman utama
+    return redirect('/');
+}
+
 
     public function export_pdf()
     {

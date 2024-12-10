@@ -63,7 +63,7 @@ class KompetensiProdiController extends Controller
             ->addColumn('aksi', function ($kompetensi) {
                 // Tombol aksi (Detail, Edit, Hapus)
                 $btn = '<button onclick="modalAction(\'' . url('/kompetensiprodi/' . $kompetensi->id_kompetensi . '/show') . '\')" class="btn btn-info btn-sm">Detail</button> ';
-                $btn .= '<button onclick="modalAction(\'' . url('/kompetensiprodi/' . $kompetensi->id_kompetensi . '/edit') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
+                // $btn .= '<button onclick="modalAction(\'' . url('/kompetensiprodi/' . $kompetensi->id_kompetensi . '/edit') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
                 $btn .= '<button onclick="modalAction(\'' . url('/kompetensiprodi/' . $kompetensi->id_kompetensi . '/confirm') . '\')" class="btn btn-danger btn-sm">Hapus</button> ';
                 return $btn;
             })
