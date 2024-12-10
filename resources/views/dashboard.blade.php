@@ -226,7 +226,7 @@
             @if(in_array(Auth::user()->id_level, [1, 2]))
             <div class="card card-pink" style="margin-bottom: 0;">
                 <div class="card-header" style="padding-bottom: 0.5rem;">
-                    <h3 class="card-title">Statistik Jumlah Pelatiham dan Sertifikasi</h3>
+                    <h3 class="card-title">Jumlah Pelatihan dan Sertifikasi Perperiode</h3>
                     
                 </div>
                 <div class="card-body" style="padding-top: 0.5rem;">

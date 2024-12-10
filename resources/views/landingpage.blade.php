@@ -13,7 +13,9 @@
             box-sizing: border-box;
             font-family: 'Arial', sans-serif;
             height: 100%;
+            background-image: url('{{ asset("assets/wallpaper.jpg") }}');
         }
+
 
         .container {
             display: flex;
@@ -164,6 +166,10 @@
             margin-top: auto;
         }
     </style>
+
+
+
+
 </head>
 <body>
     <div class="container">
