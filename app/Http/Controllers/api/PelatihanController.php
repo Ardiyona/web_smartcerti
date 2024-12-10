@@ -105,8 +105,8 @@ class PelatihanController extends Controller
 
         // Cek apakah file bukti pelatihan diunggah
         if ($request->hasFile('bukti_pelatihan')) {
-            $bukti_pelatihan = time() . '_' . $request->file('bukti_pelatihan')->getClientOriginalName();
-            $request->file('bukti_pelatihan')->storeAs('public/images/', $bukti_pelatihan);
+            $filename = time() . '_' . $request->file('bukti_pelatihan')->getClientOriginalName();
+            $request->file('bukti_pelatihan')->storeAs('public/bukti_pelatihan/', $bukti_pelatihan);
         }
 
         // Membuat data pelatihan
@@ -115,7 +115,7 @@ class PelatihanController extends Controller
             'lokasi' => $request->lokasi,
             'level_pelatihan' => $request->level_pelatihan,
             'tanggal' => $request->tanggal,
-            'bukti_pelatihan' => $bukti_pelatihan,
+            'bukti_pelatihan' => $filename,
             'kuota_peserta' => $request->kuota_peserta,
             'biaya' => $request->biaya,
             'id_vendor_pelatihan' => $request->id_vendor_pelatihan,
@@ -170,8 +170,8 @@ class PelatihanController extends Controller
             'id_vendor_pelatihan' => 'nullable|integer|exists:vendor_pelatihan,id_vendor_pelatihan',
             'id_jenis_pelatihan' => 'nullable|integer|exists:jenis_pelatihan,id_jenis_pelatihan',
             'id_periode' => 'nullable|integer|exists:periode,id_periode',
-            'id_bidang_minat' => 'nullable|array',
-            'id_matakuliah' => 'nullable|array',
+            'id_bidang_minat' => 'nullable|',
+            'id_matakuliah' => 'nullable|',
         ]);
 
         if ($validator->fails()) {
@@ -200,11 +200,20 @@ class PelatihanController extends Controller
             if ($bukti_pelatihan) {
                 Storage::delete($bukti_pelatihan);
             }
-            $bukti_pelatihan = $request->file('bukti_pelatihan')->store('public/images');
-        }
+            $filename = time() . '_' . $request->file('bukti_pelatihan')->getClientOriginalName();
+            
+            $bukti_pelatihan = $request->file('bukti_pelatihan')->store('public/bukti_pelatihan');
 
-        $pelatihan->bukti_pelatihan = $bukti_pelatihan;
+            $pelatihan->detail_peserta_pelatihan()->updateExistingPivot(
+                Auth::id(),
+                [
+                    'bukti_pelatihan' => $filename
+                ]
+            );
+        }
         $pelatihan->save();
+        $pelatihan->bukti_pelatihan = $bukti_pelatihan;
+        
 
         $pelatihan->bidang_minat_pelatihan()->sync($request->id_bidang_minat);
         $pelatihan->mata_kuliah_pelatihan()->sync($request->id_matakuliah);
