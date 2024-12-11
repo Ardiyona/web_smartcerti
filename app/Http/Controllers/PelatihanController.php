@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\BidangMinatModel;
-use App\Models\JenispelatihanModel;
+use App\Models\JenisPelatihanModel;
 use App\Models\MataKuliahModel;
 use App\Models\PeriodeModel;
 use App\Models\PelatihanModel;
