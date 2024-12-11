@@ -59,5 +59,6 @@ RUN mkdir -p /var/www/html/storage /var/www/html/bootstrap/cache \
 # Expose port 80
 EXPOSE 80
 
+
 # Start Supervisor to manage PHP-FPM and Nginx
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]

@@ -1,22 +1,22 @@
 <?php
 
 use App\Http\Controllers\api\BidangMinatController;
-use App\Http\Controllers\Api\JenisPelatihanController;
-use App\Http\Controllers\Api\JenisSertifikasiController;
-use App\Http\Controllers\Api\LevelController;
+use App\Http\Controllers\api\JenisPelatihanController;
+use App\Http\Controllers\api\JenisSertifikasiController;
+use App\Http\Controllers\api\LevelController;
 use App\Http\Controllers\api\MataKuliahController;
 use App\Http\Controllers\api\MyAccountController;
-use App\Http\Controllers\Api\NotificationController;
-use App\Http\Controllers\Api\PelatihanController;
+use App\Http\Controllers\api\NotificationController;
+use App\Http\Controllers\api\PelatihanController;
 use App\Http\Controllers\api\PenerimaanPermintaanController;
-use App\Http\Controllers\Api\PeriodeController;
+use App\Http\Controllers\api\PeriodeController;
 use App\Http\Controllers\api\PimpinanPelatihanDosenController;
 use App\Http\Controllers\api\PimpinanSertifikasiDosenController;
-use App\Http\Controllers\Api\ProfileController;
-use App\Http\Controllers\Api\SertifikasiController;
-use App\Http\Controllers\Api\UserController;
-use App\Http\Controllers\Api\VendorPelatihanController;
-use App\Http\Controllers\Api\VendorSertifikasiController;
+use App\Http\Controllers\api\ProfileController;
+use App\Http\Controllers\api\SertifikasiController;
+use App\Http\Controllers\api\UserController;
+use App\Http\Controllers\api\VendorPelatihanController;
+use App\Http\Controllers\api\VendorSertifikasiController;
 use App\Http\Controllers\PimpinanpelatihanDosenController as ControllersPimpinanpelatihanDosenController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
