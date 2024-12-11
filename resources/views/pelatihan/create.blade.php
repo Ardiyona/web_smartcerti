@@ -83,7 +83,7 @@
                 <!-- Kuota Peserta -->
                 <div class="form-group">
                     <label>Kuota Peserta</label>
-                    <input type="text" name="kuota_peserta" id="kuota_peserta" class="form-control" required>
+                    <input value="1" placeholder="1" type="number" name="kuota_peserta" id="kuota_peserta" class="form-control" readonly>
                     <small id="error-kuota_peserta" class="error-text form-text text-danger"></small>
                 </div>
 

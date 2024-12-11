@@ -1,5 +1,5 @@
 @empty($pelatihan)
-    <div id="modal-master" class="modal-dialog modal-lg" role="document">
+    <div id="modal-master" class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Kesalahan</h5>
@@ -20,7 +20,7 @@
         enctype="multipart/form-data">
         @csrf
         @method('PUT')
-        <div id="modal-master" class="modal-dialog modal-lg" role="document">
+        <div id="modal-master" class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Upload Bukti Pelatihan</h5>

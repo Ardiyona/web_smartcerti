@@ -220,7 +220,7 @@
                                         $cleanFileName = preg_replace('/^\d{10}_/', '', $fullFileName);
                                     @endphp
 
-                                    <a href="{{ url('storage/surat_tugas/' . $pelatihan->surat_tugas) }}" target="_blank"
+                                    <a href="{{ url($pelatihan->surat_tugas) }}" target="_blank"
                                         download>
                                         {{ $cleanFileName }}
                                     </a>

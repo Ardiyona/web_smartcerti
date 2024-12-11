@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Validator;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\PhpWord;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Storage;
 
 class PelatihanController extends Controller
 {
@@ -91,6 +92,10 @@ class PelatihanController extends Controller
                     'pelatihan.kuota_peserta',
                     'pelatihan.biaya'
                 )
+                ->where(function ($query) {
+                    $query->where('status_pelatihan', 'terima')
+                        ->orWhereNull('status_pelatihan');
+                })
                 ->with([
                     'vendor_pelatihan',
                     'jenis_pelatihan',
@@ -151,7 +156,8 @@ class PelatihanController extends Controller
 
         $bidangMinat = BidangMinatModel::select('id_bidang_minat', 'nama_bidang_minat')->get();
         $mataKuliah = MataKuliahModel::select('id_matakuliah', 'nama_matakuliah')->get();
-        $user = UserModel::select('user_id', 'nama_lengkap')->get();
+        $user = UserModel::select('user_id', 'nama_lengkap')
+            ->where('id_level', '!=', 1)->get();
         // dd($mataKuliah);
 
         $userid = Auth::user();
@@ -227,7 +233,6 @@ class PelatihanController extends Controller
                     'id_vendor_pelatihan'  => $request->id_vendor_pelatihan,
                     'id_jenis_pelatihan'  => $request->id_jenis_pelatihan,
                     'id_periode'  => $request->id_periode,
-                    'status_pelatihan' => 'menunggu'
                 ]);
 
                 $pelatihan->bidang_minat_pelatihan()->sync($request->id_bidang_minat);
@@ -263,7 +268,6 @@ class PelatihanController extends Controller
                     'id_vendor_pelatihan'  => $request->id_vendor_pelatihan,
                     'id_jenis_pelatihan'  => $request->id_jenis_pelatihan,
                     'id_periode'  => $request->id_periode,
-                    'status_pelatihan' => 'menunggu'
                 ]);
 
                 $pelatihan->bidang_minat_pelatihan()->sync($request->id_bidang_minat);
@@ -354,15 +358,24 @@ class PelatihanController extends Controller
             /** @var User */
             $user = Auth::user();
 
+            $oldFile = DB::table('detail_peserta_pelatihan')
+                ->where('user_id', $user->user_id)
+                ->where('id_pelatihan', $id)
+                ->value('bukti_pelatihan');
+
             // Cek apakah file bukti pelatihan diunggah
             if ($request->hasFile('bukti_pelatihan')) {
+                // Hapus file bukti pelatihan lama jika ada
+                if ($oldFile && Storage::exists('public/bukti_pelatihan/' . $oldFile)) {
+                    Storage::delete('public/bukti_pelatihan/' . $oldFile);
+                }
                 $bukti_pelatihan = time() . '_' . $request->file('bukti_pelatihan')->getClientOriginalName();
-                $request->file('bukti_pelatihan')->storeAs('public/bukti_pelatihan/', $bukti_pelatihan);
+                $request->file('bukti_pelatihan')->storeAs('public/bukti_pelatihan/' . $bukti_pelatihan);
             }
 
             if ($request->hasFile('surat_tugas')) {
                 $surat_tugas = time() . '_' . $request->file('surat_tugas')->getClientOriginalName();
-                $request->file('surat_tugas')->storeAs('public/surat_tugas/', $surat_tugas);
+                $request->file('surat_tugas')->storeAs($surat_tugas);
             }
 
             if ($pelatihan) {
@@ -536,7 +549,7 @@ class PelatihanController extends Controller
                     'msgField' => $validator->errors()
                 ]);
             }
-            
+
             $kuotaPeserta = count($request->user_id);
 
             // Simpan data user dengan hanya field yang diperlukan
@@ -681,9 +694,8 @@ class PelatihanController extends Controller
         ]);
     }
 
-    public function admin_show_update(Request $request)
+    public function admin_show_update(Request $request, $pelatihanId)
     {
-        Log::info('Request Data:', $request->all()); // Log semua data request
         if ($request->ajax() || $request->wantsJson()) {
             $rules = [
                 'bukti_pelatihan.*' => 'nullable|mimes:pdf|max:5120',
@@ -699,24 +711,47 @@ class PelatihanController extends Controller
                 ]);
             }
 
+            // Ambil daftar user_id yang terdaftar di pelatihan
+            $pesertaIds = DB::table('detail_peserta_pelatihan')
+                ->where('id_pelatihan', $pelatihanId)
+                ->pluck('user_id')
+                ->toArray();
+
             $userData = []; // Simpan data hasil upload
+
             if ($request->hasFile('bukti_pelatihan')) {
                 foreach ($request->file('bukti_pelatihan', []) as $userId => $file) {
+                    // Pastikan user_id termasuk dalam daftar peserta
+                    if (!in_array($userId, $pesertaIds)) {
+                        Log::warning("User ID: $userId tidak terdaftar pada pelatihan dengan ID: $pelatihanId");
+                        continue;
+                    }
+
                     if ($file->isValid()) {
-                        $bukti_pelatihan = $file->storeAs(
-                            'public/bukti_pelatihan',
-                            time() . '_' . $file->getClientOriginalName()
-                        );
+                        // Cari file lama di database
+                        $oldFile = DB::table('detail_peserta_pelatihan')
+                            ->where('user_id', $userId)
+                            ->where('id_pelatihan', $pelatihanId)
+                            ->value('bukti_pelatihan');
+
+                        // Hapus file lama jika ada
+                        if ($oldFile && Storage::exists('public/bukti_pelatihan/' . $oldFile)) {
+                            Storage::delete('public/bukti_pelatihan/' . $oldFile);
+                        }
+
+                        // Simpan file baru
+                        $fileName = time() . '_' . $file->getClientOriginalName();
+                        $file->storeAs('public/bukti_pelatihan', $fileName);
 
                         // Simpan ke database
                         $data = [
-                            'user_id' => $userId,
-                            'bukti_pelatihan' => $bukti_pelatihan,
+                            'bukti_pelatihan' => $fileName,
                             'updated_at' => now(),
                         ];
 
                         $result = DB::table('detail_peserta_pelatihan')
                             ->where('user_id', $userId)
+                            ->where('id_pelatihan', $pelatihanId)
                             ->update($data);
 
                         if (!$result) {
@@ -730,22 +765,29 @@ class PelatihanController extends Controller
                     } else {
                         return response()->json([
                             'status' => false,
-                            'message' => 'File tidak valid atau gagal diunggah.',
+                            'message' => "File untuk User ID: $userId tidak valid atau gagal diunggah.",
                         ]);
                     }
                 }
 
                 // Jika ada data yang berhasil diunggah, kembalikan respons berhasil
-                return response()->json([
-                    'status' => true,
-                    'message' => 'File berhasil diunggah dan disimpan ke database.',
-                    'data' => $userData
-                ]);
+                if (!empty($userData)) {
+                    return response()->json([
+                        'status' => true,
+                        'message' => 'File berhasil diunggah dan disimpan ke database.',
+                        'data' => $userData
+                    ]);
+                } else {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Tidak ada file yang diunggah untuk peserta yang terdaftar.',
+                    ]);
+                }
             }
 
             return response()->json([
                 'status' => false,
-                'message' => 'Data pelatihan tidak ditemukan',
+                'message' => 'Tidak ada file yang diunggah.',
             ]);
         }
     }

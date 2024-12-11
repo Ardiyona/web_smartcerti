@@ -67,6 +67,9 @@
             </table>
         </div>
     </div>
+    <div id="myModal" class="modal fade animate shake modal-dialog" tabindex="-1" role="dialog"
+    data-backdrop="static" data-keyboard="false" data-width="75%"
+    style="z-index: 1050; display: none; padding-left: 0px;" aria-modal="true"></div>
 @endsection
 @push('css')
     <style>
