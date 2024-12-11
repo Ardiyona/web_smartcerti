@@ -10,7 +10,8 @@ RUN apk add --no-cache \
     libjpeg-turbo-dev \
     libpng-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install zip gd
+    && docker-php-ext-install zip gd mysqli pdo pdo_mysql \
+    && docker-php-ext-enable pdo_mysql
 
 # Install Composer
 COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
@@ -36,14 +37,14 @@ RUN apk add --no-cache \
     nginx \
     supervisor \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install zip gd
+    && docker-php-ext-install zip gd mysqli pdo pdo_mysql \
+    && docker-php-ext-enable pdo_mysql
 
 # Set working directory
 WORKDIR /var/www/html
 
 # Copy application code from the builder
 COPY --from=builder /app /var/www/html
-
 # Copy configuration files
 COPY docker/nginx.conf /etc/nginx/nginx.conf
 COPY docker/supervisord.conf /etc/supervisord.conf
@@ -58,7 +59,6 @@ RUN mkdir -p /var/www/html/storage /var/www/html/bootstrap/cache \
 
 # Expose port 80
 EXPOSE 80
-
 
 # Start Supervisor to manage PHP-FPM and Nginx
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
