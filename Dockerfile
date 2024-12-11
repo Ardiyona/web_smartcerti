@@ -6,7 +6,9 @@ RUN apk add --no-cache \
     unzip \
     git \
     libzip-dev \
-    && docker-php-ext-install zip
+    && docker-php-ext-install \
+    zip \
+    gd
 
 # Install Composer
 COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
@@ -28,7 +30,9 @@ RUN apk add --no-cache \
     libzip-dev \
     nginx \
     supervisor \
-    && docker-php-ext-install zip
+    && docker-php-ext-install \
+    zip \
+    gd
 
 # Set working directory
 WORKDIR /var/www/html
