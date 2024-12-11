@@ -43,11 +43,13 @@ class SemuaDosenController extends Controller
                 DB::raw('COUNT(DISTINCT detail_peserta_pelatihan.id_detail_peserta_pelatihan) as jumlah_pelatihan'),
                 DB::raw('COUNT(DISTINCT detail_peserta_sertifikasi.id_detail_peserta_sertifikasi) as jumlah_sertifikasi')
             )
+            ->where('user.id_level', '!=', 1) // Menambahkan kondisi untuk mengecualikan admin
             ->groupBy('user.user_id', 'user.nama_lengkap');
     
         return DataTables::of($data)
             ->addIndexColumn() // Tambahkan nomor urut
             ->make(true);
     }
+    
 
 }
