@@ -6,9 +6,11 @@ RUN apk add --no-cache \
     unzip \
     git \
     libzip-dev \
-    && docker-php-ext-install \
-    zip \
-    gd
+    freetype-dev \
+    libjpeg-turbo-dev \
+    libpng-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install zip gd
 
 # Install Composer
 COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
@@ -28,11 +30,13 @@ FROM php:8.2-fpm-alpine
 # Install minimal dependencies including Nginx and Supervisor
 RUN apk add --no-cache \
     libzip-dev \
+    freetype-dev \
+    libjpeg-turbo-dev \
+    libpng-dev \
     nginx \
     supervisor \
-    && docker-php-ext-install \
-    zip \
-    gd
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install zip gd
 
 # Set working directory
 WORKDIR /var/www/html
