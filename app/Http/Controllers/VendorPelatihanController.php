@@ -23,7 +23,7 @@ class VendorPelatihanController extends Controller
 
         $activeMenu = 'vendorpelatihan'; //set menu yang sedang aktif
 
-        return view('vendorpelatihan.index', ['breadcrumb' => $breadcrumb, 'page' => $page, 'activeMenu' => $activeMenu]);
+        return view('vendorPelatihan.index', ['breadcrumb' => $breadcrumb, 'page' => $page, 'activeMenu' => $activeMenu]);
     }
 
     //Ambil data vendorpelatihan dalam bentuk json untuk datables
@@ -51,7 +51,7 @@ class VendorPelatihanController extends Controller
     public function create()
     {
 
-        return view('vendorpelatihan.create');
+        return view('vendorPelatihan.create');
     }
 
     // Menyimpan data vendor pelatihan baru ajax
@@ -92,7 +92,7 @@ class VendorPelatihanController extends Controller
     {
         $vendorpelatihan = VendorPelatihanModel::find($id);
 
-        return view('vendorpelatihan.show', ['vendorpelatihan' => $vendorpelatihan]);
+        return view('vendorPelatihan.show', ['vendorpelatihan' => $vendorpelatihan]);
     }
 
     // Menampilkan halaman form edit vendor pelatihan
@@ -100,7 +100,7 @@ class VendorPelatihanController extends Controller
     {
         $vendorpelatihan = VendorPelatihanModel::find($id);
 
-        return view('vendorpelatihan.edit', ['vendorpelatihan' => $vendorpelatihan]);
+        return view('vendorPelatihan.edit', ['vendorpelatihan' => $vendorpelatihan]);
     }
 
 
@@ -147,7 +147,7 @@ class VendorPelatihanController extends Controller
     public function confirm(string $id) {
         $vendorpelatihan = VendorPelatihanModel::find($id);
         
-        return view('vendorpelatihan.confirm', ['vendorpelatihan' => $vendorpelatihan]);
+        return view('vendorPelatihan.confirm', ['vendorpelatihan' => $vendorpelatihan]);
     }
 
     // Menghapus data vendor pelatihan ajax
@@ -173,7 +173,7 @@ class VendorPelatihanController extends Controller
 
     public function import()
     {
-        return view('vendorpelatihan.import');
+        return view('vendorPelatihan.import');
     }
 
     public function import_ajax(Request $request)

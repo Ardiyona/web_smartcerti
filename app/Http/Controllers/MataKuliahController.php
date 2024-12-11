@@ -24,7 +24,7 @@ class MataKuliahController extends Controller
 
         $activeMenu = 'matakuliah'; //set menu yang sedang aktif
 
-        return view('matakuliah.index', ['breadcrumb' => $breadcrumb, 'page' => $page, 'activeMenu' => $activeMenu]);
+        return view('mataKuliah.index', ['breadcrumb' => $breadcrumb, 'page' => $page, 'activeMenu' => $activeMenu]);
     }
 
     //Ambil data matakuliah dalam bentuk json untuk datables
@@ -52,7 +52,7 @@ class MataKuliahController extends Controller
     public function create()
     {
 
-        return view('matakuliah.create');
+        return view('mataKuliah.create');
     }
 
     // Menyimpan data mata kuliah baru ajax
@@ -90,7 +90,7 @@ class MataKuliahController extends Controller
     {
         $mataKuliah = MataKuliahModel::find($id);
 
-        return view('matakuliah.show', ['mataKuliah' => $mataKuliah]);
+        return view('mataKuliah.show', ['mataKuliah' => $mataKuliah]);
     }
 
     // Menampilkan halaman form edit mata kuliah
@@ -98,7 +98,7 @@ class MataKuliahController extends Controller
     {
         $mataKuliah = MataKuliahModel::find($id);
 
-        return view('matakuliah.edit', ['mataKuliah' => $mataKuliah]);
+        return view('mataKuliah.edit', ['mataKuliah' => $mataKuliah]);
     }
 
 
@@ -142,7 +142,7 @@ class MataKuliahController extends Controller
     public function confirm(string $id) {
         $mataKuliah = MataKuliahModel::find($id);
         
-        return view('matakuliah.confirm', ['mataKuliah' => $mataKuliah]);
+        return view('mataKuliah.confirm', ['mataKuliah' => $mataKuliah]);
     }
 
     // Menghapus data mata kuliah ajax
@@ -210,7 +210,7 @@ class MataKuliahController extends Controller
 
     public function import()
 {
-    return view('matakuliah.import');
+    return view('mataKuliah.import');
 }
 
 public function import_ajax(Request $request)

@@ -23,7 +23,7 @@ class VendorSertifikasiController extends Controller
 
         $activeMenu = 'vendorsertifikasi'; //set menu yang sedang aktif
 
-        return view('vendorsertifikasi.index', ['breadcrumb' => $breadcrumb, 'page' => $page, 'activeMenu' => $activeMenu]);
+        return view('vendorSertifikasi.index', ['breadcrumb' => $breadcrumb, 'page' => $page, 'activeMenu' => $activeMenu]);
     }
 
     //Ambil data vendorsertifikasi dalam bentuk json untuk datables
@@ -51,7 +51,7 @@ class VendorSertifikasiController extends Controller
     public function create()
     {
 
-        return view('vendorsertifikasi.create');
+        return view('vendorSertifikasi.create');
     }
 
     // Menyimpan data vendor sertifikasi baru ajax
@@ -92,7 +92,7 @@ class VendorSertifikasiController extends Controller
     {
         $vendorsertifikasi = VendorSertifikasiModel::find($id);
 
-        return view('vendorsertifikasi.show', ['vendorsertifikasi' => $vendorsertifikasi]);
+        return view('vendorSertifikasi.show', ['vendorsertifikasi' => $vendorsertifikasi]);
     }
 
     // Menampilkan halaman form edit vendor sertifikasi
@@ -100,7 +100,7 @@ class VendorSertifikasiController extends Controller
     {
         $vendorsertifikasi = VendorSertifikasiModel::find($id);
 
-        return view('vendorsertifikasi.edit', ['vendorsertifikasi' => $vendorsertifikasi]);
+        return view('vendorSertifikasi.edit', ['vendorsertifikasi' => $vendorsertifikasi]);
     }
 
 
@@ -147,7 +147,7 @@ class VendorSertifikasiController extends Controller
     public function confirm(string $id) {
         $vendorsertifikasi = VendorSertifikasiModel::find($id);
         
-        return view('vendorsertifikasi.confirm', ['vendorsertifikasi' => $vendorsertifikasi]);
+        return view('vendorSertifikasi.confirm', ['vendorsertifikasi' => $vendorsertifikasi]);
     }
 
     // Menghapus data vendor sertifikasi ajax
@@ -173,7 +173,7 @@ class VendorSertifikasiController extends Controller
 
     public function import()
     {
-        return view('vendorsertifikasi.import');
+        return view('vendorSertifikasi.import');
     }
 
     public function import_ajax(Request $request)
