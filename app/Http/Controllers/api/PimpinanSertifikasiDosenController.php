@@ -23,7 +23,8 @@ class PimpinanSertifikasiDosenController extends Controller
             'tanggal',
             'masa_berlaku',
             'kuota_peserta',
-            'biaya'
+            'biaya',
+            'status_sertifikasi'
         )
         ->where('status_sertifikasi', 'terima')
             ->with([

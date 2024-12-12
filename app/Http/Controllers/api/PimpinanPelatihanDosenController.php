@@ -24,6 +24,7 @@ class PimpinanPelatihanDosenController extends Controller
             'tanggal',
             'kuota_peserta',
             'biaya',
+            'status_pelatihan'
 
         )
             ->where('status_pelatihan', 'terima')
