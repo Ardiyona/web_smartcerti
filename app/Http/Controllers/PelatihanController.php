@@ -817,15 +817,20 @@ class PelatihanController extends Controller
         $headerTable->addRow();
 
         // Tambahkan logo
-        $logoPath = asset('storage/logo/logo.png'); // Ganti sesuai path logo Anda
-        $headerTable->addCell(2000)->addImage(
-            $logoPath,
-            [
-                'width' => 100,
-                'height' => 100,
-                'alignment' => 'left'
-            ]
-        );
+        $logoPath = public_path('storage/logo/logo.png');
+
+        if (file_exists($logoPath)) {
+            $headerTable->addCell(2000)->addImage(
+                $logoPath,
+                [
+                    'width' => 100,
+                    'height' => 100,
+                    'alignment' => 'left'
+                ]
+            );
+        } else {
+            return redirect()->back()->with('error', 'Logo tidak ditemukan di server.');
+        }
 
         // Tambahkan teks header
         $cell = $headerTable->addCell(6000);
