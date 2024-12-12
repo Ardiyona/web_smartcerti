@@ -326,7 +326,8 @@ class SertifikasiController extends Controller
 
         $bidangMinat = BidangMinatModel::select('id_bidang_minat', 'nama_bidang_minat')->get();
         $mataKuliah = MataKuliahModel::select('id_matakuliah', 'nama_matakuliah')->get();
-        $user = UserModel::select('user_id', 'nama_lengkap')->get();
+        $user = UserModel::select('user_id', 'nama_lengkap')
+        ->where('id_level', '!=', 1)->get();
 
         return view('sertifikasi.edit', [
             'sertifikasi' => $sertifikasi,
