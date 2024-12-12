@@ -865,14 +865,14 @@ class PelatihanController extends Controller
         $table = $section->addTable(['borderSize' => 6, 'borderColor' => '999999', 'cellMargin' => 80]);
         $table->addRow();
         $table->addCell(1000)->addText("NO", ['bold' => true]);
-        $table->addCell(4000)->addText("USERNAME", ['bold' => true]);
+        $table->addCell(4000)->addText("NIP", ['bold' => true]);
         $table->addCell(4000)->addText("NAMA LENGKAP", ['bold' => true]);
         $table->addCell(4000)->addText("JABATAN", ['bold' => true]);
 
         foreach ($pelatihan->detail_peserta_pelatihan as $index => $peserta) {
             $table->addRow();
             $table->addCell(1000)->addText($index + 1);
-            $table->addCell(4000)->addText($peserta->username);
+            $table->addCell(4000)->addText($peserta->nip);
             $table->addCell(4000)->addText($peserta->nama_lengkap);
             $table->addCell(4000)->addText($peserta->level->nama_level ?? 'Tidak Tersedia');
         }
