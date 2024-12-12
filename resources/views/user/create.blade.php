@@ -46,6 +46,11 @@
                     <small id="error-email" class="error-text form-text text-danger"></small>
                 </div>
                 <div class="form-group">
+                    <label>NIP</label>
+                    <input type="number" name="nip" id="nip" class="form-control" required>
+                    <small id="error-nip" class="error-text form-text text-danger"></small>
+                </div>
+                <div class="form-group">
                     <label>Jenis Kelamin</label>
                     <select name="jenis_kelamin" id="jenis_kelamin" class="form-control" required>
                         <option value="">- Pilih Jenis Kelamin -</option>
@@ -134,6 +139,11 @@
                     required: true,
                     minlength: 3,
                     maxlength: 100
+                },
+                nip: {
+                    required: true,
+                    minlength: 18,
+                    maxlength: 18
                 },
                 jenis_kelamin: {
                     required: true,

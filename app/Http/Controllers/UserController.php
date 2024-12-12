@@ -91,6 +91,7 @@ class UserController extends Controller
             'nama_lengkap' => 'required|max:255',
             'no_telp' => 'required|max:15',
             'email' => 'required|max:255',
+            'nip' => 'nullable|max:18',
             'jenis_kelamin' => 'required',
             'password' => 'nullable|min:5|max:20',
             'avatar'   => 'image|mimes:jpeg,png,jpg|max:2048',
@@ -106,6 +107,7 @@ class UserController extends Controller
         $user->nama_lengkap = $request->nama_lengkap;
         $user->no_telp = $request->no_telp;
         $user->email = $request->email;
+        $user->nip = $request->nip;
         $user->jenis_kelamin = $request->jenis_kelamin;
         $user->password = Hash::make($request->password);
 
@@ -163,6 +165,7 @@ class UserController extends Controller
                 'nama_lengkap' => 'required|max:255',
                 'no_telp' => 'required|max:15',
                 'email' => 'required|max:255',
+                'nip' => 'nullable|max:18',
                 'jenis_kelamin' => 'required',
                 'password' => 'nullable|min:5|max:20',
                 'avatar'   => 'image|mimes:jpeg,png,jpg|max:2048',
@@ -199,7 +202,7 @@ class UserController extends Controller
                 }
 
                 // Update data pengguna
-                $user->update($request->only('username', 'nama_lengkap', 'no_telp', 'email', 'jenis_kelamin', 'password', 'avatar', 'id_level'));
+                $user->update($request->only('username', 'nama_lengkap', 'no_telp', 'email', 'nip', 'jenis_kelamin', 'password', 'avatar', 'id_level'));
 
                 $user->detail_daftar_user_bidang_minat()->sync($request->id_bidang_minat);
                 $user->detail_daftar_user_matakuliah()->sync($request->id_matakuliah);
@@ -295,9 +298,9 @@ class UserController extends Controller
                 if ($baris > 1) {
                     // Menyiapkan data untuk dimasukkan
                     $avatarPath = null;
-                    if (isset($value['I'])) {
+                    if (isset($value['J'])) {
                         // Jika ada avatar, proses upload
-                        $avatarPath = $this->uploadAvatar($value['I']); // Panggil method uploadAvatar
+                        $avatarPath = $this->uploadAvatar($value['J']); // Panggil method uploadAvatar
                     }
 
                     $insert[] = [
@@ -308,7 +311,8 @@ class UserController extends Controller
                         'nama_lengkap' => $value['E'], // Kolom E untuk nama_lengkap
                         'no_telp' => $value['F'], // Kolom F untuk no_telp
                         'email' => $value['G'], // Kolom G untuk email
-                        'jenis_kelamin' => $value['H'], // Kolom H untuk jenis_kelamin
+                        'nip' => $value['H'], // Kolom G untuk nip
+                        'jenis_kelamin' => $value['I'], // Kolom H untuk jenis_kelamin
                         'avatar' => $avatarPath, // Path avatar yang sudah diproses
                         'created_at' => now(),
                         'updated_at' => now(),

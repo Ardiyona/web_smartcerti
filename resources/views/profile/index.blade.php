@@ -152,6 +152,24 @@
                                         @enderror
                                     </div>
                                 </div>
+
+                                @if (Auth::user()->id_level != 1)
+                                    <div class="form-group row mb-3">
+                                        <label for="nip"
+                                            class="col-md-4 col-form-label text-md-end">{{ __('nip') }}</label>
+                                        <div class="col-md-8">
+                                            <input id="nip" type="nip"
+                                                class="form-control @error('nip') is-invalid @enderror" name="nip"
+                                                value="{{ old('nip', $user->nip) }}">
+                                            @error('nip')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                @endif
+
                                 <div class="form-group row mb-3">
                                     <label for="no_telp"
                                         class="col-md-4 col-form-label text-md-end">{{ __('Nomor Telepon') }}</label>

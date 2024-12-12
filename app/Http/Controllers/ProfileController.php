@@ -66,6 +66,7 @@ class ProfileController extends Controller
             'nama_lengkap' => $request->nama_lengkap,
             'no_telp' => $request->no_telp,
             'email' => $request->email,
+            'nip' => $request->nip,
             'jenis_kelamin' => $request->jenis_kelamin,
         ]);
 

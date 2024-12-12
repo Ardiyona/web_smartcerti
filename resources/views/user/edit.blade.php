@@ -64,6 +64,12 @@
                         <small id="error-email" class="error-text form-text text-danger"></small>
                     </div>
                     <div class="form-group">
+                        <label>NIP</label>
+                        <input value="{{ $user->nip }}" type="text" name="nip" id="nip"
+                            class="form-control" required>
+                        <small id="error-nip" class="error-text form-text text-danger"></small>
+                    </div>
+                    <div class="form-group">
                         <label>Jenis Kelamin</label>
                         <select value ="{{ $user->jenis_kelamin }}" name="jenis_kelamin" id="jenis_kelamin" class="form-control"
                             required>
@@ -144,6 +150,11 @@
                         required: true,
                         minlength: 3,
                         maxlength: 100
+                    },
+                    nip: {
+                        required: true,
+                        minlength: 18,
+                        maxlength: 18
                     },
                     jenis_kelamin: {
                         required: true,
