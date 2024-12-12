@@ -3,7 +3,7 @@ FROM php:8.2-fpm-alpine AS builder
 
 # Install required dependencies
 RUN apk add --no-cache unzip git libzip-dev freetype-dev libjpeg-turbo-dev libpng-dev \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg --with-png --with-webp \
     && docker-php-ext-install zip gd mysqli pdo pdo_mysql \
     && docker-php-ext-enable pdo_mysql
 
@@ -24,7 +24,7 @@ FROM php:8.2-fpm-alpine
 
 # Install minimal dependencies including Nginx and Supervisor
 RUN apk add --no-cache libzip-dev freetype-dev libjpeg-turbo-dev libpng-dev nginx supervisor \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg --with-png --with-webp \
     && docker-php-ext-install zip gd mysqli pdo pdo_mysql \
     && docker-php-ext-enable pdo_mysql
 
@@ -41,6 +41,7 @@ COPY docker/supervisord.conf /etc/supervisord.conf
 # Create the log directory for Supervisor
 RUN mkdir -p /var/log/supervisor
 
+# Ini Setup storage, cek dulu kayak gimana penyimpanan di kelompok
 # Symlink handling and permissions
 RUN mkdir /var/www/html/temp_storage \
     && mv /var/www/html/public/storage /var/www/html/temp_storage \
