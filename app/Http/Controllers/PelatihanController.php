@@ -817,7 +817,7 @@ class PelatihanController extends Controller
         $headerTable->addRow();
 
         // Tambahkan logo
-        $logoPath = storage_path('Logo/logo.png'); // Ganti sesuai path logo Anda
+        $logoPath = asset('storage/logo/logo.png'); // Ganti sesuai path logo Anda
         $headerTable->addCell(2000)->addImage(
             $logoPath,
             [

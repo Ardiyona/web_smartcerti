@@ -67,7 +67,7 @@
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown"
                 style="width: 280px; padding: 20px;">
                 <div class="dropdown-item text-center">
-                    @if (Auth::user()->avatar && file_exists(public_path('storage/photos/' . Auth::user()->avatar)))
+                    @if (Auth::user()->avatar)
                         <img src="{{ asset('storage/photos/' . Auth::user()->avatar) }}"
                             class="img-fluid rounded-circle" style="width: 80px; height: 80px;">
                     @else

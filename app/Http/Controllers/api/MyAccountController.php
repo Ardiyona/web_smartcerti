@@ -46,14 +46,17 @@ class MyAccountController extends Controller
         }
 
         // Perbarui data utama pengguna
-        $user->update($request->only('username', 'nama_lengkap', 'no_telp', 'email', 'jenis_kelamin', 'avatar', 'id_level'));
+        $user->update($request->only('username', 'nama_lengkap', 'no_telp', 'email', 'nip', 'jenis_kelamin', 'avatar', 'id_level'));
 
         Log::info('Query setelah update:', $user->toArray());
 
         // Sinkronisasi relasi hanya jika data dikirim
+        if ($request->id_bidang_minat) {
             $user->detail_daftar_user_bidang_minat()->sync($request->id_bidang_minat);
-
+        }
+        if ($request->id_matakuliah) {
             $user->detail_daftar_user_matakuliah()->sync($request->id_matakuliah);
+        }
 
         return response()->json([
             'success' => true,
