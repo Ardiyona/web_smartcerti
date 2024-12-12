@@ -25,6 +25,7 @@ class PimpinanSertifikasiDosenController extends Controller
             'kuota_peserta',
             'biaya'
         )
+        ->where('status_sertifikasi', 'terima')
             ->with([
                 'vendor_sertifikasi',
                 'jenis_sertifikasi',

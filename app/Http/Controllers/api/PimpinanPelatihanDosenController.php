@@ -23,8 +23,10 @@ class PimpinanPelatihanDosenController extends Controller
             'level_pelatihan',
             'tanggal',
             'kuota_peserta',
-            'biaya'
+            'biaya',
+
         )
+            ->where('status_pelatihan', 'terima')
             ->with([
                 'vendor_pelatihan',
                 'jenis_pelatihan',
