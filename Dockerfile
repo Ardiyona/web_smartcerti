@@ -53,6 +53,9 @@ RUN mkdir /var/www/html/temp_storage \
     && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
+# Set mask user
+RUN echo "umask 002" >> /etc/profile
+
 # Expose port 80
 EXPOSE 80
 
