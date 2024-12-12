@@ -3,18 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Landing Page - Bidang Minat</title>
+    <title>SMARTCERTI</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         /* General page styles */
         body, html {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
-            height: 100%;
-            background-image: url('{{ asset("assets/wallpaper.jpg") }}');
-        }
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+    height: 100%;
+    background: linear-gradient(110deg, #375E97, #EF5428, #61a4bc);
+    /* #1e3c72: Biru tua, #2a5298: Biru medium, #61a4bc: Biru terang */
+    background-repeat: no-repeat;
+    background-attachment: fixed; /* Agar tetap ketika scroll */
+}
+
 
 
         .container {
@@ -63,11 +67,11 @@
         .login-button {
             background-color: white;
             border: none;
-            padding: 8px 15px;
+            padding: 6px 12px;
             border-radius: 5px;
             cursor: pointer;
             font-size: 1rem;
-            margin-right: 40px;
+            margin-right: 20px;
         }
 
         .login-button a {
@@ -97,7 +101,7 @@
             font-size: 2.5rem;
             font-weight: bold;
             margin-bottom: 60px;
-            color: #EF5428;
+            color: #ffffff;
         }
 
         .bidang-options {
