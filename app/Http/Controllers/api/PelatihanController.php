@@ -77,10 +77,9 @@ class PelatihanController extends Controller
         // Validasi input
         $validator = Validator::make($request->all(), [
             'nama_pelatihan' => 'required|string|max:255',
-            'jenis' => 'required|string',
+            'level_pelatihan' => 'required|string',
             'tanggal' => 'required|date',
             'bukti_pelatihan' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
-            'masa_berlaku' => 'required|date',
             'kuota_peserta' => 'required|integer',
             'biaya' => 'required|numeric',
             'id_vendor_pelatihan' => 'required|integer|exists:vendor_pelatihan,id_vendor_pelatihan',
