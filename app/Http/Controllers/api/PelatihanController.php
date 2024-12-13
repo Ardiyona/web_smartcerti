@@ -13,6 +13,7 @@ use App\Models\UserModel;
 use App\Models\VendorPelatihanModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 
@@ -55,33 +56,31 @@ class PelatihanController extends Controller
 
 
     public function index()
-{
-    /** @var User */
-    $user = Auth::guard('api')->user();
-    // Mengambil pelatihan yang hanya dimiliki oleh user yang sedang login
-    $pelatihan = $user->detail_peserta_pelatihan()
-        ->with('vendor_pelatihan', 'jenis_pelatihan', 'periode', 'bidang_minat_pelatihan', 'mata_kuliah_pelatihan')
-        ->get();
+    {
+        /** @var User */
+        $user = Auth::guard('api')->user();
+        // Mengambil pelatihan yang hanya dimiliki oleh user yang sedang login
+        $pelatihan = $user->detail_peserta_pelatihan()
+            ->with('vendor_pelatihan', 'jenis_pelatihan', 'periode', 'bidang_minat_pelatihan', 'mata_kuliah_pelatihan')
+            ->get();
 
-    // Mengembalikan response dalam bentuk JSON
-    return response()->json([
-        'success' => true,
-        'message' => 'Data pelatihan retrieved successfully',
-        'data' => $pelatihan
-    ], 200);
-}
-
-
+        // Mengembalikan response dalam bentuk JSON
+        return response()->json([
+            'success' => true,
+            'message' => 'Data pelatihan retrieved successfully',
+            'data' => $pelatihan
+        ], 200);
+    }
 
     public function store(Request $request)
     {
         // Validasi input
         $validator = Validator::make($request->all(), [
             'nama_pelatihan' => 'required|string|max:255',
-            'lokasi' => 'required|string|max:255',
-            'level_pelatihan' => 'required|string|max:50',
+            'jenis' => 'required|string',
             'tanggal' => 'required|date',
             'bukti_pelatihan' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            'masa_berlaku' => 'required|date',
             'kuota_peserta' => 'required|integer',
             'biaya' => 'required|numeric',
             'id_vendor_pelatihan' => 'required|integer|exists:vendor_pelatihan,id_vendor_pelatihan',
@@ -106,33 +105,34 @@ class PelatihanController extends Controller
         // Cek apakah file bukti pelatihan diunggah
         if ($request->hasFile('bukti_pelatihan')) {
             $filename = time() . '_' . $request->file('bukti_pelatihan')->getClientOriginalName();
-            $request->file('bukti_pelatihan')->storeAs('public/bukti_pelatihan/', $bukti_pelatihan);
+            $bukti_pelatihan = $request->file('bukti_pelatihan')->storeAs('public/bukti_pelatihan/', $filename);
         }
 
-        // Membuat data pelatihan
         $pelatihan = PelatihanModel::create([
             'nama_pelatihan' => $request->nama_pelatihan,
-            'lokasi' => $request->lokasi,
-            'level_pelatihan' => $request->level_pelatihan,
+            'no_pelatihan' => $request->no_pelatihan,
+            'jenis' => $request->jenis,
             'tanggal' => $request->tanggal,
             'bukti_pelatihan' => $filename,
+            'masa_berlaku' => $request->masa_berlaku,
             'kuota_peserta' => $request->kuota_peserta,
             'biaya' => $request->biaya,
             'id_vendor_pelatihan' => $request->id_vendor_pelatihan,
             'id_jenis_pelatihan' => $request->id_jenis_pelatihan,
             'id_periode' => $request->id_periode
         ]);
-
-        // Sinkronisasi relasi many-to-many
         $pelatihan->bidang_minat_pelatihan()->sync($request->id_bidang_minat);
         $pelatihan->mata_kuliah_pelatihan()->sync($request->id_matakuliah);
 
-        // Menambahkan peserta pelatihan
-        $pelatihan->detail_peserta_pelatihan()->attach($request->user_id);
+        $userId = Auth::id();
+
+        $pelatihan->detail_peserta_pelatihan()->attach($userId, [
+            'bukti_pelatihan' => $filename
+        ]);
 
         return response()->json([
             'success' => true,
-            'message' => 'Pelatihan berhasil dibuat',
+            'message' => 'pelatihan berhasil dibuat terima kasih',
             'data' => $pelatihan
         ], 201);
     }
@@ -201,7 +201,7 @@ class PelatihanController extends Controller
                 Storage::delete($bukti_pelatihan);
             }
             $filename = time() . '_' . $request->file('bukti_pelatihan')->getClientOriginalName();
-            
+
             $bukti_pelatihan = $request->file('bukti_pelatihan')->store('public/bukti_pelatihan');
 
             $pelatihan->detail_peserta_pelatihan()->updateExistingPivot(
@@ -213,7 +213,7 @@ class PelatihanController extends Controller
         }
         $pelatihan->save();
         $pelatihan->bukti_pelatihan = $bukti_pelatihan;
-        
+
 
         $pelatihan->bidang_minat_pelatihan()->sync($request->id_bidang_minat);
         $pelatihan->mata_kuliah_pelatihan()->sync($request->id_matakuliah);
@@ -253,127 +253,124 @@ class PelatihanController extends Controller
         }
     }
 
-//     public function getPelatihanByUser($id)
-// {
-//     $pelatihans = PelatihanModel::where('user_id', $id)->get();
-//     if ($pelatihans->isEmpty()) {
-//         return response()->json([
-//             'message' => 'Tidak ada pelatihan ditemukan untuk user ini.',
-//         ], 404);
-//     }
-//     return response()->json($pelatihans);
+    //     public function getPelatihanByUser($id)
+    // {
+    //     $pelatihans = PelatihanModel::where('user_id', $id)->get();
+    //     if ($pelatihans->isEmpty()) {
+    //         return response()->json([
+    //             'message' => 'Tidak ada pelatihan ditemukan untuk user ini.',
+    //         ], 404);
+    //     }
+    //     return response()->json($pelatihans);
 
-// }
+    // }
 
 
-public function getPelatihanByUser($id)
-{
-    // Ambil data peserta pelatihan berdasarkan user_id
-    $pesertaPelatihan = PesertaPelatihanModel::with('pelatihan')
-        ->where('user_id', $id)
-        ->get();
+    public function getPelatihanByUser($id)
+    {
+        // Ambil data peserta pelatihan berdasarkan user_id
+        $pesertaPelatihan = PesertaPelatihanModel::with('pelatihan')
+            ->where('user_id', $id)
+            ->get();
 
-    // Periksa apakah data kosong
-    if ($pesertaPelatihan->isEmpty()) {
-        return response()->json([
-            'message' => 'Tidak ada pelatihan ditemukan untuk user ini.',
-        ], 404);
+        // Periksa apakah data kosong
+        if ($pesertaPelatihan->isEmpty()) {
+            return response()->json([
+                'message' => 'Tidak ada pelatihan ditemukan untuk user ini.',
+            ], 404);
+        }
+
+        // Jika data ditemukan, kembalikan dalam bentuk JSON
+        return response()->json($pesertaPelatihan);
     }
 
-    // Jika data ditemukan, kembalikan dalam bentuk JSON
-    return response()->json($pesertaPelatihan);
-}
+
+    // public function create()
+    // {
+    //     // Mengambil data dari berbagai tabel terkait pelatihan
+    //     $vendorpelatihan = VendorPelatihanModel::select('id_vendor_pelatihan', 'nama')->get();
+    //     $jenispelatihan = JenisPelatihanModel::select('id_jenis_pelatihan', 'nama_jenis_pelatihan')->get();
+    //     $periode = PeriodeModel::select('id_periode', 'tahun_periode')->get();
+    //     $bidangMinat = BidangMinatModel::select('id_bidang_minat', 'nama_bidang_minat')->get();
+    //     $mataKuliah = MataKuliahModel::select('id_matakuliah', 'nama_matakuliah')->get();
+    //     $user = UserModel::select('user_id', 'nama_lengkap')->get();
+
+    //     // Mendapatkan user yang sedang login
+    //     $userid = Auth::user();
+
+    //     // Menentukan data tambahan berdasarkan level user
+    //     if ($userid->id_level == 1) {
+    //         $response = [
+    //             'success' => true,
+    //             'message' => 'Data pelatihan untuk admin',
+    //             'data' => [
+    //                 'vendorpelatihan' => $vendorpelatihan,
+    //                 'jenispelatihan' => $jenispelatihan,
+    //                 'periode' => $periode,
+    //                 'bidangMinat' => $bidangMinat,
+    //                 'mataKuliah' => $mataKuliah,
+    //                 'user' => $user,
+    //             ],
+    //         ];
+    //     } else {
+    //         $response = [
+    //             'success' => true,
+    //             'message' => 'Data pelatihan untuk user',
+    //             'data' => [
+    //                 'vendorpelatihan' => $vendorpelatihan,
+    //                 'jenispelatihan' => $jenispelatihan,
+    //                 'periode' => $periode,
+    //                 'bidangMinat' => $bidangMinat,
+    //                 'mataKuliah' => $mataKuliah,
+    //                 'user' => $user,
+    //             ],
+    //         ];
+    //     }
+
+    //     // Mengembalikan data dalam bentuk JSON
+    //     return response()->json($response, 200);
+    // }
 
 
-// public function create()
-// {
-//     // Mengambil data dari berbagai tabel terkait pelatihan
-//     $vendorpelatihan = VendorPelatihanModel::select('id_vendor_pelatihan', 'nama')->get();
-//     $jenispelatihan = JenisPelatihanModel::select('id_jenis_pelatihan', 'nama_jenis_pelatihan')->get();
-//     $periode = PeriodeModel::select('id_periode', 'tahun_periode')->get();
-//     $bidangMinat = BidangMinatModel::select('id_bidang_minat', 'nama_bidang_minat')->get();
-//     $mataKuliah = MataKuliahModel::select('id_matakuliah', 'nama_matakuliah')->get();
-//     $user = UserModel::select('user_id', 'nama_lengkap')->get();
+    public function create()
+    {
+        // Ambil data yang diperlukan
+        $vendorpelatihan = VendorPelatihanModel::select('id_vendor_pelatihan', 'nama')->get();
+        $jenispelatihan = JenisPelatihanModel::select('id_jenis_pelatihan', 'nama_jenis_pelatihan')->get();
+        $periode = PeriodeModel::select('id_periode', 'tahun_periode')->get();
+        $bidangMinat = BidangMinatModel::select('id_bidang_minat', 'nama_bidang_minat')->get();
+        $mataKuliah = MataKuliahModel::select('id_matakuliah', 'nama_matakuliah')->get();
+        $user = UserModel::select('user_id', 'nama_lengkap')->get();
 
-//     // Mendapatkan user yang sedang login
-//     $userid = Auth::user();
+        // Periksa apakah user terautentikasi
+        $userid = Auth::user();
+        if (!$userid) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User tidak terautentikasi',
+            ], 401);
+        }
 
-//     // Menentukan data tambahan berdasarkan level user
-//     if ($userid->id_level == 1) {
-//         $response = [
-//             'success' => true,
-//             'message' => 'Data pelatihan untuk admin',
-//             'data' => [
-//                 'vendorpelatihan' => $vendorpelatihan,
-//                 'jenispelatihan' => $jenispelatihan,
-//                 'periode' => $periode,
-//                 'bidangMinat' => $bidangMinat,
-//                 'mataKuliah' => $mataKuliah,
-//                 'user' => $user,
-//             ],
-//         ];
-//     } else {
-//         $response = [
-//             'success' => true,
-//             'message' => 'Data pelatihan untuk user',
-//             'data' => [
-//                 'vendorpelatihan' => $vendorpelatihan,
-//                 'jenispelatihan' => $jenispelatihan,
-//                 'periode' => $periode,
-//                 'bidangMinat' => $bidangMinat,
-//                 'mataKuliah' => $mataKuliah,
-//                 'user' => $user,
-//             ],
-//         ];
-//     }
+        // Struktur data yang akan dikembalikan
+        $data = [
+            'vendorpelatihan' => $vendorpelatihan,
+            'jenispelatihan' => $jenispelatihan,
+            'periode' => $periode,
+            'bidangMinat' => $bidangMinat,
+            'mataKuliah' => $mataKuliah,
+            'user' => $user,
+        ];
 
-//     // Mengembalikan data dalam bentuk JSON
-//     return response()->json($response, 200);
-// }
+        // Tentukan pesan berdasarkan level user
+        $message = $userid->id_level == 1
+            ? 'Data pelatihan untuk admin'
+            : 'Data pelatihan untuk user';
 
-
-public function create()
-{
-    // Ambil data yang diperlukan
-    $vendorpelatihan = VendorPelatihanModel::select('id_vendor_pelatihan', 'nama')->get();
-    $jenispelatihan = JenisPelatihanModel::select('id_jenis_pelatihan', 'nama_jenis_pelatihan')->get();
-    $periode = PeriodeModel::select('id_periode', 'tahun_periode')->get();
-    $bidangMinat = BidangMinatModel::select('id_bidang_minat', 'nama_bidang_minat')->get();
-    $mataKuliah = MataKuliahModel::select('id_matakuliah', 'nama_matakuliah')->get();
-    $user = UserModel::select('user_id', 'nama_lengkap')->get();
-
-    // Periksa apakah user terautentikasi
-    $userid = Auth::user();
-    if (!$userid) {
+        // Kembalikan data dalam format JSON
         return response()->json([
-            'success' => false,
-            'message' => 'User tidak terautentikasi',
-        ], 401);
+            'success' => true,
+            'message' => $message,
+            'data' => $data,
+        ], 200);
     }
-
-    // Struktur data yang akan dikembalikan
-    $data = [
-        'vendorpelatihan' => $vendorpelatihan,
-        'jenispelatihan' => $jenispelatihan,
-        'periode' => $periode,
-        'bidangMinat' => $bidangMinat,
-        'mataKuliah' => $mataKuliah,
-        'user' => $user,
-    ];
-
-    // Tentukan pesan berdasarkan level user
-    $message = $userid->id_level == 1
-        ? 'Data pelatihan untuk admin'
-        : 'Data pelatihan untuk user';
-
-    // Kembalikan data dalam format JSON
-    return response()->json([
-        'success' => true,
-        'message' => $message,
-        'data' => $data,
-    ], 200);
-}
-
-
-
 }
