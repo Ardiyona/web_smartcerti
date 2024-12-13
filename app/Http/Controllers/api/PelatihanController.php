@@ -79,6 +79,7 @@ class PelatihanController extends Controller
             'nama_pelatihan' => 'required|string|max:255',
             'level_pelatihan' => 'required|string',
             'tanggal' => 'required|date',
+            'lokasi' => 'required|string|max:255',
             'bukti_pelatihan' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
             'kuota_peserta' => 'required|integer',
             'biaya' => 'required|numeric',
@@ -109,11 +110,10 @@ class PelatihanController extends Controller
 
         $pelatihan = PelatihanModel::create([
             'nama_pelatihan' => $request->nama_pelatihan,
-            'no_pelatihan' => $request->no_pelatihan,
-            'jenis' => $request->jenis,
+            'level_pelatihan' => $request->level_pelatihan,
+            'lokasi' => $request->lokasi,
             'tanggal' => $request->tanggal,
             'bukti_pelatihan' => $filename,
-            'masa_berlaku' => $request->masa_berlaku,
             'kuota_peserta' => $request->kuota_peserta,
             'biaya' => $request->biaya,
             'id_vendor_pelatihan' => $request->id_vendor_pelatihan,
