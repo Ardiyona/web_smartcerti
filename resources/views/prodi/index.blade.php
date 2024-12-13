@@ -4,7 +4,6 @@
         <div class="card-header">
             <h3 class="card-title">Program Studi Management</h3>
             <div class="card-tools">
-                <a href="{{ url('/prodi/export_pdf') }}" class="btn btn-warning"><i class="fa fa-file-pdf"></i> Export PDF</a>
                 <button onclick="modalAction(`{{ url('/prodi/create') }}`)" class="btn btn-success"
                     style="background-color: #EF5428; border-color: #EF5428;"> <i class="fas fa-plus"></i> Tambah</button>
             </div>
@@ -46,6 +45,13 @@
 
 @push('css')
     <style>
+        .card.card-outline.card-primary {
+            border-color: #375E97 !important;
+        }
+
+        .table {
+            width: 100% !important;
+        }
         .table {
             width: 100% !important;
         }

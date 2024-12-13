@@ -233,8 +233,8 @@
                     @endif
                 </div>
                 <div class="modal-footer">
-                    <button type="button" data-dismiss="modal" class="btn btn-warning">Batal</button>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
+                    <button type="button" data-dismiss="modal" class="btn"  style="color: #EF5428; background-color: white; border-color: #EF5428;">Batal</button>
+                    <button type="submit" class="btn" style="color: white; background-color: #EF5428; border-color: #EF5428;">Simpan</button>
                 </div>
             </div>
         </div>
