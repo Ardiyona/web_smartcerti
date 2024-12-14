@@ -185,7 +185,9 @@
                         <th>ID</th>
                         <th>Nama Prodi</th>
                         <th>Bidang Terkait</th>
+                        @if(Auth::user()->id_level == 1)
                         <th>Aksi</th>
+                        @endif
                     </tr>
                 </thead>
             </table>
@@ -240,7 +242,9 @@
                     },
                     { data: "prodi", className: "", orderable: true, searchable: true },
                     { data: "bidang_terkait", className: "", orderable: true, searchable: true },
+                    @if(Auth::user()->id_level == 1)
                     { data: "aksi", className: "text-center", orderable: false, searchable: false }
+                    @endif
                 ]
             });
 

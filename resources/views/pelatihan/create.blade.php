@@ -200,10 +200,14 @@
                 }
             },
             submitHandler: function(form) {
+                var formData = new FormData(form); //tambah ini tadi
                 $.ajax({
                     url: form.action,
                     type: form.method,
-                    data: $(form).serialize(),
+                    data: formData, //tambah ini tadi
+                    contentType: false, //tambah ini tadi
+                    processData: false, //tambah ini tadi
+                    // data: $(form).serialize(), //ini yg asli
                     success: function(response) {
                         if (response.status) {
                             $('#myModal').modal('hide');
