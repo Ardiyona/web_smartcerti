@@ -201,7 +201,7 @@ class PelatihanController extends Controller
             }
             $filename = time() . '_' . $request->file('bukti_pelatihan')->getClientOriginalName();
 
-            $bukti_pelatihan = $request->file('bukti_pelatihan')->store('public/bukti_pelatihan');
+            $bukti_pelatihan = $request->file('bukti_pelatihan')->storeAs('public/bukti_pelatihan', $filename);
 
             $pelatihan->detail_peserta_pelatihan()->updateExistingPivot(
                 Auth::id(),
