@@ -196,8 +196,8 @@
             <h1>Sertifikasi dan Pelatihan Dosen Jurusan Teknologi Informasi Politeknik Negeri Malang</h1>
             <div class="bidang-options">
                 <div class="option">
-                    <img src="{{ asset('assets/database.png') }}" alt="Database">
-                    <div class="title">Database</div>
+                    <img src="{{ asset('assets/database.png') }}" alt="Basis Data">
+                    <div class="title">Basis Data</div>
                     <a href="{{ route('database.index') }}" class="button">Lihat Selengkapnya</a>
 
                 </div>

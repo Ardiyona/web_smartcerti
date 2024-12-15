@@ -20,7 +20,7 @@ class PageController extends Controller
         // Ambil data user dengan bidang minat "Database"
         $user = UserModel::with(['detail_daftar_user_bidang_minat', 'detail_daftar_user_matakuliah'])
             ->whereHas('detail_daftar_user_bidang_minat', function ($query) {
-                $query->where('nama_bidang_minat', 'Database');
+                $query->where('nama_bidang_minat', 'Basis Data');
             })
             ->whereIn('id_level', [2, 3]) // Filter berdasarkan level ID
             ->get();

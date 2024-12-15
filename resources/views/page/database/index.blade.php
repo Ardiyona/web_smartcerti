@@ -168,7 +168,7 @@
     <!-- Landing Page -->
     <div class="landing-page">
       <div class="content">
-        <h1>Daftar Dosen dengan Bidang Minat Database<br>Jurusan Teknologi Informasi</h1>
+        <h1>Daftar Dosen dengan Bidang Minat Basis Data<br>Jurusan Teknologi Informasi</h1>
 
         <!-- User Cards -->
         <div class="user-cards">
