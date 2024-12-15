@@ -111,6 +111,8 @@ class UserController extends Controller
         $user->jenis_kelamin = $request->jenis_kelamin;
         $user->password = Hash::make($request->password);
 
+        $user->save();
+
         $user->detail_daftar_user_bidang_minat()->sync($request->id_bidang_minat);
         $user->detail_daftar_user_matakuliah()->sync($request->id_matakuliah);
 
@@ -120,8 +122,6 @@ class UserController extends Controller
             $request->file('avatar')->storeAs('public/photos', $fileName);
             $user->avatar = $fileName;
         }
-
-        $user->save();
 
         return response()->json([
             'status' => true,
