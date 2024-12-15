@@ -2,13 +2,8 @@
 FROM php:8.2-fpm-alpine AS builder
 
 # Install required dependencies
-RUN apk add --no-cache unzip git libzip-dev freetype-dev libjpeg-turbo-dev libpng-dev \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install zip gd mysqli pdo pdo_mysql \
-    && docker-php-ext-enable pdo_mysql
-
-# Install Composer
-COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
+COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
+RUN install-php-extensions gd zip @composer mysqli pdo_mysql xsl
 
 # Set working directory
 WORKDIR /app
@@ -23,10 +18,10 @@ RUN composer install --no-dev --optimize-autoloader
 FROM php:8.2-fpm-alpine
 
 # Install minimal dependencies including Nginx and Supervisor
-RUN apk add --no-cache libzip-dev freetype-dev libjpeg-turbo-dev libpng-dev nginx supervisor \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \    
-    && docker-php-ext-install zip gd mysqli pdo pdo_mysql \
-    && docker-php-ext-enable pdo_mysql
+RUN apk add --no-cache nginx supervisor
+
+COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
+RUN install-php-extensions gd zip @composer mysqli pdo_mysql xsl
 
 # Set working directory
 WORKDIR /var/www/html
@@ -41,18 +36,17 @@ COPY docker/supervisord.conf /etc/supervisord.conf
 # Create the log directory for Supervisor
 RUN mkdir -p /var/log/supervisor
 
-# Ini Setup storage, cek dulu kayak gimana penyimpanan di kelompok
+# KHUSUS KELOMPOK 6/KELOMPOK YANG SYMNLINKNYA RUSAK(CUKUP DI UNCOMMMENT)
+RUN mkdir -p /var/www/html/storage/app/public \
+    && mv /var/www/html/public/storage/* /var/www/html/storage/app/public/
+
 # Symlink handling and permissions
-RUN mkdir /var/www/html/temp_storage \
-    && mv /var/www/html/public/storage /var/www/html/temp_storage \
+RUN mkdir -p /var/www/html/public/storage \
     && rm -rf /var/www/html/public/storage \
     && php artisan storage:unlink \
     && php artisan storage:link \
-    && mkdir -p /var/html/storage/app/public \
-    && mv /var/www/html/temp_storage/* /var/www/html/storage/app/public/ \
-    && rm -rf /var/www/html/temp_storage \
-    && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
-    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+        && chown -R www-data:www-data /var/www/html/storage /var/www/html/storage/app/public /var/www/html/public/storage \
+    && chmod -R 775 /var/www/html/storage /var/www/html/storage/app/public
 
 # Set mask user
 RUN echo "umask 002" >> /etc/profile
