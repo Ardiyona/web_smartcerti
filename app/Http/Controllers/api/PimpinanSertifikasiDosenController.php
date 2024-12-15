@@ -26,7 +26,10 @@ class PimpinanSertifikasiDosenController extends Controller
             'biaya',
             'status_sertifikasi'
         )
-        ->where('status_sertifikasi', 'terima')
+        ->where(function ($query) {
+            $query->where('status_sertifikasi', 'terima')
+                  ->orWhereNull('status_sertifikasi');
+        })
             ->with([
                 'vendor_sertifikasi',
                 'jenis_sertifikasi',

@@ -25,9 +25,11 @@ class PimpinanPelatihanDosenController extends Controller
             'kuota_peserta',
             'biaya',
             'status_pelatihan'
-
         )
-            ->where('status_pelatihan', 'terima')
+            ->where(function ($query) {
+                $query->where('status_pelatihan', 'terima')
+                      ->orWhereNull('status_pelatihan');
+            })
             ->with([
                 'vendor_pelatihan',
                 'jenis_pelatihan',
@@ -37,7 +39,7 @@ class PimpinanPelatihanDosenController extends Controller
                 'detail_peserta_pelatihan'
             ])
             ->get();
-
+    
         // Mengembalikan response dalam bentuk JSON
         return response()->json([
             'success' => true,
@@ -45,4 +47,5 @@ class PimpinanPelatihanDosenController extends Controller
             'data' => $pelatihan
         ], 200);
     }
+    
 }
