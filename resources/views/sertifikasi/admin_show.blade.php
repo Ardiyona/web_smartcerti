@@ -36,21 +36,45 @@
                             <th> </th>
                             <td> </td>
                         </tr>
-                        @if ($sertifikasi->status_sertifikasi != 'menunggu')
+                        @if ($sertifikasi->status_sertifikasi != 'menunggu' && $sertifikasi->status_sertifikasi != 'tolak')
                             @if ($sertifikasi && $sertifikasi->detail_peserta_sertifikasi->count())
-                                @foreach ($sertifikasi->detail_peserta_sertifikasi as $peserta)
-                                    <tr>
-                                        <th class="text-right">Nama Peserta</th>
-                                        <td>{{ $peserta->nama_lengkap }}</td>
-                                        <th class="text-right">Bukti Sertifikasi</th>
-                                        <td>
-                                            <input type="file" id="bukti_sertifikasi"
-                                                name="bukti_sertifikasi[{{ $peserta->user_id }}]" class="form-control">
-                                            <small id="error-id_bukti_sertifikasi"
-                                                class="error-text form-text text-danger"></small>
-                                        </td>
-                                    </tr>
-                                @endforeach
+                            @foreach ($sertifikasi->detail_peserta_sertifikasi as $peserta)
+                            <tr>
+                                <th class="text-right">Nama Peserta</th>
+                                <td>{{ $peserta->nama_lengkap }}</td>
+                                <th class="text-right">Bukti Sertifikasi</th>
+                                <td>
+                                    @php
+                                        $buktiSertifikasi = $peserta->pivot->bukti_sertifikasi ?? null;
+                                    @endphp
+                        
+                                    @if ($buktiSertifikasi)
+                                        <small class="form-text">
+                                            File saat ini:
+                                            @php
+                                                // Ambil nama file tanpa path
+                                                $fullFileName = basename($buktiSertifikasi);
+                        
+                                                // Hilangkan timestamp di depan nama file
+                                                $cleanFileName = preg_replace('/^\d{10}_/', '', $fullFileName);
+                                            @endphp
+                        
+                                            <a href="{{ url('storage/bukti_sertifikasi/' . $buktiSertifikasi) }}" target="_blank" download>
+                                                {{ $cleanFileName }}
+                                            </a>
+                                        </small>
+                                    @endif
+                        
+                                    <input type="file" id="bukti_sertifikasi_{{ $peserta->user_id }}"
+                                           name="bukti_sertifikasi[{{ $peserta->user_id }}]"
+                                           class="form-control">
+                                    <small class="form-text text-muted">
+                                        Abaikan jika tidak ingin mengubah file bukti sertifikasi
+                                    </small>
+                                    <small id="error-bukti_sertifikasi_{{ $peserta->user_id }}" class="error-text form-text text-danger"></small>
+                                </td>
+                            </tr>
+                        @endforeach
                             @else
                                 <tr>
                                     <td colspan="4" class="text-center">Tidak ada peserta terkait.</td>

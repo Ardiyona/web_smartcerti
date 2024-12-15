@@ -44,9 +44,34 @@
                                         <td>{{ $peserta->nama_lengkap }}</td>
                                         <th class="text-right">Bukti Pelatihan</th>
                                         <td>
-                                            <input type="file" id="bukti_pelatihan"
+                                            @php
+                                                $buktiPelatihan = $peserta->pivot->bukti_pelatihan ?? null;
+                                            @endphp
+
+                                            @if ($buktiPelatihan)
+                                                <small class="form-text">
+                                                    File saat ini:
+                                                    @php
+                                                        // Ambil nama file tanpa path
+                                                        $fullFileName = basename($buktiPelatihan);
+
+                                                        // Hilangkan timestamp di depan nama file
+                                                        $cleanFileName = preg_replace('/^\d{10}_/', '', $fullFileName);
+                                                    @endphp
+
+                                                    <a href="{{ url('storage/bukti_pelatihan/' . $buktiPelatihan) }}"
+                                                        target="_blank" download>
+                                                        {{ $cleanFileName }}
+                                                    </a>
+                                                </small>
+                                            @endif
+
+                                            <input type="file" id="bukti_pelatihan_{{ $peserta->user_id }}"
                                                 name="bukti_pelatihan[{{ $peserta->user_id }}]" class="form-control">
-                                            <small id="error-id_bukti_pelatihan"
+                                            <small class="form-text text-muted">
+                                                Abaikan jika tidak ingin mengubah file bukti pelatihan
+                                            </small>
+                                            <small id="error-bukti_pelatihan_{{ $peserta->user_id }}"
                                                 class="error-text form-text text-danger"></small>
                                         </td>
                                     </tr>
@@ -62,7 +87,6 @@
                                 </td>
                             </tr>
                         @endif
-
                     </table>
                 </div>
                 <div class="modal-footer">
@@ -77,9 +101,9 @@
                             class="btn btn-success"><i class="fa fa-file-pdf"></i>Download Draft Surat Tugas</a>
                     @endif
                     <button type="button" data-dismiss="modal" class="btn"
-                    style="color: #EF5428; background-color: white; border-color: #EF5428;">Batal</button>
-                <button type="submit"
-                    class="btn"style="color: white; background-color: #EF5428; border-color: #EF5428;">Simpan</button>
+                        style="color: #EF5428; background-color: white; border-color: #EF5428;">Batal</button>
+                    <button type="submit"
+                        class="btn"style="color: white; background-color: #EF5428; border-color: #EF5428;">Simpan</button>
 
                 </div>
             </div>

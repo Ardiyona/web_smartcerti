@@ -40,17 +40,21 @@
                     <tr>
                         <th class="text-right col-3">No Sertifikasi</th>
                         <td class="col-9">
-                            @php
-                                $currentUser = Auth::user();
-                                $userNoSertifikasi =
-                                    $sertifikasi->detail_peserta_sertifikasi
-                                        ->filter(function ($peserta) use ($currentUser) {
-                                            return $peserta->user_id == $currentUser->user_id;
-                                        })
-                                        ->pluck('pivot.no_sertifikasi')
-                                        ->implode('- ') ?? ''; // Berikan default kosong
-                            @endphp
-                            {{ $userNoSertifikasi }}
+                            @forelse ($sertifikasi->detail_peserta_sertifikasi as $peserta)
+                                @if ($peserta->pivot->no_sertifikasi)
+                                    <div>
+                                        <strong>{{ $peserta->nama_lengkap }}:</strong>
+                                        {{ $peserta->pivot->no_sertifikasi }}
+                                    </div>
+                                @else
+                                    <div>
+                                        <strong>{{ $peserta->nama_lengkap }}:</strong> 
+                                        <span class="text-danger">Tidak ada nomor sertifikasi</span>
+                                    </div>
+                                @endif
+                            @empty
+                                <span class="text-danger">Tidak ada peserta terkait.</span>
+                            @endforelse
                         </td>
                     </tr>
                     <tr>
@@ -110,36 +114,30 @@
                     <tr>
                         <th class="text-right col-3">Bukti Sertifikasi</th>
                         <td class="col-9">
-                            @php
-                                // Ambil semua peserta yang memiliki bukti sertifikasi
-                                $allBuktiSertifikasi = $sertifikasi->detail_peserta_sertifikasi
-                                    ->filter(function ($peserta) {
-                                        return !empty($peserta->pivot->bukti_sertifikasi);
-                                    });
-                            @endphp
-                    
-                            @if ($allBuktiSertifikasi->count() > 0)
-                                <ul>
-                                    @foreach ($allBuktiSertifikasi as $peserta)
-                                        @php
-                                            // Ambil nama file tanpa path
-                                            $fullFileName = basename($peserta->pivot->bukti_sertifikasi);
-                    
-                                            // Hilangkan tanggal di depan nama file
-                                            $cleanFileName = preg_replace('/^\d{10}_/', '', $fullFileName);
-                                        @endphp
-                    
-                                        <li>
-                                            <a href="{{ url('storage/bukti_sertifikasi/' . $peserta->pivot->bukti_sertifikasi) }}"
-                                               target="_blank" download>
-                                                {{ $cleanFileName }}
-                                            </a> 
-                                        </li>
-                                    @endforeach
-                                </ul>
+                            @forelse ($sertifikasi->detail_peserta_sertifikasi as $peserta)
+                            @if ($peserta->pivot->bukti_sertifikasi)
+                                @php
+                                    // Ambil nama file tanpa path
+                                    $fullFileName = basename($peserta->pivot->bukti_sertifikasi);
+            
+                                    // Hilangkan timestamp di depan nama file
+                                    $cleanFileName = preg_replace('/^\d{10}_/', '', $fullFileName);
+                                @endphp
+                                <div>
+                                    <strong>{{ $peserta->nama_lengkap }}:</strong>
+                                    <a href="{{ url('storage/bukti_sertifikasi/' . $peserta->pivot->bukti_sertifikasi) }}"
+                                       target="_blank" download>
+                                        {{ $cleanFileName }}
+                                    </a>
+                                </div>
                             @else
-                                <span class="text-danger">Tidak ada bukti sertifikasi</span>
+                                <div>
+                                    <strong>{{ $peserta->nama_lengkap }}:</strong> <span class="text-danger">Tidak ada bukti sertifikasi</span>
+                                </div>
                             @endif
+                        @empty
+                            <span class="text-danger">Tidak ada peserta terkait.</span>
+                        @endforelse
                         </td>
                     </tr>
                 </table>

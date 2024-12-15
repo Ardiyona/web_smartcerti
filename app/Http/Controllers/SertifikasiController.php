@@ -327,7 +327,7 @@ class SertifikasiController extends Controller
         $bidangMinat = BidangMinatModel::select('id_bidang_minat', 'nama_bidang_minat')->get();
         $mataKuliah = MataKuliahModel::select('id_matakuliah', 'nama_matakuliah')->get();
         $user = UserModel::select('user_id', 'nama_lengkap')
-        ->where('id_level', '!=', 1)->get();
+            ->where('id_level', '!=', 1)->get();
 
         return view('sertifikasi.edit', [
             'sertifikasi' => $sertifikasi,
@@ -382,9 +382,9 @@ class SertifikasiController extends Controller
             $user = Auth::user();
 
             $oldFile = DB::table('detail_peserta_sertifikasi')
-            ->where('user_id', $user->user_id)
-            ->where('id_sertifikasi', $id)
-            ->value('bukti_sertifikasi');
+                ->where('user_id', $user->user_id)
+                ->where('id_sertifikasi', $id)
+                ->value('bukti_sertifikasi');
 
             // Cek apakah file bukti sertifikasi diunggah
             if ($request->hasFile('bukti_sertifikasi')) {
@@ -396,13 +396,17 @@ class SertifikasiController extends Controller
             }
 
             if ($sertifikasi) {
+                $kuotaPeserta = $request->kuota_peserta;
+                if ($user->id_level == 1) {
+                    $kuotaPeserta = count($request->user_id);
+                }
                 if ($request->hasFile('bukti_sertifikasi')) {
                     $sertifikasi->update([
                         'nama_sertifikasi'  => $request->nama_sertifikasi,
                         'jenis'      => $request->jenis,
                         'tanggal'      => $request->tanggal,
                         'masa_berlaku'      => $request->masa_berlaku,
-                        'kuota_peserta'      => $request->kuota_peserta,
+                        'kuota_peserta'      => $kuotaPeserta,
                         'biaya'      => $request->biaya,
                         'id_vendor_sertifikasi'  => $request->id_vendor_sertifikasi,
                         'id_jenis_sertifikasi'  => $request->id_jenis_sertifikasi,
@@ -421,7 +425,7 @@ class SertifikasiController extends Controller
                         'jenis'      => $request->jenis,
                         'tanggal'      => $request->tanggal,
                         'masa_berlaku'      => $request->masa_berlaku,
-                        'kuota_peserta'      => $request->kuota_peserta,
+                        'kuota_peserta'      => $kuotaPeserta,
                         'biaya'      => $request->biaya,
                         'id_vendor_sertifikasi'  => $request->id_vendor_sertifikasi,
                         'id_jenis_sertifikasi'  => $request->id_jenis_sertifikasi,
@@ -482,6 +486,16 @@ class SertifikasiController extends Controller
 
             if ($sertifikasi) {
                 if ($currentUser->id_level == 1) {
+                    // Hapus file bukti sertifikasi dari setiap detail_peserta_sertifikasi terkait
+                    $detailPesertas = DB::table('detail_peserta_sertifikasi')
+                        ->where('id_sertifikasi', $id)
+                        ->get();
+
+                    foreach ($detailPesertas as $detail) {
+                        if ($detail->bukti_sertifikasi && Storage::exists('public/bukti_sertifikasi/' . $detail->bukti_sertifikasi)) {
+                            Storage::delete('public/bukti_sertifikasi/' . $detail->bukti_sertifikasi);
+                        }
+                    }
                     // Jika user adalah admin, hapus data sertifikasi sepenuhnya
                     $sertifikasi->mata_kuliah_sertifikasi()->detach();
                     $sertifikasi->bidang_minat_sertifikasi()->detach();
@@ -502,6 +516,10 @@ class SertifikasiController extends Controller
                         ->first(); // Ambil data pivot spesifik
 
                     if ($detailPeserta) {
+                        // Hapus file bukti sertifikasi jika ada
+                        if ($detailPeserta->bukti_sertifikasi && Storage::exists('public/bukti_sertifikasi/' . $detailPeserta->bukti_sertifikasi)) {
+                            Storage::delete('public/bukti_sertifikasi/' . $detailPeserta->bukti_sertifikasi);
+                        }
                         // Hapus data berdasarkan primary key tabel pivot
                         DB::table('detail_peserta_sertifikasi')
                             ->where('id_detail_peserta_sertifikasi', $detailPeserta->id_detail_peserta_sertifikasi)

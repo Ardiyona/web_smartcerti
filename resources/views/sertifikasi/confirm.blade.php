@@ -53,15 +53,49 @@
                             <td class="col-9">
                                 @php
                                     $currentUser = Auth::user();
-                                    $userNoSertifikasi =
-                                        $sertifikasi->detail_peserta_sertifikasi
-                                            ->filter(function ($peserta) use ($currentUser) {
-                                                return $peserta->user_id == $currentUser->user_id;
-                                            })
-                                            ->pluck('pivot.no_sertifikasi')
-                                            ->implode('- ') ?? ''; // Berikan default kosong
+                                    $isAdmin = $currentUser->id_level == 1;
                                 @endphp
-                                {{ $userNoSertifikasi }}
+
+                                @if ($isAdmin)
+                                    @forelse ($sertifikasi->detail_peserta_sertifikasi as $peserta)
+                                    @if ($peserta->pivot->no_sertifikasi)
+                                        <div>
+                                            <strong>{{ $peserta->nama_lengkap }}:</strong>
+                                            {{ $peserta->pivot->no_sertifikasi }}
+                                        </div>
+                                    @else
+                                        <div>
+                                            <strong>{{ $peserta->nama_lengkap }}:</strong> 
+                                            <span class="text-danger">Tidak ada nomor sertifikasi</span>
+                                        </div>
+                                    @endif
+                                @empty
+                                    <span class="text-danger">Tidak ada peserta terkait.</span>
+                                @endforelse
+                                @else
+                                    {{-- Jika User biasa, tampilkan hanya bukti sertifikasi miliknya --}}
+                                    @php
+                                        $userDetail = $sertifikasi->detail_peserta_sertifikasi
+                                            ->where('user_id', $currentUser->user_id)
+                                            ->first();
+                                    @endphp
+
+                                    @if ($userDetail && $userDetail->pivot->no_sertifikasi)
+                                        @php
+                                            $currentUser = Auth::user();
+                                            $userNoSertifikasi =
+                                                $sertifikasi->detail_peserta_sertifikasi
+                                                    ->filter(function ($peserta) use ($currentUser) {
+                                                        return $peserta->user_id == $currentUser->user_id;
+                                                    })
+                                                    ->pluck('pivot.no_sertifikasi')
+                                                    ->implode('- ') ?? ''; // Berikan default kosong
+                                        @endphp
+                                        {{ $userNoSertifikasi }}
+                                    @else
+                                        <span class="text-danger">Tidak ada bukti sertifikasi</span>
+                                    @endif
+                                @endif
                             </td>
                         </tr>
                         <tr>
@@ -99,40 +133,68 @@
                             <th class="text-right col-3">Bukti Sertifikasi</th>
                             <td class="col-9">
                                 @php
-                                    // Mendapatkan user yang sedang login
                                     $currentUser = Auth::user();
-
-                                    // Filter detail_peserta_sertifikasi milik user yang login
-                                    $userDetail = $sertifikasi->detail_peserta_sertifikasi
-                                        ->where('user_id', $currentUser->user_id)
-                                        ->first();
+                                    $isAdmin = $currentUser->id_level == 1;
                                 @endphp
-                                @if ($userDetail && $userDetail->pivot->bukti_sertifikasi)
-                                    {{-- Jika user memiliki bukti sertifikasi --}}
-                                    @php
-                                        // Ambil nama file tanpa path
-                                        $fullFileName = basename($userDetail->pivot->bukti_sertifikasi);
 
-                                        // Hilangkan tanggal di depan nama file
-                                        $cleanFileName = preg_replace('/^\d{10}_/', '', $fullFileName);
+                                @if ($isAdmin)
+                                    {{-- Jika Admin, tampilkan semua bukti sertifikasi dari semua peserta --}}
+                                    @forelse ($sertifikasi->detail_peserta_sertifikasi as $peserta)
+                                        @if ($peserta->pivot->bukti_sertifikasi)
+                                            @php
+                                                // Ambil nama file tanpa path
+                                                $fullFileName = basename($peserta->pivot->bukti_sertifikasi);
+
+                                                // Hilangkan timestamp di depan nama file
+                                                $cleanFileName = preg_replace('/^\d{10}_/', '', $fullFileName);
+                                            @endphp
+                                            <div>
+                                                <strong>{{ $peserta->nama_lengkap }}:</strong>
+                                                <a href="{{ url('storage/bukti_sertifikasi/' . $peserta->pivot->bukti_sertifikasi) }}"
+                                                    target="_blank" download>
+                                                    {{ $cleanFileName }}
+                                                </a>
+                                            </div>
+                                        @else
+                                            <div>
+                                                <strong>{{ $peserta->nama_lengkap }}:</strong> <span
+                                                    class="text-danger">Tidak ada bukti sertifikasi</span>
+                                            </div>
+                                        @endif
+                                    @empty
+                                        <span class="text-danger">Tidak ada peserta terkait.</span>
+                                    @endforelse
+                                @else
+                                    {{-- Jika User biasa, tampilkan hanya bukti sertifikasi miliknya --}}
+                                    @php
+                                        $userDetail = $sertifikasi->detail_peserta_sertifikasi
+                                            ->where('user_id', $currentUser->user_id)
+                                            ->first();
                                     @endphp
 
-                                    <a href="{{ url('storage/bukti_sertifikasi/' . $userDetail->pivot->bukti_sertifikasi) }}"
-                                        target="_blank" download>
-                                        {{ $cleanFileName }}
-                                    </a>
-                                @else
-                                    <span class="text-danger">Tidak ada bukti sertifikasi</span>
+                                    @if ($userDetail && $userDetail->pivot->bukti_sertifikasi)
+                                        @php
+                                            $fullFileName = basename($userDetail->pivot->bukti_sertifikasi);
+                                            $cleanFileName = preg_replace('/^\d{10}_/', '', $fullFileName);
+                                        @endphp
+                                        <a href="{{ url('storage/bukti_sertifikasi/' . $userDetail->pivot->bukti_sertifikasi) }}"
+                                            target="_blank" download>
+                                            {{ $cleanFileName }}
+                                        </a>
+                                    @else
+                                        <span class="text-danger">Tidak ada bukti sertifikasi</span>
+                                    @endif
                                 @endif
                             </td>
                         </tr>
                     </table>
                 </div>
                 <div class="modal-footer">
-                <button type="button" data-dismiss="modal" class="btn"
-                    style="color: #EF5428; background-color: white; border-color: #EF5428;">Batal</button>
-                <button type="submit"
-                    class="btn"style="color: white; background-color: #EF5428; border-color: #EF5428;">Ya, Hapus</button>
+                    <button type="button" data-dismiss="modal" class="btn"
+                        style="color: #EF5428; background-color: white; border-color: #EF5428;">Batal</button>
+                    <button type="submit"
+                        class="btn"style="color: white; background-color: #EF5428; border-color: #EF5428;">Ya,
+                        Hapus</button>
                 </div>
             </div>
         </div>

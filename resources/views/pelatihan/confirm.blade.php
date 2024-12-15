@@ -80,30 +80,57 @@
                             <th class="text-right col-3">Bukti Pelatihan</th>
                             <td class="col-9">
                                 @php
-                                    // Mendapatkan user yang sedang login
                                     $currentUser = Auth::user();
-
-                                    // Filter detail_peserta_pelatihan milik user yang login
-                                    $userDetail = $pelatihan->detail_peserta_pelatihan
-                                        ->where('user_id', $currentUser->user_id)
-                                        ->first();
+                                    $isAdmin = $currentUser->id_level == 1;
                                 @endphp
-                                @if ($userDetail && $userDetail->pivot->bukti_pelatihan)
-                                    {{-- Jika user memiliki bukti pelatihan --}}
-                                    @php
-                                        // Ambil nama file tanpa path
-                                        $fullFileName = basename($userDetail->pivot->bukti_pelatihan);
 
-                                        // Hilangkan tanggal di depan nama file
-                                        $cleanFileName = preg_replace('/^\d{10}_/', '', $fullFileName);
+                                @if ($isAdmin)
+                                    {{-- Jika Admin, tampilkan semua bukti pelatihan dari semua peserta --}}
+                                    @forelse ($pelatihan->detail_peserta_pelatihan as $peserta)
+                                        @if ($peserta->pivot->bukti_pelatihan)
+                                            @php
+                                                // Ambil nama file tanpa path
+                                                $fullFileName = basename($peserta->pivot->bukti_pelatihan);
+
+                                                // Hilangkan timestamp di depan nama file
+                                                $cleanFileName = preg_replace('/^\d{10}_/', '', $fullFileName);
+                                            @endphp
+                                            <div>
+                                                <strong>{{ $peserta->nama_lengkap }}:</strong>
+                                                <a href="{{ url('storage/bukti_pelatihan/' . $peserta->pivot->bukti_pelatihan) }}"
+                                                    target="_blank" download>
+                                                    {{ $cleanFileName }}
+                                                </a>
+                                            </div>
+                                        @else
+                                            <div>
+                                                <strong>{{ $peserta->nama_lengkap }}:</strong> <span
+                                                    class="text-danger">Tidak ada bukti pelatihan</span>
+                                            </div>
+                                        @endif
+                                    @empty
+                                        <span class="text-danger">Tidak ada peserta terkait.</span>
+                                    @endforelse
+                                @else
+                                    {{-- Jika User biasa, tampilkan hanya bukti pelatihan miliknya --}}
+                                    @php
+                                        $userDetail = $pelatihan->detail_peserta_pelatihan
+                                            ->where('user_id', $currentUser->user_id)
+                                            ->first();
                                     @endphp
 
-                                    <a href="{{ url('storage/bukti_pelatihan/' . $userDetail->pivot->bukti_pelatihan) }}"
-                                        target="_blank" download>
-                                        {{ $cleanFileName }}
-                                    </a>
-                                @else
-                                    <span class="text-danger">Tidak ada bukti pelatihan</span>
+                                    @if ($userDetail && $userDetail->pivot->bukti_pelatihan)
+                                        @php
+                                            $fullFileName = basename($userDetail->pivot->bukti_pelatihan);
+                                            $cleanFileName = preg_replace('/^\d{10}_/', '', $fullFileName);
+                                        @endphp
+                                        <a href="{{ url('storage/bukti_pelatihan/' . $userDetail->pivot->bukti_pelatihan) }}"
+                                            target="_blank" download>
+                                            {{ $cleanFileName }}
+                                        </a>
+                                    @else
+                                        <span class="text-danger">Tidak ada bukti pelatihan</span>
+                                    @endif
                                 @endif
                             </td>
                         </tr>

@@ -305,7 +305,7 @@ class PelatihanController extends Controller
         $bidangMinat = BidangMinatModel::select('id_bidang_minat', 'nama_bidang_minat')->get();
         $mataKuliah = MataKuliahModel::select('id_matakuliah', 'nama_matakuliah')->get();
         $user = UserModel::select('user_id', 'nama_lengkap')
-        ->where('id_level', '!=', 1)->get();
+            ->where('id_level', '!=', 1)->get();
 
         return view('pelatihan.edit', [
             'pelatihan' => $pelatihan,
@@ -380,6 +380,10 @@ class PelatihanController extends Controller
             }
 
             if ($pelatihan) {
+                $kuotaPeserta = $request->kuota_peserta;
+                if ($user->id_level == 1) {
+                    $kuotaPeserta = count($request->user_id);
+                }
                 if ($request->hasFile('bukti_pelatihan')) {
                     $pelatihan->update([
                         'nama_pelatihan'  => $request->nama_pelatihan,
@@ -387,7 +391,7 @@ class PelatihanController extends Controller
                         'level_pelatihan'      => $request->level_pelatihan,
                         'tanggal'      => $request->tanggal,
                         'bukti_pelatihan'      => $bukti_pelatihan,
-                        'kuota_peserta'      => $request->kuota_peserta,
+                        'kuota_peserta'      => $kuotaPeserta,
                         'biaya'      => $request->biaya,
                         'id_vendor_pelatihan'  => $request->id_vendor_pelatihan,
                         'id_jenis_pelatihan'  => $request->id_jenis_pelatihan,
@@ -406,7 +410,7 @@ class PelatihanController extends Controller
                         'lokasi'      => $request->lokasi,
                         'level_pelatihan'      => $request->level_pelatihan,
                         'tanggal'      => $request->tanggal,
-                        'kuota_peserta'      => $request->kuota_peserta,
+                        'kuota_peserta'      => $kuotaPeserta,
                         'biaya'      => $request->biaya,
                         'id_vendor_pelatihan'  => $request->id_vendor_pelatihan,
                         'id_jenis_pelatihan'  => $request->id_jenis_pelatihan,
@@ -453,6 +457,16 @@ class PelatihanController extends Controller
 
             if ($pelatihan) {
                 if ($currentUser->id_level == 1) {
+                    // Hapus file bukti pelatihan dari setiap detail_peserta_pelatihan terkait
+                    $detailPesertas = DB::table('detail_peserta_pelatihan')
+                        ->where('id_pelatihan', $id)
+                        ->get();
+
+                    foreach ($detailPesertas as $detail) {
+                        if ($detail->bukti_pelatihan && Storage::exists('public/bukti_pelatihan/' . $detail->bukti_pelatihan)) {
+                            Storage::delete('public/bukti_pelatihan/' . $detail->bukti_pelatihan);
+                        }
+                    }
                     // Jika user adalah admin, hapus data pelatihan sepenuhnya
                     $pelatihan->mata_kuliah_pelatihan()->detach();
                     $pelatihan->bidang_minat_pelatihan()->detach();
@@ -473,6 +487,10 @@ class PelatihanController extends Controller
                         ->first(); // Ambil data pivot spesifik
 
                     if ($detailPeserta) {
+                        // Hapus file bukti pelatihan jika ada
+                        if ($detailPeserta->bukti_pelatihan && Storage::exists('public/bukti_pelatihan/' . $detailPeserta->bukti_pelatihan)) {
+                            Storage::delete('public/bukti_pelatihan/' . $detailPeserta->bukti_pelatihan);
+                        }
                         // Hapus data berdasarkan primary key tabel pivot
                         DB::table('detail_peserta_pelatihan')
                             ->where('id_detail_peserta_pelatihan', $detailPeserta->id_detail_peserta_pelatihan)

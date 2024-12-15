@@ -94,36 +94,30 @@
                     <tr>
                         <th class="text-right col-3">Bukti Pelatihan</th>
                         <td class="col-9">
-                            @php
-                                // Ambil semua peserta yang memiliki bukti pelatihan
-                                $allBuktiPelatihan = $pelatihan->detail_peserta_pelatihan
-                                    ->filter(function ($peserta) {
-                                        return !empty($peserta->pivot->bukti_pelatihan);
-                                    });
-                            @endphp
-                    
-                            @if ($allBuktiPelatihan->count() > 0)
-                                <ul>
-                                    @foreach ($allBuktiPelatihan as $peserta)
-                                        @php
-                                            // Ambil nama file tanpa path
-                                            $fullFileName = basename($peserta->pivot->bukti_pelatihan);
-                    
-                                            // Hilangkan tanggal di depan nama file
-                                            $cleanFileName = preg_replace('/^\d{10}_/', '', $fullFileName);
-                                        @endphp
-                    
-                                        <li>
-                                            <a href="{{ url('storage/bukti_pelatihan/' . $peserta->pivot->bukti_pelatihan) }}"
-                                               target="_blank" download>
-                                                {{ $cleanFileName }}
-                                            </a> 
-                                        </li>
-                                    @endforeach
-                                </ul>
+                            @forelse ($pelatihan->detail_peserta_pelatihan as $peserta)
+                            @if ($peserta->pivot->bukti_pelatihan)
+                                @php
+                                    // Ambil nama file tanpa path
+                                    $fullFileName = basename($peserta->pivot->bukti_pelatihan);
+            
+                                    // Hilangkan timestamp di depan nama file
+                                    $cleanFileName = preg_replace('/^\d{10}_/', '', $fullFileName);
+                                @endphp
+                                <div>
+                                    <strong>{{ $peserta->nama_lengkap }}:</strong>
+                                    <a href="{{ url('storage/bukti_pelatihan/' . $peserta->pivot->bukti_pelatihan) }}"
+                                       target="_blank" download>
+                                        {{ $cleanFileName }}
+                                    </a>
+                                </div>
                             @else
-                                <span class="text-danger">Tidak ada bukti pelatihan</span>
+                                <div>
+                                    <strong>{{ $peserta->nama_lengkap }}:</strong> <span class="text-danger">Tidak ada bukti pelatihan</span>
+                                </div>
                             @endif
+                        @empty
+                            <span class="text-danger">Tidak ada peserta terkait.</span>
+                        @endforelse
                         </td>
                     </tr>
                 </table>
