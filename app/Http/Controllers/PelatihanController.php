@@ -835,7 +835,7 @@ class PelatihanController extends Controller
         $headerTable->addRow();
 
         // Tambahkan logo
-        $logoPath = public_path('storage/logo/logo.png');
+        $logoPath = public_path('storage/logo/Logo.png');
 
         if (file_exists($logoPath)) {
             $headerTable->addCell(2000)->addImage(
