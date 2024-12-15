@@ -124,7 +124,7 @@
                 {
                     data: "lokasi",
                     className: "",
-                    width: "6%",
+                    width: "3%",
                     orderable: false,
                     searchable: true
                 },
@@ -138,7 +138,7 @@
                 {
                     data: "aksi",
                     className: "",
-                    width: "9%",
+                    width: "12%",
                     orderable: false,
                     searchable: false
                 }
