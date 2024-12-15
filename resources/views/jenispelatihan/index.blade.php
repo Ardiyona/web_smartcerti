@@ -72,7 +72,7 @@
                     }
                 },
                 columns: [{
-                        data: "id_jenis_pelatihan",
+                        data: "DT_RowIndex",
                         className: "text-center",
                         orderable: true,
                         searchable: true
