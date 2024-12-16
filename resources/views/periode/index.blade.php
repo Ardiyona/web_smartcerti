@@ -168,10 +168,11 @@
                     }
                 },
                 columns: [{
-                        data: "id_periode",
+                        data: "DT_RowIndex",
                         className: "text-center",
-                        orderable: true,
-                        searchable: true
+                        width: "5%",
+                        orderable: false,
+                        searchable: false
                     },
                     {
                         data: "tahun_periode",

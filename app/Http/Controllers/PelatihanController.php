@@ -36,7 +36,7 @@ class PelatihanController extends Controller
         $activeMenu = 'pelatihan';
 
         $vendorpelatihan = VendorPelatihanModel::all();
-        $periode = PeriodeModel::all();
+        $periode = PeriodeModel::orderBy('tahun_periode', 'asc')->get();
 
         return view('pelatihan.index', [
             'breadcrumb' => $breadcrumb,
@@ -376,7 +376,7 @@ class PelatihanController extends Controller
 
             if ($request->hasFile('surat_tugas')) {
                 $surat_tugas = time() . '_' . $request->file('surat_tugas')->getClientOriginalName();
-                $request->file('surat_tugas')->storeAs($surat_tugas);
+                $request->file('surat_tugas')->storeAs('public/surat_tugas/' .$surat_tugas);
             }
 
             if ($pelatihan) {

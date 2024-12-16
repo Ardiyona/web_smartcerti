@@ -40,8 +40,10 @@ class PeriodeController extends Controller
 
     public function list()
     {
-        $periode = PeriodeModel::select('id_periode', 'tahun_periode');
-
+        // Menambahkan orderBy untuk mengurutkan berdasarkan 'tahun_periode'
+        $periode = PeriodeModel::select('id_periode', 'tahun_periode')
+                               ->orderBy('tahun_periode', 'asc'); // 'asc' untuk urutan menaik, 'desc' untuk menurun
+    
         return DataTables::of($periode)
             ->addIndexColumn()
             ->addColumn('aksi', function ($periode) {

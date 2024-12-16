@@ -34,7 +34,7 @@ class SertifikasiController extends Controller
         $activeMenu = 'sertifikasi';
 
         $vendorSertifikasi = VendorSertifikasiModel::all();
-        $periode = PeriodeModel::all();
+        $periode = PeriodeModel::orderBy('tahun_periode', 'asc')->get();
 
         return view('sertifikasi.index', [
             'breadcrumb' => $breadcrumb,
