@@ -69,7 +69,7 @@ $("#form-tambah").validate({
         },
         bidang_terkait: {
             required: true,
-            maxlength: 50
+            maxlength: 255
         }
     },
     submitHandler: function(form) {

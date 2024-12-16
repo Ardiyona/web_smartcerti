@@ -96,7 +96,7 @@ class KompetensiProdiController extends Controller
             // Validasi input
             $rules = [
                 'id_prodi' => 'required|exists:prodi,id_prodi', // Harus sesuai dengan ID di tabel prodi
-                'bidang_terkait' => 'required|string|max:50',
+                'bidang_terkait' => 'required|string|max:500',
             ];
     
             $validator = Validator::make($request->all(), $rules);

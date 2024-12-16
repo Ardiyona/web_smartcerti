@@ -58,8 +58,8 @@ class ProdiController extends Controller
     {
         if ($request->ajax() || $request->wantsJson()) {
             $rules = [
-                'nama_prodi' => 'required|string|max:255',
-                'kode_prodi' => 'required|string|max:255|min:3'
+                'nama_prodi' => 'required|string|max:100|',
+                'kode_prodi' => 'required|string|max:100|min:2|unique:prodi'
             ];
 
             $validator = Validator::make($request->all(), $rules);
@@ -80,6 +80,9 @@ class ProdiController extends Controller
         }
         return redirect('/');
     }
+
+
+    
 
     public function show(String $id)
     {
