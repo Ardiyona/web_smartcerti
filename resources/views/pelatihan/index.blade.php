@@ -187,7 +187,7 @@
                     orderable: true, // Set true jika ingin sorting berdasarkan tanggal
                     searchable: false
                 });
-                columns.splice(1, 0, {
+                columns.splice(2, 0, {
                     data: "vendor_pelatihan.nama",
                     className: "",
                     width: "9%",
