@@ -71,12 +71,20 @@
                         d.kode_pelatihan = $('#kode_pelatihan').val();
                     }
                 },
+                // columns: [{
+                //         data: "DT_RowIndex",
+                //         className: "text-center",
+                //         orderable: true,
+                //         searchable: true
+                //     },
                 columns: [{
-                        data: "DT_RowIndex",
-                        className: "text-center",
-                        orderable: true,
-                        searchable: true
-                    },
+                    // nomor urut dari laravel datatable addIndexColumn()
+                    data: "DT_RowIndex",
+                    ClassName: "text-center",
+                    width: "5%",
+                    orderable: false,
+                    searchable: false
+                },
                     {
                         data: "nama_jenis_pelatihan",
                         className: "",
