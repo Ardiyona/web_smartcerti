@@ -15,7 +15,7 @@
                     <small id="error-kategori_id" class="error-text form-text text-danger"></small>
                 </div>
                 <div class="form-group">
-                    <label>Pilih File</label> 375E97
+                    <label>Pilih File</label>
                     <input type="file" name="file_user" id="file_user" class="form-control" required>
                     <small id="error-file_user" class="error-text form-text text-danger"></small>
                 </div>
