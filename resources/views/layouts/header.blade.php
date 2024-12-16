@@ -55,7 +55,7 @@
         <li class="nav-item dropdown">
             <a class="nav-link d-flex align-items-center" id="userDropdown" role="button" data-toggle="dropdown"
                 aria-haspopup="true" aria-expanded="false">
-                @if (Auth::user()->avatar && file_exists(public_path('storage/photos/' . Auth::user()->avatar)))
+                @if (Auth::user()->avatar)
                     <img src="{{ asset('storage/photos/' . Auth::user()->avatar) }}" class="rounded-circle profile-img">
                 @else
                     <img src="{{ asset('assets/user.png') }}" class="rounded-circle profile-img">
