@@ -68,7 +68,7 @@
                             $('#myModal').modal('hide');
                             Swal.fire({
                                 icon: 'success',
-                                title: 'Berhasil oye',
+                                title: 'Berhasil',
                                 text: response.message
                             });
                             dataBidangMinat.ajax.reload(); // Reload DataTables for Bidang Minat
