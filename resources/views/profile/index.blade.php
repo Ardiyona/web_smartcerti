@@ -160,7 +160,7 @@
                                         <div class="col-md-8">
                                             <input id="nip" type="nip"
                                                 class="form-control @error('nip') is-invalid @enderror" name="nip"
-                                                value="{{ old('nip', $user->nip) }}">
+                                                value="{{ old('nip', $user->nip) }}" readonly>
                                             @error('nip')
                                                 <span class="invalid-feedback" role="alert">
                                                     <strong>{{ $message }}</strong>
