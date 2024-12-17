@@ -152,7 +152,9 @@ class PelatihanController extends Controller
         // Mengambil id_level dan nama_level dari tabel level
         $vendorpelatihan = VendorPelatihanModel::select('id_vendor_pelatihan', 'nama')->get();
         $jenispelatihan = JenisPelatihanModel::select('id_jenis_pelatihan', 'nama_jenis_pelatihan')->get();
-        $periode = PeriodeModel::select('id_periode', 'tahun_periode')->get();
+        $periode = PeriodeModel::select('id_periode', 'tahun_periode')
+            ->orderBy('tahun_periode', 'asc')
+            ->get();
 
         $bidangMinat = BidangMinatModel::select('id_bidang_minat', 'nama_bidang_minat')->get();
         $mataKuliah = MataKuliahModel::select('id_matakuliah', 'nama_matakuliah')->get();
@@ -300,7 +302,9 @@ class PelatihanController extends Controller
 
         $vendorpelatihan = VendorPelatihanModel::select('id_vendor_pelatihan', 'nama')->get();
         $jenispelatihan = JenisPelatihanModel::select('id_jenis_pelatihan', 'nama_jenis_pelatihan')->get();
-        $periode = PeriodeModel::select('id_periode', 'tahun_periode')->get();
+        $periode = PeriodeModel::select('id_periode', 'tahun_periode')
+            ->orderBy('tahun_periode', 'asc')
+            ->get();
 
         $bidangMinat = BidangMinatModel::select('id_bidang_minat', 'nama_bidang_minat')->get();
         $mataKuliah = MataKuliahModel::select('id_matakuliah', 'nama_matakuliah')->get();
@@ -376,7 +380,7 @@ class PelatihanController extends Controller
 
             if ($request->hasFile('surat_tugas')) {
                 $surat_tugas = time() . '_' . $request->file('surat_tugas')->getClientOriginalName();
-                $request->file('surat_tugas')->storeAs('public/surat_tugas/' .$surat_tugas);
+                $request->file('surat_tugas')->storeAs('public/surat_tugas/' . $surat_tugas);
             }
 
             if ($pelatihan) {
@@ -472,6 +476,11 @@ class PelatihanController extends Controller
                     $pelatihan->bidang_minat_pelatihan()->detach();
                     PesertaPelatihanModel::where('id_pelatihan', $id)->delete();
 
+                    // Hapus notifikasi terkait pelatihan
+                    DB::table('notifications')
+                        ->where('data', 'LIKE', '%"id_pelatihan":' . $id . '%')
+                        ->delete();
+
                     // Hapus data pelatihan
                     $pelatihan->delete();
 
@@ -494,6 +503,12 @@ class PelatihanController extends Controller
                         // Hapus data berdasarkan primary key tabel pivot
                         DB::table('detail_peserta_pelatihan')
                             ->where('id_detail_peserta_pelatihan', $detailPeserta->id_detail_peserta_pelatihan)
+                            ->delete();
+
+                        // Hapus notifikasi terkait untuk user ini
+                        DB::table('notifications')
+                            ->where('data', 'LIKE', '%"id_pelatihan":' . $id . '%')
+                            ->where('notifiable_id', $currentUser->user_id)
                             ->delete();
 
                         return response()->json([
@@ -524,7 +539,9 @@ class PelatihanController extends Controller
         // Mengambil id_level dan nama_level dari tabel level
         $vendorpelatihan = VendorPelatihanModel::select('id_vendor_pelatihan', 'nama')->get();
         $jenispelatihan = JenisPelatihanModel::select('id_jenis_pelatihan', 'nama_jenis_pelatihan')->get();
-        $periode = PeriodeModel::select('id_periode', 'tahun_periode')->get();
+        $periode = PeriodeModel::select('id_periode', 'tahun_periode')
+            ->orderBy('tahun_periode', 'asc')
+            ->get();
 
         $bidangMinat = BidangMinatModel::select('id_bidang_minat', 'nama_bidang_minat')->get();
         $mataKuliah = MataKuliahModel::select('id_matakuliah', 'nama_matakuliah')->get();

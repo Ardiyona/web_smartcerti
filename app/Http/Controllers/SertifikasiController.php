@@ -172,7 +172,9 @@ class SertifikasiController extends Controller
         // Mengambil id_level dan nama_level dari tabel level
         $vendorSertifikasi = VendorSertifikasiModel::select('id_vendor_sertifikasi', 'nama')->get();
         $jenisSertifikasi = JenisSertifikasiModel::select('id_jenis_sertifikasi', 'nama_jenis_sertifikasi')->get();
-        $periode = PeriodeModel::select('id_periode', 'tahun_periode')->get();
+        $periode = PeriodeModel::select('id_periode', 'tahun_periode')
+            ->orderBy('tahun_periode', 'asc')
+            ->get();
 
         $bidangMinat = BidangMinatModel::select('id_bidang_minat', 'nama_bidang_minat')->get();
         $mataKuliah = MataKuliahModel::select('id_matakuliah', 'nama_matakuliah')->get();
@@ -322,7 +324,9 @@ class SertifikasiController extends Controller
 
         $vendorSertifikasi = VendorSertifikasiModel::select('id_vendor_sertifikasi', 'nama')->get();
         $jenisSertifikasi = JenisSertifikasiModel::select('id_jenis_sertifikasi', 'nama_jenis_sertifikasi')->get();
-        $periode = PeriodeModel::select('id_periode', 'tahun_periode')->get();
+        $periode = PeriodeModel::select('id_periode', 'tahun_periode')
+            ->orderBy('tahun_periode', 'asc')
+            ->get();
 
         $bidangMinat = BidangMinatModel::select('id_bidang_minat', 'nama_bidang_minat')->get();
         $mataKuliah = MataKuliahModel::select('id_matakuliah', 'nama_matakuliah')->get();
@@ -501,6 +505,11 @@ class SertifikasiController extends Controller
                     $sertifikasi->bidang_minat_sertifikasi()->detach();
                     PesertaSertifikasiModel::where('id_sertifikasi', $id)->delete();
 
+                    // Hapus notifikasi terkait sertifikasi
+                    DB::table('notifications')
+                        ->where('data', 'LIKE', '%"id_sertifikasi":' . $id . '%')
+                        ->delete();
+
                     // Hapus data sertifikasi
                     $sertifikasi->delete();
 
@@ -523,6 +532,12 @@ class SertifikasiController extends Controller
                         // Hapus data berdasarkan primary key tabel pivot
                         DB::table('detail_peserta_sertifikasi')
                             ->where('id_detail_peserta_sertifikasi', $detailPeserta->id_detail_peserta_sertifikasi)
+                            ->delete();
+
+                        // Hapus notifikasi terkait untuk user ini
+                        DB::table('notifications')
+                            ->where('data', 'LIKE', '%"id_sertifikasi":' . $id . '%')
+                            ->where('notifiable_id', $currentUser->user_id)
                             ->delete();
 
                         return response()->json([
@@ -554,7 +569,9 @@ class SertifikasiController extends Controller
         // Mengambil id_level dan nama_level dari tabel level
         $vendorSertifikasi = VendorSertifikasiModel::select('id_vendor_sertifikasi', 'nama')->get();
         $jenisSertifikasi = JenisSertifikasiModel::select('id_jenis_sertifikasi', 'nama_jenis_sertifikasi')->get();
-        $periode = PeriodeModel::select('id_periode', 'tahun_periode')->get();
+        $periode = PeriodeModel::select('id_periode', 'tahun_periode')
+            ->orderBy('tahun_periode', 'asc')
+            ->get();
 
         $bidangMinat = BidangMinatModel::select('id_bidang_minat', 'nama_bidang_minat')->get();
         $mataKuliah = MataKuliahModel::select('id_matakuliah', 'nama_matakuliah')->get();
