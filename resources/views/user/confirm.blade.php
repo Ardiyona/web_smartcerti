@@ -57,6 +57,10 @@
                             <td class="col-9">{{ $user->email }}</td>
                         </tr>
                         <tr>
+                            <th class="text-right col-3">NIP</th>
+                            <td class="col-9">{{ $user->nip }}</td>
+                        </tr>
+                        <tr>
                             <th class="text-right col-3">Jenis Kelamin</th>
                             <td class="col-9">{{ $user->jenis_kelamin }}</td>
                         </tr>
