@@ -21,6 +21,10 @@ Masalah yang dihadapi : Pengelolaan sertifikasi yang kurang efektif dan kurang t
 
 ## Fitur Mengelola Pelatihan 
 ![image](https://github.com/user-attachments/assets/2ce4044f-e0b4-4bd7-aa3f-93888d2230ff)
+![image](https://github.com/user-attachments/assets/5b23b377-cdd5-4ba4-902b-9e09bbaa8b7b)
+![image](https://github.com/user-attachments/assets/ab5e9afc-25bd-4a91-8e46-672a2e1da5a1)
+![image](https://github.com/user-attachments/assets/f4acb312-25c0-490a-923a-05caa08bbe8e)
+
 
 ## Fitur Mengelola Sertifikasi 
 ![image](https://github.com/user-attachments/assets/b9cdecee-0e56-4bb9-93f8-389482140c5d)
@@ -63,6 +67,8 @@ Masalah yang dihadapi : Pengelolaan sertifikasi yang kurang efektif dan kurang t
 
 ## Fitur Penerimaan Pengajuan
 ![image](https://github.com/user-attachments/assets/5fa9b096-ee8e-4c77-9211-788ad456ccee)
+![image](https://github.com/user-attachments/assets/0ae7e77d-2811-4183-94db-e1b136df0fed)
+
 
 # Dosen
 
