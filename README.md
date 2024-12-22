@@ -1,68 +1,83 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+Nama proyek :  Sistem Informasi Manajemen Sertifikasi dan Pelatihan Jurusan Teknologi Informasi (SmartCerTI)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Latar Belakang Proyek : Sistem Informasi Pendataan Sertifikasi dan Pelatihan Dosen Jurusan Teknologi Informasi merupakan sistem informasi yang dibangun untuk memetakan kualifikasi dosen di JTI. Sistem Informasi ini diharapkan dapat memetakan dosen sehingga memudahkan untuk Pengembangan dosen JTI. Sistem informasi ini diharapkan juga dapat mempermudah pimpinan Jurusan dalam mengelola, mendistribusikan maupun mengembangkan potensi-potensi yang ada di JTI.
 
-## About Laravel
+Masalah yang dihadapi : Pengelolaan sertifikasi yang kurang efektif dan kurang terstruktur. Tidak adanya sistem pemetaan kualifikasi dosen atau pendataan kompetensi dosen berdasarkan sertifikasi yang dimiliki oleh dosen
 
-tes
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+# Landing Page
+![image](https://github.com/user-attachments/assets/bdf1cba2-64ad-44a7-ae15-72be652681c7)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Detail
+![image](https://github.com/user-attachments/assets/41a85305-1db0-47d4-be55-252c9f736805)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+# Login
+![image](https://github.com/user-attachments/assets/40b291f4-5b3c-4b1d-a6ad-2ed0a8621fd3)
 
-## Learning Laravel
+# ADMIN
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Dashboard
+![image](https://github.com/user-attachments/assets/fc73aa36-7861-487d-bb22-ffd01727beb9)
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Fitur Mengelola Pelatihan 
+![image](https://github.com/user-attachments/assets/2ce4044f-e0b4-4bd7-aa3f-93888d2230ff)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Fitur Mengelola Sertifikasi 
+![image](https://github.com/user-attachments/assets/b9cdecee-0e56-4bb9-93f8-389482140c5d)
 
-## Laravel Sponsors
+## Fitur Mengelola Kompetensi Prodi
+![image](https://github.com/user-attachments/assets/5427230b-6531-4b28-ad76-5ee6ce76a4b0)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Fitur Mengelola Level Pengguna
+![image](https://github.com/user-attachments/assets/8d204a43-4867-4f78-b4ef-b2e0cf5d51ae)
 
-### Premium Partners
+## Fitur Mengelola Data Pengguna
+![image](https://github.com/user-attachments/assets/08b6ca0b-ee50-4dde-b700-5a8f7edff244)
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+## Fitur Mengelola Vendor Pelatihan dan Sertifikasi
+![image](https://github.com/user-attachments/assets/d7a4cefa-def6-4bfb-b73f-3911e15c73d9)
 
-## Contributing
+## Fitur Mengelola Jenis Pelatihan dan Sertifikasi
+![image](https://github.com/user-attachments/assets/d91c6dea-062f-4c7f-879d-121072af8a7f)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Fitur Mengelola Bidang Minat
+![image](https://github.com/user-attachments/assets/5c786c34-634f-4c4d-ac51-78fea330cdf6)
 
-## Code of Conduct
+## Fitur Mengelola Mata Kuliah
+![image](https://github.com/user-attachments/assets/95cd9a30-9870-4ec4-ab52-2f76770a4f39)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Fitur Mengelola Periode
+![image](https://github.com/user-attachments/assets/40c6408a-c19f-4951-8b9c-0a14f8c73424)
 
-## Security Vulnerabilities
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# Pimpinan
 
-## License
+## Dashboard
+![image](https://github.com/user-attachments/assets/400d65e3-3916-4204-ae33-90d481681e7a)
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Fitur Pelatihan
+![image](https://github.com/user-attachments/assets/1bb524dc-f8f3-42bf-9603-1fe8971c259c)
+
+## Fitur Sertifikasi
+![image](https://github.com/user-attachments/assets/6e0fb8db-48cd-4850-9a22-b1fcc41743c5)
+
+## Fitur Penerimaan Pengajuan
+![image](https://github.com/user-attachments/assets/5fa9b096-ee8e-4c77-9211-788ad456ccee)
+
+# Dosen
+
+## Dashboard
+![image](https://github.com/user-attachments/assets/900ff9df-ce53-4179-ade6-f6e711491951)
+
+## Fitur Pelatihan
+![image](https://github.com/user-attachments/assets/ed34a32f-09a7-4575-b892-aae9b57962ac)
+
+## Fitur Sertifikasi
+![image](https://github.com/user-attachments/assets/57ffc869-b39d-459a-bcd2-501d53a4d0c5)
+
+
+
+
+
+
+
